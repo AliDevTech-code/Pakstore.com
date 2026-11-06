@@ -113,17 +113,13 @@ $cartTotals = cart_totals();
             </div>
 
             <div class="flex items-center gap-1 sm:gap-2 shrink-0">
-                <button type="button" data-open-drawer="cart-drawer" class="relative p-2 text-slate-700 hover:text-[#00A651] hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer" aria-label="View Shopping Cart" title="Shopping Cart">
-                    <i data-lucide="shopping-bag" class="w-5 h-5 text-[#00A651]"></i>
-                    <?php if ($navCartCount > 0): ?>
-                        <span class="absolute -top-1 -right-1 bg-[#FF6B00] text-white font-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center shadow-sm"><?= $navCartCount ?></span>
-                    <?php endif; ?>
-                </button>
-
                 <details class="relative group">
                     <summary class="list-none flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-lg bg-[#00A651] hover:bg-[#008f45] border border-[#00A651] text-xs font-bold text-white transition-colors cursor-pointer shadow-sm">
                         <i data-lucide="user" class="w-4 h-4"></i>
                         <span class="hidden sm:inline max-w-[90px] truncate"><?= $navCustomer ? e(explode(' ', $navCustomer['full_name'])[0]) : 'Login' ?></span>
+                        <?php if ($navCartCount > 0): ?>
+                            <span class="bg-white text-[#00A651] text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center leading-none"><?= $navCartCount ?></span>
+                        <?php endif; ?>
                         <i data-lucide="chevron-down" class="w-3 h-3 text-white/80"></i>
                     </summary>
                     <div class="absolute right-0 mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-xl py-2 z-50 text-xs">
@@ -132,6 +128,11 @@ $cartTotals = cart_totals();
                                 <span class="font-bold text-slate-900 block truncate"><?= e($navCustomer['full_name']) ?></span>
                                 <span class="text-[10px] text-slate-500 font-mono"><?= e($navCustomer['phone']) ?></span>
                             </div>
+                            <button type="button" data-open-drawer="cart-drawer" onclick="this.closest('details').open=false" class="w-full px-3.5 py-2 text-left hover:bg-emerald-50 flex items-center gap-2 text-slate-700 font-medium cursor-pointer">
+                                <i data-lucide="shopping-bag" class="w-4 h-4 text-[#00A651]"></i>
+                                <span class="flex-1">Shopping Cart</span>
+                                <span class="bg-[#FF6B00] text-white text-[10px] font-black px-1.5 py-0.5 rounded-full leading-none"><?= (int) $navCartCount ?></span>
+                            </button>
                             <a href="<?= e(url('account.php')) ?>" class="w-full px-3.5 py-2 text-left hover:bg-emerald-50 flex items-center gap-2 text-slate-700 font-medium">
                                 <i data-lucide="package" class="w-4 h-4 text-[#00A651]"></i>
                                 <span>My Orders &amp; Delivery</span>
@@ -153,6 +154,11 @@ $cartTotals = cart_totals();
                                 <span class="font-bold text-slate-900 block">Welcome to <?= e($storeName) ?></span>
                                 <span class="text-[10px] text-slate-500">Login or create an account</span>
                             </div>
+                            <button type="button" data-open-drawer="cart-drawer" onclick="this.closest('details').open=false" class="w-full px-3.5 py-2 text-left hover:bg-emerald-50 flex items-center gap-2 text-slate-700 font-medium cursor-pointer">
+                                <i data-lucide="shopping-bag" class="w-4 h-4 text-[#00A651]"></i>
+                                <span class="flex-1">Shopping Cart</span>
+                                <span class="bg-[#FF6B00] text-white text-[10px] font-black px-1.5 py-0.5 rounded-full leading-none"><?= (int) $navCartCount ?></span>
+                            </button>
                             <a href="<?= e(url('account.php')) ?>" class="w-full px-3.5 py-2 text-left hover:bg-emerald-50 flex items-center gap-2 text-slate-700 font-medium">
                                 <i data-lucide="log-in" class="w-4 h-4 text-[#00A651]"></i>
                                 <span>Login</span>

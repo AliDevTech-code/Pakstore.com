@@ -90,7 +90,7 @@ $footerCount      = cart_count();
 
 <!-- Mobile bottom nav -->
 <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 py-1.5 shadow-lg print-hide" aria-label="Mobile navigation">
-    <div class="grid grid-cols-5 gap-1">
+    <div class="grid grid-cols-4 gap-1">
         <a href="<?= e(url('index.php')) ?>" class="flex flex-col items-center justify-center py-1 text-slate-600 hover:text-[#00A651] transition-colors">
             <i data-lucide="home" class="w-5 h-5"></i>
             <span class="text-[10px] font-semibold mt-0.5">Home</span>
@@ -103,15 +103,6 @@ $footerCount      = cart_count();
             <i data-lucide="package-check" class="w-5 h-5"></i>
             <span class="text-[10px] font-semibold mt-0.5">Track</span>
         </a>
-        <button type="button" data-open-drawer="cart-drawer" class="relative flex flex-col items-center justify-center py-1 text-slate-600 hover:text-[#00A651] transition-colors">
-            <span class="relative">
-                <i data-lucide="shopping-bag" class="w-5 h-5 text-[#00A651]"></i>
-                <?php if ($footerCount > 0): ?>
-                    <span class="absolute -top-1.5 -right-2 bg-[#FF6B00] text-white font-black text-[9px] w-4 h-4 rounded-full flex items-center justify-center"><?= $footerCount ?></span>
-                <?php endif; ?>
-            </span>
-            <span class="text-[10px] font-semibold mt-0.5 text-[#00A651]">Cart</span>
-        </button>
         <?php if ($footerCustomer): ?>
             <a href="<?= e(url('account.php')) ?>" class="flex flex-col items-center justify-center py-1 text-slate-600 hover:text-[#00A651] transition-colors">
                 <i data-lucide="user" class="w-5 h-5"></i>
