@@ -6,10 +6,10 @@
  * IMPORTANT: config/config.local.php is git-ignored, never commit it.
  */
 
-define('DB_HOST', 'sqlXXX.infinityfree.com'); // e.g. sql301.infinityfree.com
-define('DB_NAME', 'if0_00000000_pakstore');    // e.g. if0_12345678_pakstore
-define('DB_USER', 'if0_00000000');             // e.g. if0_12345678
-define('DB_PASS', 'YOUR_DATABASE_PASSWORD');
+define('DB_HOST', 'sql100.infinityfree.com'); // e.g. sql301.infinityfree.com
+define('DB_NAME', 'if0_41380880_Pakstore');    // e.g. if0_12345678_pakstore
+define('DB_USER', 'if0_41380880');             // e.g. if0_12345678
+define('DB_PASS', 'bxiCWKPcJHxmE');
 
 // Leave empty if the site is directly in htdocs.
 // Use '/subfolder' if you uploaded the project into a sub-folder.
