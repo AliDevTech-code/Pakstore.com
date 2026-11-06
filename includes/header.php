@@ -53,14 +53,14 @@ $cartTotals = cart_totals();
     <link rel="preload" href="<?= e(url('assets/fonts/outfit-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 
     <link rel="stylesheet" href="<?= e(url('assets/css/tailwind.css')) ?>">
-    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=2') ?>">
+    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=3') ?>">
     <script src="<?= e(url('assets/js/lucide.min.js')) ?>"></script>
     <style>
         /* Keep drawers closed by default even if the external stylesheet fails to load. */
         [data-drawer][hidden] { display: none !important; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-[#00A651] selection:text-white has-mobile-nav">
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-[#00A651] selection:text-white">
 
 <!-- Announcement bar -->
 <div class="bg-[#003d1e] text-emerald-100 text-xs py-1.5 px-4 border-b border-emerald-900/40 print-hide">
@@ -86,11 +86,6 @@ $cartTotals = cart_totals();
     <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between gap-2 sm:gap-4 h-[64px] sm:h-[72px]">
             <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
-                <button type="button" data-open-drawer="category-drawer" class="p-2 rounded-lg text-slate-700 hover:text-[#00A651] hover:bg-emerald-50 border border-slate-200 transition-colors cursor-pointer flex items-center gap-1.5" title="Categories Menu" aria-label="Open Categories Menu">
-                    <i data-lucide="menu" class="w-5 h-5"></i>
-                    <span class="hidden sm:inline text-xs font-bold">Categories</span>
-                </button>
-
                 <a href="<?= e(url('index.php')) ?>" class="flex items-center gap-1.5 text-left group cursor-pointer shrink-0" aria-label="<?= e($storeName) ?> home">
                     <span id="store-text-logo" class="<?= $logoUrl !== '' ? 'hidden ' : 'flex ' ?>items-end">
                         <span class="text-xl sm:text-3xl font-black tracking-tight text-[#00A651]">Pak</span>
@@ -101,6 +96,11 @@ $cartTotals = cart_totals();
                         <img src="<?= e(image_url($logoUrl) . $logoVersion) ?>" alt="<?= e($storeName) ?>" class="h-9 sm:h-10 w-auto max-w-[110px] sm:max-w-[170px] object-contain rounded" onerror="this.style.display='none';var f=document.getElementById('store-text-logo');if(f){f.classList.remove('hidden');f.classList.add('flex');}">
                     <?php endif; ?>
                 </a>
+
+                <button type="button" data-open-drawer="category-drawer" class="p-2 rounded-lg text-slate-700 hover:text-[#00A651] hover:bg-emerald-50 border border-slate-200 transition-colors cursor-pointer flex items-center gap-1.5" title="Categories Menu" aria-label="Open Categories Menu">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                    <span class="hidden sm:inline text-xs font-bold">Categories</span>
+                </button>
             </div>
 
             <div class="flex-1 min-w-0 max-w-2xl">

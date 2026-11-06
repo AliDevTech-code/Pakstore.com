@@ -88,35 +88,6 @@ $footerCount      = cart_count();
     </div>
 </footer>
 
-<!-- Mobile bottom nav -->
-<nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 py-1.5 shadow-lg print-hide" aria-label="Mobile navigation">
-    <div class="grid grid-cols-4 gap-1">
-        <a href="<?= e(url('index.php')) ?>" class="flex flex-col items-center justify-center py-1 text-slate-600 hover:text-[#00A651] transition-colors">
-            <i data-lucide="home" class="w-5 h-5"></i>
-            <span class="text-[10px] font-semibold mt-0.5">Home</span>
-        </a>
-        <a href="<?= e(url('index.php#catalog-section')) ?>" class="flex flex-col items-center justify-center py-1 text-slate-600 hover:text-[#00A651] transition-colors">
-            <i data-lucide="layout-grid" class="w-5 h-5"></i>
-            <span class="text-[10px] font-semibold mt-0.5">Categories</span>
-        </a>
-        <a href="<?= e(url('track-order.php')) ?>" class="flex flex-col items-center justify-center py-1 text-slate-600 hover:text-[#00A651] transition-colors" title="Track Order Status">
-            <i data-lucide="package-check" class="w-5 h-5"></i>
-            <span class="text-[10px] font-semibold mt-0.5">Track</span>
-        </a>
-        <?php if ($footerCustomer): ?>
-            <a href="<?= e(url('account.php')) ?>" class="flex flex-col items-center justify-center py-1 text-slate-600 hover:text-[#00A651] transition-colors">
-                <i data-lucide="user" class="w-5 h-5"></i>
-                <span class="text-[10px] font-semibold mt-0.5 truncate max-w-[50px]"><?= e(explode(' ', $footerCustomer['full_name'])[0]) ?></span>
-            </a>
-        <?php else: ?>
-            <a href="<?= e(url('account.php')) ?>" class="flex flex-col items-center justify-center py-1 text-slate-600 hover:text-[#00A651] transition-colors">
-                <i data-lucide="user" class="w-5 h-5"></i>
-                <span class="text-[10px] font-semibold mt-0.5 truncate max-w-[50px]">Account</span>
-            </a>
-        <?php endif; ?>
-    </div>
-</nav>
-
 <script src="<?= e(url('assets/js/main.js') . '?v=2') ?>"></script>
 </body>
 </html>

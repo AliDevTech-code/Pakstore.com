@@ -128,10 +128,3 @@ input[type="radio"], input[type="checkbox"] { accent-color: #00A651; }
   }
   .print-area * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
-
-/* ---------------------------------------------------------------
-   Sticky mobile bars leave room above the bottom nav
-   --------------------------------------------------------------- */
-@media (max-width: 767px) {
-  body.has-mobile-nav { padding-bottom: 64px; }
-}

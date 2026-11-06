@@ -219,6 +219,7 @@ require __DIR__ . '/includes/header.php';
                             <form method="post" action="<?= e(url('account.php?mode=signup')) ?>" class="space-y-3">
                                 <?= csrf_field() ?>
                                 <input type="hidden" name="action" value="signup">
+                                <input type="hidden" name="redirect" value="<?= e(get_string('redirect')) ?>">
 
                                 <div>
                                     <label for="full_name" class="block text-xs font-semibold text-slate-700 mb-1">Full Name *</label>
@@ -264,6 +265,7 @@ require __DIR__ . '/includes/header.php';
                             <form method="post" action="<?= e(url('account.php')) ?>" class="space-y-3.5">
                                 <?= csrf_field() ?>
                                 <input type="hidden" name="action" value="login">
+                                <input type="hidden" name="redirect" value="<?= e(get_string('redirect')) ?>">
 
                                 <div>
                                     <label for="identifier" class="block text-xs font-semibold text-slate-700 mb-1">Phone or Email *</label>

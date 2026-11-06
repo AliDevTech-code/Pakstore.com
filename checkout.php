@@ -53,6 +53,16 @@ $shipping = delivery_charges();
 $total = $subtotal + $shipping;
 
 $customer = current_customer();
+
+/* Orders are only accepted from signed-in customers. */
+if (!$customer) {
+    $returnTo = 'checkout.php';
+    if ($isDirect) {
+        $returnTo .= '?product=' . $directId . '&qty=' . $directQty;
+    }
+    flash('info', 'Please sign in or create an account to place your order. Your cart is saved.');
+    redirect('account.php?mode=login&redirect=' . urlencode($returnTo));
+}
 $form = [
     'customer_name' => $customer['full_name'] ?? '',
     'phone'         => $customer['phone'] ?? '',
