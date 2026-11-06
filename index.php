@@ -115,10 +115,6 @@ require __DIR__ . '/includes/header.php';
                         <span class="w-2 h-2 rounded-full bg-[#00A651] animate-pulse"></span>
                         <span>&#127477;&#127472; 100% Cash on Delivery All Over Pakistan</span>
                     </div>
-                    <button type="button" data-open-drawer="category-drawer" class="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-[#FF6B00] hover:bg-[#e05e00] px-3.5 py-1.5 rounded-full transition-all shadow-md" title="Open Categories Menu">
-                        <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
-                        <span>Categories Menu &#9776; Explore</span>
-                    </button>
                 </div>
 
                 <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1]">
