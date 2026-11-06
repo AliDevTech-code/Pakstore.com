@@ -16,4 +16,4 @@ define('DB_PASS', 'bxiCWKPcJHxmE');
 define('APP_BASE', '');
 
 // Turn on only while debugging. Keep false on the live site.
-define('APP_DEBUG', false);
+define('APP_DEBUG', true);
