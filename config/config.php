@@ -20,22 +20,22 @@ if (is_file($pakstoreLocalConfig)) {
 
 /** Database host, e.g. sql301.infinityfree.com */
 if (!defined('DB_HOST')) {
-    define('DB_HOST', getenv('PAKSTORE_DB_HOST') ?: 'sqlXXX.infinityfree.com');
+    define('DB_HOST', getenv('PAKSTORE_DB_HOST') ?: 'sql100.infinityfree.com');
 }
 
 /** Database name, e.g. if0_12345678_pakstore */
 if (!defined('DB_NAME')) {
-    define('DB_NAME', getenv('PAKSTORE_DB_NAME') ?: 'if0_00000000_pakstore');
+    define('DB_NAME', getenv('PAKSTORE_DB_NAME') ?: 'if0_41380880_Pakstore');
 }
 
 /** Database user, e.g. if0_12345678 */
 if (!defined('DB_USER')) {
-    define('DB_USER', getenv('PAKSTORE_DB_USER') ?: 'if0_00000000');
+    define('DB_USER', getenv('PAKSTORE_DB_USER') ?: 'if0_41380880');
 }
 
 /** Database password */
 if (!defined('DB_PASS')) {
-    define('DB_PASS', getenv('PAKSTORE_DB_PASS') ?: 'CHANGE_ME');
+    define('DB_PASS', getenv('PAKSTORE_DB_PASS') ?: 'bxiCWKPcJHxmE');
 }
 
 /**
