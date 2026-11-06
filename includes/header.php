@@ -42,26 +42,12 @@ $cartTotals = cart_totals();
     <meta property="og:description" content="<?= e($metaDescription) ?>">
     <meta property="og:type" content="website">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="preload" href="<?= e(url('assets/fonts/plus-jakarta-sans-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="<?= e(url('assets/fonts/outfit-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: '#00A651',
-                        branddark: '#008f45',
-                        accent: '#FF6B00'
-                    }
-                }
-            }
-        };
-    </script>
-    <link rel="stylesheet" href="<?= e(url('assets/css/style.css')) ?>">
-    <script src="https://unpkg.com/lucide@0.546.0/dist/umd/lucide.min.js"></script>
+    <link rel="stylesheet" href="<?= e(url('assets/css/tailwind.css')) ?>">
+    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=2') ?>">
+    <script src="<?= e(url('assets/js/lucide.min.js')) ?>"></script>
     <style>
         /* Keep drawers closed by default even if the external stylesheet fails to load. */
         [data-drawer][hidden] { display: none !important; }
@@ -93,9 +79,10 @@ $cartTotals = cart_totals();
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between gap-3 sm:gap-6 h-[72px]">
             <div class="flex items-center gap-2 sm:gap-3">
-                <button type="button" data-open-drawer="category-drawer" class="p-2 rounded-lg text-slate-700 hover:text-[#00A651] hover:bg-emerald-50 transition-colors cursor-pointer flex items-center gap-1.5" title="Categories Menu" aria-label="Open Categories Menu">
+                <button type="button" data-open-drawer="category-drawer" class="p-2 rounded-lg text-slate-700 hover:text-[#00A651] hover:bg-emerald-50 border border-slate-200 transition-colors cursor-pointer flex items-center gap-1.5" title="Categories Menu" aria-label="Open Categories Menu">
                     <i data-lucide="menu" class="w-5 h-5"></i>
-                    <span class="hidden lg:inline text-xs font-bold">Categories</span>
+                    <span class="hidden sm:inline text-xs font-bold">Categories</span>
+                    <span class="sm:hidden text-[11px] font-bold">Menu</span>
                 </button>
 
                 <a href="<?= e(url('index.php')) ?>" class="flex items-center gap-1.5 text-left group cursor-pointer shrink-0" aria-label="<?= e($storeName) ?> home">

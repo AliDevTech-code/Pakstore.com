@@ -17,6 +17,67 @@ $statusCounts = [];
 foreach ($pdo->query('SELECT status, COUNT(*) AS c FROM orders GROUP BY status')->fetchAll() as $row) {
     $statusCounts[$row['status']] = (int) $row['c'];
 }
+
+/* 14-day revenue chart data (missing days filled with zero). */
+$dailyRows = $pdo->query(
+    "SELECT DATE(created_at) AS day, COALESCE(SUM(total_amount),0) AS revenue, COUNT(*) AS orders
+     FROM orders
+     WHERE status <> 'Cancelled' AND created_at >= (NOW() - INTERVAL 14 DAY)
+     GROUP BY DATE(created_at) ORDER BY day ASC"
+)->fetchAll();
+$dailyMap = [];
+foreach ($dailyRows as $row) {
+    $dailyMap[(string) $row['day']] = $row;
+}
+$chartDays = [];
+for ($i = 13; $i >= 0; $i--) {
+    $day = date('Y-m-d', strtotime('-' . $i . ' days'));
+    $chartDays[] = [
+        'day'     => $day,
+        'revenue' => (float) ($dailyMap[$day]['revenue'] ?? 0),
+        'orders'  => (int) ($dailyMap[$day]['orders'] ?? 0),
+    ];
+}
+$maxRevenue = 1.0;
+$chartTotal = 0.0;
+foreach ($chartDays as $day) {
+    $maxRevenue = max($maxRevenue, $day['revenue']);
+    $chartTotal += $day['revenue'];
+}
+$chartPoints = [];
+$chartCount = count($chartDays);
+foreach ($chartDays as $i => $day) {
+    $x = $chartCount > 1 ? ($i / ($chartCount - 1)) * 640 : 320;
+    $y = 150 - (($day['revenue'] / $maxRevenue) * 118);
+    $chartPoints[] = round($x, 1) . ' ' . round($y, 1);
+}
+$chartLine = implode(' L', $chartPoints);
+$chartArea = 'M0 150 L' . $chartLine . ' L640 150 Z';
+
+/* Order status donut. */
+$statusPalette = [
+    'Pending'    => '#f59e0b',
+    'Processing' => '#6366f1',
+    'Shipped'    => '#3b82f6',
+    'Delivered'  => '#00A651',
+    'Cancelled'  => '#f43f5e',
+];
+$statusTotal = array_sum($statusCounts);
+$donutSegments = [];
+$donutOffset = 0;
+foreach ($statusPalette as $status => $color) {
+    $count = (int) ($statusCounts[$status] ?? 0);
+    if ($count <= 0) {
+        continue;
+    }
+    $from = $statusTotal > 0 ? ($donutOffset / $statusTotal) * 360 : 0;
+    $donutOffset += $count;
+    $to = $statusTotal > 0 ? ($donutOffset / $statusTotal) * 360 : 0;
+    $donutSegments[] = $color . ' ' . round($from, 2) . 'deg ' . round($to, 2) . 'deg';
+}
+$donutBackground = $donutSegments
+    ? 'conic-gradient(' . implode(', ', $donutSegments) . ')'
+    : 'conic-gradient(#e2e8f0 0deg 360deg)';
 ?>
 
 <div class="flex flex-wrap items-end justify-between gap-3 mb-6">
@@ -73,6 +134,67 @@ foreach ($pdo->query('SELECT status, COUNT(*) AS c FROM orders GROUP BY status')
     </div>
 </div>
 
+<!-- Charts -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-4 mb-4">
+    <div class="xl:col-span-2 bg-white border border-slate-200 rounded-2xl p-5">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-4">
+            <div>
+                <h2 class="text-sm font-bold text-slate-900 flex items-center gap-1.5"><i data-lucide="trending-up" class="w-4 h-4 text-[#00A651]"></i> Sales Overview</h2>
+                <p class="text-[11px] text-slate-500 mt-0.5">Revenue for the last 14 days</p>
+            </div>
+            <div class="text-right">
+                <span class="block text-lg font-black font-mono text-slate-900"><?= e(money($chartTotal)) ?></span>
+                <span class="text-[10px] uppercase tracking-wider font-bold text-slate-400">14-day total</span>
+            </div>
+        </div>
+
+        <div class="relative">
+            <svg viewBox="0 0 640 160" class="w-full h-40 sm:h-44" preserveAspectRatio="none" role="img" aria-label="Sales graph for the last 14 days">
+                <defs>
+                    <linearGradient id="salesFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#00A651" stop-opacity="0.28"></stop>
+                        <stop offset="100%" stop-color="#00A651" stop-opacity="0"></stop>
+                    </linearGradient>
+                </defs>
+                <line x1="0" y1="30" x2="640" y2="30" stroke="#f1f5f9" stroke-width="1"></line>
+                <line x1="0" y1="90" x2="640" y2="90" stroke="#f1f5f9" stroke-width="1"></line>
+                <line x1="0" y1="150" x2="640" y2="150" stroke="#e2e8f0" stroke-width="1"></line>
+                <path d="<?= e($chartArea) ?>" fill="url(#salesFill)"></path>
+                <path d="M<?= e($chartLine) ?>" fill="none" stroke="#00A651" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></path>
+            </svg>
+            <div class="flex justify-between text-[9px] sm:text-[10px] text-slate-400 font-medium mt-1">
+                <?php foreach ([0, 4, 9, 13] as $index): ?>
+                    <span><?= e(date('d M', strtotime($chartDays[$index]['day']))) ?></span>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-2xl p-5">
+        <h2 class="text-sm font-bold text-slate-900 flex items-center gap-1.5 mb-4"><i data-lucide="pie-chart" class="w-4 h-4 text-[#00A651]"></i> Orders by Status</h2>
+
+        <div class="relative w-36 h-36 mx-auto">
+            <div class="w-full h-full rounded-full" style="background: <?= e($donutBackground) ?>"></div>
+            <div class="absolute inset-[22px] bg-white rounded-full flex flex-col items-center justify-center shadow-inner">
+                <span class="text-2xl font-black font-mono text-slate-900 leading-none"><?= $totalOrders ?></span>
+                <span class="text-[9px] uppercase tracking-wider font-bold text-slate-400 mt-1">Total Orders</span>
+            </div>
+        </div>
+
+        <div class="mt-5 space-y-2">
+            <?php foreach ($statusPalette as $status => $color): ?>
+                <div class="flex items-center justify-between text-[11px]">
+                    <span class="flex items-center gap-2 text-slate-600">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: <?= e($color) ?>"></span>
+                        <?= e($status) ?>
+                    </span>
+                    <span class="font-mono font-bold text-slate-900"><?= (int) ($statusCounts[$status] ?? 0) ?></span>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>
+
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
     <!-- Recent orders -->
     <div class="lg:col-span-2 bg-white border border-slate-200 rounded-2xl overflow-hidden">
@@ -120,21 +242,6 @@ foreach ($pdo->query('SELECT status, COUNT(*) AS c FROM orders GROUP BY status')
 
     <!-- Right column -->
     <div class="space-y-4">
-        <div class="bg-white border border-slate-200 rounded-2xl p-4">
-            <h2 class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-1.5"><i data-lucide="pie-chart" class="w-4 h-4 text-[#00A651]"></i> Orders by Status</h2>
-            <div class="space-y-2">
-                <?php foreach (['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'] as $status): ?>
-                    <div class="flex items-center justify-between text-xs">
-                        <span class="flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full <?= e(str_replace(['bg-', 'text-'], ['bg-', 'bg-'], explode(' ', order_status_classes($status))[0])) ?>"></span>
-                            <span class="text-slate-600"><?= e($status) ?></span>
-                        </span>
-                        <span class="font-mono font-bold text-slate-900"><?= (int) ($statusCounts[$status] ?? 0) ?></span>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
-
         <div class="bg-white border border-slate-200 rounded-2xl p-4">
             <div class="flex items-center justify-between mb-3">
                 <h2 class="text-sm font-bold text-slate-900 flex items-center gap-1.5"><i data-lucide="alert-triangle" class="w-4 h-4 text-[#FF6B00]"></i> Low Stock</h2>

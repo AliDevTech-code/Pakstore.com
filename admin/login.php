@@ -55,12 +55,11 @@ $pageTitle = 'Admin Sign In - ' . setting('store_name', 'PakStore');
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
     <title><?= e($pageTitle) ?></title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="<?= e(url('assets/css/style.css')) ?>">
-    <script src="https://unpkg.com/lucide@0.546.0/dist/umd/lucide.min.js"></script>
+    <link rel="preload" href="<?= e(url('assets/fonts/plus-jakarta-sans-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="<?= e(url('assets/fonts/outfit-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="<?= e(url('assets/css/tailwind.css')) ?>">
+    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=2') ?>">
+    <script src="<?= e(url('assets/js/lucide.min.js')) ?>"></script>
 </head>
 <body class="min-h-screen bg-slate-950 text-slate-900 flex items-center justify-center p-4">
 

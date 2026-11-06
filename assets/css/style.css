@@ -1,5 +1,21 @@
 /* PakStore - small additions on top of Tailwind */
 
+/* Self-hosted brand fonts (no external font requests) */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('../fonts/plus-jakarta-sans-latin.woff2') format('woff2');
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Outfit';
+  src: url('../fonts/outfit-latin.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 html,
 body {
   overflow-x: hidden;

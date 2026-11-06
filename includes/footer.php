@@ -126,6 +126,6 @@ $footerCount      = cart_count();
     </div>
 </nav>
 
-<script src="<?= e(url('assets/js/main.js')) ?>"></script>
+<script src="<?= e(url('assets/js/main.js') . '?v=2') ?>"></script>
 </body>
 </html>
