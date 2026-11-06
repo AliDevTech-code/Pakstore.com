@@ -6,3 +6,14 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Real database credentials - never commit.
+config/config.local.php
+
+# Uploaded files (keep the folders themselves).
+uploads/products/*
+uploads/logo/*
+uploads/banners/*
+!uploads/products/.gitkeep
+!uploads/logo/.gitkeep
+!uploads/banners/.gitkeep

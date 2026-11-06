@@ -1,6 +1,0 @@
-{
-  "name": "Pakstore - Pakistan E-Commerce & Admin",
-  "description": "Professional Pakistani e-commerce store with Cash on Delivery (COD), full customer address and order management admin panel, product catalog management, and InfinityFree PHP/MySQL deployment export.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
