@@ -62,6 +62,10 @@ $cartTotals = cart_totals();
     </script>
     <link rel="stylesheet" href="<?= e(url('assets/css/style.css')) ?>">
     <script src="https://unpkg.com/lucide@0.546.0/dist/umd/lucide.min.js"></script>
+    <style>
+        /* Keep drawers closed by default even if the external stylesheet fails to load. */
+        [data-drawer][hidden] { display: none !important; }
+    </style>
 </head>
 <body class="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-[#00A651] selection:text-white has-mobile-nav">
 
@@ -290,7 +294,7 @@ $cartTotals = cart_totals();
                     </div>
                     <h3 class="text-sm font-bold text-slate-800">Your bag is empty</h3>
                     <p class="text-xs text-slate-500 mt-1 max-w-xs">Explore our catalog and choose your favorite items with Cash on Delivery.</p>
-                    <button type="button" data-close-drawer="cart-drawer" class="mt-4 px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-slate-800">Start Shopping</button>
+                    <a href="<?= e(url('index.php#catalog-section')) ?>" class="mt-4 px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-slate-800">Start Shopping</a>
                 </div>
             <?php endif; ?>
         </div>
