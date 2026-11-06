@@ -589,6 +589,12 @@ function upload_image(array $file, string $subdir, string $prefix = 'img'): arra
         return [false, 'Could not move the uploaded file. Check uploads/ permissions (755).'];
     }
 
+    if (!is_file($target) || filesize($target) <= 0) {
+        @unlink($target);
+        return [false, 'The uploaded file could not be saved on the server. Please try again.'];
+    }
+    @chmod($target, 0644);
+
     return [true, 'uploads/' . $subdir . '/' . $name];
 }
 

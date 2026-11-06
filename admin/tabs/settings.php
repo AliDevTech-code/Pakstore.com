@@ -4,6 +4,10 @@
 $pdo = db();
 $staff = $pdo->query('SELECT * FROM admin_users ORDER BY id ASC')->fetchAll();
 $logo = setting('logo_url', '');
+$logoIsRemote = $logo !== '' && (bool) preg_match('~^https?://~i', $logo);
+$logoAbs = __DIR__ . '/../../' . ltrim($logo, '/');
+$logoExists = $logo !== '' && ($logoIsRemote || is_file($logoAbs));
+$logoSize = ($logo !== '' && !$logoIsRemote && is_file($logoAbs)) ? (int) filesize($logoAbs) : 0;
 ?>
 
 <div class="flex flex-wrap items-end justify-between gap-3 mb-5">
@@ -37,6 +41,25 @@ $logo = setting('logo_url', '');
                         <label for="logo_file" class="block text-xs font-semibold text-slate-700 mb-1">Upload Logo (JPG / PNG / WEBP, max 3 MB)</label>
                         <input id="logo_file" name="logo_file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="w-full text-xs border border-slate-300 rounded-lg p-1.5 bg-white file:mr-2 file:px-2.5 file:py-1 file:rounded file:border-0 file:bg-slate-900 file:text-white file:text-[11px] file:font-bold">
                     </div>
+                    <?php if ($logo !== '' && !$logoExists): ?>
+                        <div class="flex items-start gap-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-[11px] text-rose-800">
+                            <i data-lucide="alert-triangle" class="w-3.5 h-3.5 mt-0.5 shrink-0"></i>
+                            <span>
+                                <strong>Logo file is missing on the server.</strong>
+                                The setting still points to <code class="font-mono"><?= e($logo) ?></code>, so the storefront shows the text logo.
+                                Upload the logo again below and click <strong>Save Settings</strong>.
+                            </span>
+                        </div>
+                    <?php elseif ($logo !== '' && $logoExists): ?>
+                        <div class="flex items-start gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-[11px] text-emerald-800">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 mt-0.5 shrink-0"></i>
+                            <span>
+                                Logo file found<?= $logoSize > 0 ? ' (' . e(number_format($logoSize / 1024, 1)) . ' KB)' : '' ?>.
+                                <a href="<?= e(image_url($logo)) ?>" target="_blank" rel="noopener" class="font-bold underline">Open image</a>
+                                to verify it is not blank or white.
+                            </span>
+                        </div>
+                    <?php endif; ?>
                     <?php if ($logo !== ''): ?>
                         <label class="flex items-center gap-2 text-[11px] text-slate-600 cursor-pointer">
                             <input type="checkbox" name="remove_logo" value="1" class="rounded border-slate-300"> Remove current logo (use text logo)

@@ -11,6 +11,13 @@ require_once __DIR__ . '/functions.php';
 $settings      = settings_all();
 $storeName     = setting('store_name', 'PakStore');
 $logoUrl       = setting('logo_url', '');
+$logoVersion   = '';
+if ($logoUrl !== '' && !preg_match('~^https?://~i', $logoUrl)) {
+    $logoFile = dirname(__DIR__) . '/' . ltrim($logoUrl, '/');
+    if (is_file($logoFile)) {
+        $logoVersion = '?v=' . filemtime($logoFile);
+    }
+}
 $topBarText    = setting('top_bar_text', 'Cash on Delivery All Over Pakistan');
 $phone         = setting('phone', '');
 $whatsapp      = setting('whatsapp', '');
@@ -86,14 +93,13 @@ $cartTotals = cart_totals();
                 </button>
 
                 <a href="<?= e(url('index.php')) ?>" class="flex items-center gap-1.5 text-left group cursor-pointer shrink-0" aria-label="<?= e($storeName) ?> home">
+                    <span id="store-text-logo" class="<?= $logoUrl !== '' ? 'hidden ' : 'flex ' ?>items-end">
+                        <span class="text-2xl sm:text-3xl font-black tracking-tight text-[#00A651]">Pak</span>
+                        <span class="text-2xl sm:text-3xl font-black tracking-tight text-[#FF6B00]">Store</span>
+                        <span class="ml-1 text-[10px] font-bold uppercase tracking-widest text-slate-400 self-end mb-1 hidden sm:inline">.pk</span>
+                    </span>
                     <?php if ($logoUrl !== ''): ?>
-                        <img src="<?= e(image_url($logoUrl)) ?>" alt="<?= e($storeName) ?>" class="h-9 max-w-[150px] object-contain rounded">
-                    <?php else: ?>
-                        <span class="flex items-end">
-                            <span class="text-2xl sm:text-3xl font-black tracking-tight text-[#00A651]">Pak</span>
-                            <span class="text-2xl sm:text-3xl font-black tracking-tight text-[#FF6B00]">Store</span>
-                            <span class="ml-1 text-[10px] font-bold uppercase tracking-widest text-slate-400 self-end mb-1 hidden sm:inline">.pk</span>
-                        </span>
+                        <img src="<?= e(image_url($logoUrl) . $logoVersion) ?>" alt="<?= e($storeName) ?>" class="h-10 w-auto max-w-[170px] object-contain rounded" onerror="this.style.display='none';var f=document.getElementById('store-text-logo');if(f){f.classList.remove('hidden');f.classList.add('flex');}">
                     <?php endif; ?>
                 </a>
             </div>
