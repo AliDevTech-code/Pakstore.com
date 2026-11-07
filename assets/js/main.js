@@ -206,6 +206,31 @@
     });
   }
 
+  /* ---------------- Product description read more ---------------- */
+  function initDescriptionToggle() {
+    qsa('[data-desc-toggle]').forEach(function (btn) {
+      var target = document.getElementById(btn.getAttribute('data-desc-toggle'));
+      if (!target) return;
+      var label = btn.querySelector('[data-desc-label]');
+      var icon = btn.querySelector('i');
+
+      btn.addEventListener('click', function () {
+        var isOpen = target.style.maxHeight === 'none';
+        if (isOpen) {
+          target.style.maxHeight = '6.5rem';
+          target.classList.add('overflow-hidden');
+          if (label) label.textContent = 'Read more';
+          if (icon) icon.classList.remove('rotate-180');
+        } else {
+          target.style.maxHeight = 'none';
+          target.classList.remove('overflow-hidden');
+          if (label) label.textContent = 'Read less';
+          if (icon) icon.classList.add('rotate-180');
+        }
+      });
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     initSlider();
     initQuantitySteppers();
@@ -214,6 +239,7 @@
     initSuccessBurst();
     initCopyButtons();
     initConfirms();
+    initDescriptionToggle();
 
     if (window.lucide && typeof window.lucide.createIcons === 'function') {
       window.lucide.createIcons();

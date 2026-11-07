@@ -263,15 +263,13 @@ require __DIR__ . '/includes/header.php';
 
                                 <a href="<?= e($productUrl) ?>" class="text-xs sm:text-sm font-bold text-slate-900 clamp-2 min-h-[32px] sm:min-h-[38px] hover:text-[#00A651] transition-colors leading-snug"><?= e($p['title']) ?></a>
 
-                                <div class="mt-1 flex items-center gap-1">
-                                    <?php if ((int) $p['reviews_count'] > 0): ?>
+                                <?php if ((int) $p['reviews_count'] > 0): ?>
+                                    <div class="mt-1 flex items-center gap-1">
                                         <i data-lucide="star" class="w-3 h-3 fill-amber-400 text-amber-400"></i>
                                         <span class="text-[10px] font-bold text-slate-700 font-mono"><?= e(number_format((float) $p['rating'], 1)) ?></span>
                                         <span class="text-[10px] text-slate-400">(<?= (int) $p['reviews_count'] ?>)</span>
-                                    <?php else: ?>
-                                        <span class="text-[10px] text-slate-400">No ratings yet</span>
-                                    <?php endif; ?>
-                                </div>
+                                    </div>
+                                <?php endif; ?>
                             </div>
 
                             <div class="mt-2.5 pt-2 border-t border-slate-100">

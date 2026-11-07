@@ -192,7 +192,19 @@ require __DIR__ . '/includes/header.php';
                     </div>
 
                     <?php if ($product['description']): ?>
-                        <p class="mt-4 text-xs sm:text-sm text-slate-600 leading-relaxed"><?= nl2br(e($product['description'])) ?></p>
+                        <?php
+                        $descText = trim((string) $product['description']);
+                        $descLong = mb_strlen($descText) > 150 || substr_count($descText, "\n") >= 3;
+                        ?>
+                        <div class="mt-4">
+                            <p id="product-description" class="text-xs sm:text-sm text-slate-600 leading-relaxed<?= $descLong ? ' overflow-hidden' : '' ?>"<?= $descLong ? ' style="max-height:6.5rem"' : '' ?>><?= nl2br(e($descText)) ?></p>
+                            <?php if ($descLong): ?>
+                                <button type="button" data-desc-toggle="product-description" class="mt-1.5 text-[11px] font-bold text-[#00A651] hover:text-[#008f45] flex items-center gap-1">
+                                    <span data-desc-label>Read more</span>
+                                    <i data-lucide="arrow-down" class="w-3.5 h-3.5 transition-transform"></i>
+                                </button>
+                            <?php endif; ?>
+                        </div>
                     <?php endif; ?>
 
                     <?php if ($features): ?>
