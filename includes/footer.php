@@ -79,10 +79,6 @@ $footerCount      = cart_count();
                 <span>100% Cash on Delivery Nationwide</span>
                 <span aria-hidden="true">&middot;</span>
                 <span>Karachi &middot; Lahore &middot; Islamabad</span>
-                <span aria-hidden="true">&middot;</span>
-                <a href="<?= e(url('admin/login.php')) ?>" class="text-slate-500 hover:text-slate-300 transition-colors flex items-center gap-1" title="Staff Authorization Portal">
-                    <span>&#128274; Staff Portal</span>
-                </a>
             </div>
         </div>
     </div>
