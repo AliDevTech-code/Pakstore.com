@@ -2,6 +2,7 @@
 /** Hero banners tab. */
 
 $pdo = db();
+ensure_banner_size_columns();
 $banners = $pdo->query('SELECT * FROM banners ORDER BY sort_order ASC, id DESC')->fetchAll();
 
 $editId = (int) get_string('edit', '0');
@@ -52,6 +53,18 @@ if ($editId > 0) {
                     <img src="<?= e(image_url($editing['image'])) ?>" alt="" class="mt-2 h-20 w-full object-cover rounded-lg border border-slate-200">
                 <?php endif; ?>
             </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label for="image_width" class="block text-xs font-semibold text-slate-700 mb-1">Width (px)</label>
+                    <input id="image_width" name="image_width" type="number" min="300" max="4000" step="10" value="<?= (int) ($editing['image_width'] ?? 1600) ?>" placeholder="1600" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-mono focus:outline-[#00A651]">
+                </div>
+                <div>
+                    <label for="image_height" class="block text-xs font-semibold text-slate-700 mb-1">Height (px)</label>
+                    <input id="image_height" name="image_height" type="number" min="100" max="2000" step="10" value="<?= (int) ($editing['image_height'] ?? 400) ?>" placeholder="400" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-mono focus:outline-[#00A651]">
+                </div>
+            </div>
+            <p class="text-[10px] text-slate-500 -mt-1">Patla banner ke liye height chhoti rakhein (e.g. 1600 × 400).</p>
 
             <div>
                 <label for="link" class="block text-xs font-semibold text-slate-700 mb-1">Button Link (optional)</label>

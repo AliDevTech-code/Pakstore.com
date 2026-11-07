@@ -5,6 +5,8 @@ require_once __DIR__ . '/includes/auth.php';
 require_post();
 csrf_verify();
 
+ensure_banner_size_columns();
+
 $action = post_string('action');
 
 if ($action === 'delete') {
@@ -25,6 +27,8 @@ if ($action === 'save') {
     $sort     = post_int('sort_order');
     $active   = isset($_POST['is_active']) ? 1 : 0;
     $imageUrl = post_string('image_url');
+    $imageWidth  = min(4000, max(300, post_int('image_width', 1600)));
+    $imageHeight = min(2000, max(100, post_int('image_height', 400)));
 
     if (mb_strlen($title) < 2) {
         flash('error', 'Banner title is required.');
@@ -56,16 +60,16 @@ if ($action === 'save') {
 
     if ($id > 0) {
         $stmt = db()->prepare(
-            'UPDATE banners SET title = ?, subtitle = ?, image = ?, category = ?, badge = ?, link = ?, sort_order = ?, is_active = ? WHERE id = ?'
+            'UPDATE banners SET title = ?, subtitle = ?, image = ?, image_width = ?, image_height = ?, category = ?, badge = ?, link = ?, sort_order = ?, is_active = ? WHERE id = ?'
         );
-        $stmt->execute([$title, $subtitle ?: null, $image, $category ?: null, $badge ?: null, $link, $sort, $active, $id]);
+        $stmt->execute([$title, $subtitle ?: null, $image, $imageWidth, $imageHeight, $category ?: null, $badge ?: null, $link, $sort, $active, $id]);
         flash('success', 'Banner updated.');
     } else {
         $stmt = db()->prepare(
-            'INSERT INTO banners (title, subtitle, image, category, badge, link, sort_order, is_active)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+            'INSERT INTO banners (title, subtitle, image, image_width, image_height, category, badge, link, sort_order, is_active)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
         );
-        $stmt->execute([$title, $subtitle ?: null, $image, $category ?: null, $badge ?: null, $link, $sort, $active]);
+        $stmt->execute([$title, $subtitle ?: null, $image, $imageWidth, $imageHeight, $category ?: null, $badge ?: null, $link, $sort, $active]);
         flash('success', 'Banner added.');
     }
 

@@ -601,6 +601,30 @@ function upload_image(array $file, string $subdir, string $prefix = 'img'): arra
 /* ------------------------------------------------------------------
  * Misc
  * ------------------------------------------------------------------ */
+/**
+ * Add banner display-size columns to older installs (runs once per request).
+ */
+function ensure_banner_size_columns(): void
+{
+    static $checked = false;
+    if ($checked) {
+        return;
+    }
+    $checked = true;
+
+    try {
+        $columns = db()->query('SHOW COLUMNS FROM banners')->fetchAll(PDO::FETCH_COLUMN);
+        if (!in_array('image_width', $columns, true)) {
+            db()->exec('ALTER TABLE banners ADD COLUMN image_width INT UNSIGNED NULL DEFAULT NULL AFTER image');
+        }
+        if (!in_array('image_height', $columns, true)) {
+            db()->exec('ALTER TABLE banners ADD COLUMN image_height INT UNSIGNED NULL DEFAULT NULL AFTER image_width');
+        }
+    } catch (Throwable $e) {
+        error_log('Banner size migration failed: ' . $e->getMessage());
+    }
+}
+
 function post_int(string $key, int $default = 0): int
 {
     return isset($_POST[$key]) ? (int) $_POST[$key] : $default;

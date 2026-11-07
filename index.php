@@ -23,12 +23,25 @@ $categories = all_categories();
 
 /* ---------------- Banner slides ---------------- */
 $banners = [];
+ensure_banner_size_columns();
 try {
     $banners = db()->query(
         'SELECT * FROM banners WHERE is_active = 1 ORDER BY sort_order ASC, id DESC'
     )->fetchAll();
 } catch (Throwable $e) {
     error_log('Banner query failed: ' . $e->getMessage());
+}
+
+/* Display shape follows the first banner's saved width/height (default 1600x400). */
+$bannerWidth  = 1600;
+$bannerHeight = 400;
+if ($banners) {
+    $savedW = (int) ($banners[0]['image_width'] ?? 0);
+    $savedH = (int) ($banners[0]['image_height'] ?? 0);
+    if ($savedW > 0 && $savedH > 0) {
+        $bannerWidth  = $savedW;
+        $bannerHeight = $savedH;
+    }
 }
 
 /* ---------------- Product query ---------------- */
@@ -112,7 +125,7 @@ require __DIR__ . '/includes/header.php';
 
     <?php if ($banners): ?>
     <!-- ================= BANNER SLIDER ================= -->
-    <section data-hero-slider class="relative overflow-hidden bg-slate-950 text-white border-b border-slate-800 min-h-[220px] sm:min-h-[380px] lg:min-h-[500px] flex flex-col justify-end">
+    <section data-hero-slider class="relative overflow-hidden bg-slate-950 text-white border-b border-slate-800 min-h-[150px] sm:min-h-[220px] flex flex-col justify-end" style="aspect-ratio: <?= (int) $bannerWidth ?> / <?= (int) $bannerHeight ?>; max-height: <?= (int) $bannerHeight ?>px;">
         <div class="absolute inset-0 z-0 overflow-hidden">
             <?php foreach ($banners as $i => $banner): ?>
                 <div class="hero-slide <?= $i === 0 ? 'is-active' : '' ?>">

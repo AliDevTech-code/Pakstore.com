@@ -57,7 +57,7 @@ $pageTitle = 'Admin Sign In - ' . setting('store_name', 'PakStore');
     <title><?= e($pageTitle) ?></title>
     <link rel="preload" href="<?= e(url('assets/fonts/plus-jakarta-sans-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="<?= e(url('assets/fonts/outfit-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="<?= e(url('assets/css/tailwind.css') . '?v=3') ?>">
+    <link rel="stylesheet" href="<?= e(url('assets/css/tailwind.css') . '?v=4') ?>">
     <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=4') ?>">
     <script src="<?= e(url('assets/js/lucide.min.js')) ?>"></script>
 </head>
