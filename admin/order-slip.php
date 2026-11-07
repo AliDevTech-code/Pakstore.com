@@ -22,7 +22,7 @@ $storeName = setting('store_name', 'PakStore');
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
     <title>Courier Slip #<?= e($order['order_code']) ?> - <?= e($storeName) ?></title>
-    <link rel="stylesheet" href="<?= e(url('assets/css/tailwind.css') . '?v=2') ?>">
+    <link rel="stylesheet" href="<?= e(url('assets/css/tailwind.css') . '?v=3') ?>">
     <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=4') ?>">
     <style>
         @page { size: A5; margin: 8mm; }

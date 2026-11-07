@@ -82,17 +82,43 @@ require __DIR__ . '/includes/header.php';
 
 <main class="flex-1">
     <!-- ================= HERO ================= -->
-    <section data-hero-slider class="relative overflow-hidden bg-slate-950 text-white border-b border-slate-800 min-h-[240px] sm:min-h-[400px] lg:min-h-[520px] flex flex-col justify-end">
+    <section class="relative overflow-hidden bg-gradient-to-br from-slate-950 via-emerald-950 to-slate-900 text-white border-b border-slate-800">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,166,81,0.18),transparent_60%)]"></div>
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-10 sm:pt-12 sm:pb-14 flex flex-col justify-center items-center text-center">
+            <div class="max-w-3xl mx-auto flex flex-col items-center space-y-4 sm:space-y-5">
+                <div class="inline-flex items-center gap-2 text-xs font-bold text-emerald-300 bg-emerald-950/90 border border-emerald-500/40 px-3.5 py-1.5 rounded-full backdrop-blur-md">
+                    <span class="w-2 h-2 rounded-full bg-[#00A651] animate-pulse"></span>
+                    <span>&#127477;&#127472; 100% Cash on Delivery All Over Pakistan</span>
+                </div>
+
+                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1]">
+                    Premium Lifestyle &amp; Audio. <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#00A651] via-emerald-300 to-[#FF6B00]">Pay Cash at Doorstep.</span>
+                </h1>
+
+                <p class="text-xs sm:text-sm md:text-base text-slate-200 leading-relaxed max-w-2xl mx-auto">
+                    Authentic smartwatches, active noise-cancelling acoustics, genuine leather accessories, and royal fragrances. Check the parcel and pay cash to the rider upon arrival.
+                </p>
+
+                <div class="flex flex-wrap items-center justify-center gap-3 pt-1">
+                    <a href="#catalog-section" class="px-6 py-3 bg-[#00A651] hover:bg-[#008f45] text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-lg flex items-center gap-2">
+                        <span>Explore Catalog</span>
+                        <i data-lucide="arrow-down" class="w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <?php if ($banners): ?>
+    <!-- ================= BANNER SLIDER ================= -->
+    <section data-hero-slider class="relative overflow-hidden bg-slate-950 text-white border-b border-slate-800 min-h-[220px] sm:min-h-[380px] lg:min-h-[500px] flex flex-col justify-end">
         <div class="absolute inset-0 z-0 overflow-hidden">
-            <?php if ($banners): ?>
-                <?php foreach ($banners as $i => $banner): ?>
-                    <div class="hero-slide <?= $i === 0 ? 'is-active' : '' ?>">
-                        <img src="<?= e(image_url($banner['image'])) ?>" alt="<?= e($banner['title']) ?>" loading="<?= $i === 0 ? 'eager' : 'lazy' ?>">
-                    </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <div class="hero-slide is-active bg-gradient-to-br from-slate-950 via-emerald-950 to-slate-900"></div>
-            <?php endif; ?>
+            <?php foreach ($banners as $i => $banner): ?>
+                <div class="hero-slide <?= $i === 0 ? 'is-active' : '' ?>">
+                    <img src="<?= e(image_url($banner['image'])) ?>" alt="<?= e($banner['title']) ?>" loading="<?= $i === 0 ? 'eager' : 'lazy' ?>">
+                </div>
+            <?php endforeach; ?>
         </div>
 
         <?php if (count($banners) > 1): ?>
@@ -112,6 +138,7 @@ require __DIR__ . '/includes/header.php';
             </div>
         <?php endif; ?>
     </section>
+    <?php endif; ?>
 
     <!-- ================= CATALOG ================= -->
     <section id="catalog-section" class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 overflow-hidden">
