@@ -64,6 +64,7 @@ if (empty($structuredData)) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-site-verification" content="ByRh6Xdd-AWXEIN41Nqmz-gGEdc7mCFRaK4RiSkRrEc">
     <title><?= e($pageTitle) ?></title>
     <meta name="description" content="<?= e($metaDescription) ?>">
     <meta property="og:title" content="<?= e($pageTitle) ?>">
