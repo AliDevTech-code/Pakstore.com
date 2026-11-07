@@ -93,8 +93,8 @@ require __DIR__ . '/includes/header.php';
             <?php else: ?>
                 <div class="hero-slide is-active bg-gradient-to-br from-slate-950 via-emerald-950 to-slate-900"></div>
             <?php endif; ?>
-            <div class="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/85 to-slate-950/70"></div>
-            <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(2,6,23,0.65)_65%,rgba(2,6,23,0.95)_100%)]"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-950/45 to-slate-950/10"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/35"></div>
         </div>
 
         <?php if (count($banners) > 1): ?>
@@ -117,12 +117,12 @@ require __DIR__ . '/includes/header.php';
                     </div>
                 </div>
 
-                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1]">
+                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1] drop-shadow-[0_2px_10px_rgba(2,6,23,0.9)]">
                     Premium Lifestyle &amp; Audio. <br>
                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#00A651] via-emerald-300 to-[#FF6B00]">Pay Cash at Doorstep.</span>
                 </h1>
 
-                <p class="text-xs sm:text-sm md:text-base text-slate-200 leading-relaxed max-w-2xl mx-auto">
+                <p class="text-xs sm:text-sm md:text-base text-slate-100 leading-relaxed max-w-2xl mx-auto drop-shadow-[0_2px_8px_rgba(2,6,23,0.9)]">
                     Authentic smartwatches, active noise-cancelling acoustics, genuine leather accessories, and royal fragrances. Check the parcel and pay cash to the rider upon arrival.
                 </p>
 
