@@ -1,5 +1,5 @@
 <?php
-/** Product detail page: gallery, pricing, stock, reviews, related products. */
+/** Product detail page: gallery, pricing, stock, related products. */
 
 require_once __DIR__ . '/includes/functions.php';
 
@@ -35,30 +35,6 @@ if ($gallery === []) {
 }
 if (!in_array($product['image'], $gallery, true)) {
     array_unshift($gallery, $product['image']);
-}
-
-/* ---------------- Reviews (real data only) ---------------- */
-$stmt = db()->prepare('SELECT * FROM reviews WHERE product_id = ? ORDER BY created_at DESC, id DESC LIMIT 30');
-$stmt->execute([$productId]);
-$reviews = $stmt->fetchAll();
-
-$avgRating = 0.0;
-$countRating = 0;
-if ($reviews) {
-    foreach ($reviews as $r) {
-        $avgRating += (float) $r['rating'];
-        $countRating++;
-    }
-    $avgRating = $countRating > 0 ? $avgRating / $countRating : 0.0;
-} else {
-    $avgRating = (float) $product['rating'];
-    $countRating = (int) $product['reviews_count'];
-}
-
-$ratingBuckets = [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0];
-foreach ($reviews as $r) {
-    $star = max(1, min(5, (int) $r['rating']));
-    $ratingBuckets[$star]++;
 }
 
 /* ---------------- Related products ---------------- */
@@ -99,6 +75,33 @@ $whatsappShare = 'https://wa.me/?text=' . rawurlencode($shareText . ' ' . (isset
 
 $pageTitle = $product['title'] . ' - ' . setting('store_name', 'PakStore');
 $metaDescription = mb_substr(trim((string) $product['description']), 0, 160);
+if ($metaDescription === '') {
+    $metaDescription = $product['title'] . ' - Cash on Delivery available all over Pakistan.';
+}
+
+$seoScheme = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http');
+$seoOrigin = $seoScheme . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
+$seoImage = preg_match('~^https?://~i', (string) $product['image'])
+    ? $product['image']
+    : $seoOrigin . image_url($product['image']);
+$ogImage = $seoImage;
+$ogType = 'product';
+$structuredData = '<script type="application/ld+json">' . json_encode([
+    '@context'    => 'https://schema.org',
+    '@type'       => 'Product',
+    'name'        => $product['title'],
+    'description' => trim(strip_tags((string) ($product['description'] ?? ''))),
+    'sku'         => (string) $product['sku'],
+    'image'       => [$seoImage],
+    'offers'      => [
+        '@type'         => 'Offer',
+        'price'         => number_format((float) $product['price'], 2, '.', ''),
+        'priceCurrency' => 'PKR',
+        'availability'  => $inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+        'url'           => $seoOrigin . url('product.php?id=' . (int) $product['id']),
+    ],
+], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE) . '</script>';
+
 require __DIR__ . '/includes/header.php';
 ?>
 
@@ -166,16 +169,6 @@ require __DIR__ . '/includes/header.php';
                     </div>
 
                     <div class="mt-3 flex flex-wrap items-center gap-2 text-xs">
-                        <?php if ($countRating > 0): ?>
-                            <span class="flex items-center gap-1 text-amber-500 font-bold">
-                                <i data-lucide="star" class="w-4 h-4 fill-amber-400 text-amber-400"></i>
-                                <?= e(number_format($avgRating, 1)) ?>
-                            </span>
-                            <span class="text-slate-400">(<?= (int) $countRating ?> reviews)</span>
-                        <?php else: ?>
-                            <span class="text-slate-400">No ratings yet</span>
-                        <?php endif; ?>
-                        <span class="text-slate-300">&middot;</span>
                         <?php if ($inStock): ?>
                             <span class="text-[#00A651] font-bold flex items-center gap-1"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> In Stock (<?= (int) $product['stock'] ?>)</span>
                         <?php else: ?>
@@ -234,7 +227,7 @@ require __DIR__ . '/includes/header.php';
                         <a href="<?= e(url('checkout.php?product=' . (int) $product['id'] . '&qty=1')) ?>"
                            class="w-full py-3 bg-[#00A651] hover:bg-[#008f45] text-white font-bold rounded-xl text-sm transition-colors shadow-sm flex items-center justify-center gap-2 <?= $inStock ? '' : 'opacity-50 pointer-events-none' ?>">
                             <i data-lucide="zap" class="w-4 h-4 fill-current"></i>
-                            <span>Order Now - Cash on Delivery</span>
+                            <span>Order Now</span>
                         </a>
 
                         <div class="flex items-center gap-2">
@@ -249,72 +242,6 @@ require __DIR__ . '/includes/header.php';
                 </div>
             </div>
         </div>
-
-        <!-- Reviews -->
-        <section class="mt-6 bg-white rounded-2xl border border-slate-200 overflow-hidden">
-            <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
-                <h2 class="text-sm font-bold text-slate-900">Customer Reviews</h2>
-                <span class="text-[11px] text-slate-500"><?= (int) $countRating ?> verified rating<?= $countRating === 1 ? '' : 's' ?></span>
-            </div>
-
-            <?php if ($reviews): ?>
-                <div class="grid grid-cols-1 md:grid-cols-3">
-                    <div class="p-5 border-b md:border-b-0 md:border-r border-slate-200 bg-slate-50/60 text-center">
-                        <div class="text-4xl font-black text-slate-900 font-mono"><?= e(number_format($avgRating, 1)) ?></div>
-                        <div class="flex items-center justify-center gap-0.5 mt-1">
-                            <?php for ($s = 1; $s <= 5; $s++): ?>
-                                <i data-lucide="star" class="w-4 h-4 <?= $s <= round($avgRating) ? 'fill-amber-400 text-amber-400' : 'text-slate-300' ?>"></i>
-                            <?php endfor; ?>
-                        </div>
-                        <p class="text-[11px] text-slate-500 mt-1">Based on <?= (int) $countRating ?> review<?= $countRating === 1 ? '' : 's' ?></p>
-                    </div>
-                    <div class="md:col-span-2 p-5 space-y-1.5">
-                        <?php foreach ([5, 4, 3, 2, 1] as $star): ?>
-                            <?php $pct = $countRating > 0 ? round(($ratingBuckets[$star] / $countRating) * 100) : 0; ?>
-                            <div class="flex items-center gap-2 text-[11px]">
-                                <span class="w-8 text-slate-600 font-semibold text-right"><?= $star ?> &#9733;</span>
-                                <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                                    <div class="h-full bg-amber-400 rounded-full" style="width: <?= $pct ?>%"></div>
-                                </div>
-                                <span class="w-9 text-slate-400 font-mono text-right"><?= $pct ?>%</span>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-
-                <div class="divide-y divide-slate-100 border-t border-slate-200">
-                    <?php foreach ($reviews as $review): ?>
-                        <div class="p-5">
-                            <div class="flex items-start justify-between gap-3">
-                                <div>
-                                    <span class="text-xs font-bold text-slate-900"><?= e($review['author']) ?></span>
-                                    <?php if (!empty($review['city'])): ?>
-                                        <span class="text-[10px] text-slate-400"> &middot; <?= e($review['city']) ?></span>
-                                    <?php endif; ?>
-                                    <?php if ((int) $review['is_verified'] === 1): ?>
-                                        <span class="ml-2 text-[9px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">VERIFIED BUYER</span>
-                                    <?php endif; ?>
-                                </div>
-                                <span class="text-[10px] text-slate-400 whitespace-nowrap"><?= e(format_date($review['created_at'], false)) ?></span>
-                            </div>
-                            <div class="flex items-center gap-0.5 mt-1">
-                                <?php for ($s = 1; $s <= 5; $s++): ?>
-                                    <i data-lucide="star" class="w-3 h-3 <?= $s <= (int) $review['rating'] ? 'fill-amber-400 text-amber-400' : 'text-slate-300' ?>"></i>
-                                <?php endfor; ?>
-                            </div>
-                            <?php if (!empty($review['comment'])): ?>
-                                <p class="text-xs text-slate-600 mt-2 leading-relaxed"><?= nl2br(e($review['comment'])) ?></p>
-                            <?php endif; ?>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php else: ?>
-                <div class="p-10 text-center">
-                    <i data-lucide="message-square" class="w-8 h-8 text-slate-300 mx-auto mb-2"></i>
-                    <p class="text-xs text-slate-500">No reviews yet. Reviews will appear here once customers rate this product.</p>
-                </div>
-            <?php endif; ?>
-        </section>
 
         <!-- Related -->
         <?php if ($related): ?>

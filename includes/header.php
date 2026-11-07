@@ -37,6 +37,27 @@ $metaDescription = $metaDescription ?? 'Shop online in Pakistan with 100% Cash o
 
 $cartItems = cart_detailed();
 $cartTotals = cart_totals();
+
+$siteOrigin = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
+$canonicalUrl = $siteOrigin . ($_SERVER['REQUEST_URI'] ?? '/');
+$ogType = $ogType ?? 'website';
+$shareImage = $ogImage ?? setting('logo_url', '');
+if ($shareImage !== '' && !preg_match('~^https?://~i', $shareImage)) {
+    $shareImage = $siteOrigin . image_url($shareImage);
+}
+if (empty($structuredData)) {
+    $structuredData = '<script type="application/ld+json">' . json_encode([
+        '@context' => 'https://schema.org',
+        '@type'    => 'WebSite',
+        'name'     => $storeName,
+        'url'      => $siteOrigin . url(''),
+        'potentialAction' => [
+            '@type'       => 'SearchAction',
+            'target'      => $siteOrigin . url('index.php') . '?q={search_term_string}',
+            'query-input' => 'required name=search_term_string',
+        ],
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE) . '</script>';
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -47,7 +68,19 @@ $cartTotals = cart_totals();
     <meta name="description" content="<?= e($metaDescription) ?>">
     <meta property="og:title" content="<?= e($pageTitle) ?>">
     <meta property="og:description" content="<?= e($metaDescription) ?>">
-    <meta property="og:type" content="website">
+    <meta property="og:type" content="<?= e($ogType) ?>">
+    <meta property="og:url" content="<?= e($canonicalUrl) ?>">
+    <meta property="og:site_name" content="<?= e($storeName) ?>">
+    <?php if ($shareImage !== ''): ?>
+        <meta property="og:image" content="<?= e($shareImage) ?>">
+        <meta name="twitter:image" content="<?= e($shareImage) ?>">
+    <?php endif; ?>
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?= e($pageTitle) ?>">
+    <meta name="twitter:description" content="<?= e($metaDescription) ?>">
+    <link rel="canonical" href="<?= e($canonicalUrl) ?>">
+    <meta name="theme-color" content="#00A651">
+    <?= $structuredData ?>
 
     <link rel="preload" href="<?= e(url('assets/fonts/plus-jakarta-sans-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="<?= e(url('assets/fonts/outfit-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>

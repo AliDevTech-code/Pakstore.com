@@ -28,7 +28,7 @@ if ($action === 'save') {
     $features      = post_string('features');
     $galleryText   = post_string('gallery');
     $imageUrl      = post_string('image_url');
-    $inStock       = isset($_POST['in_stock']) ? 1 : 0;
+    $inStock       = $stock > 0 ? 1 : 0;
 
     $errors = [];
     if (mb_strlen($title) < 3) {
@@ -88,6 +88,38 @@ if ($action === 'save') {
         $line = trim($line);
         if ($line !== '') {
             $gallery[] = $line;
+        }
+    }
+
+    /* Multiple image uploads: first image becomes main, rest go to gallery (color variants). */
+    $newUploads = [];
+    if (!empty($_FILES['image_files']['name'][0])) {
+        $fileCount = count($_FILES['image_files']['name']);
+        for ($i = 0; $i < $fileCount; $i++) {
+            if ((int) ($_FILES['image_files']['error'][$i] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+                continue;
+            }
+            $file = [
+                'name'     => $_FILES['image_files']['name'][$i],
+                'type'     => $_FILES['image_files']['type'][$i] ?? '',
+                'tmp_name' => $_FILES['image_files']['tmp_name'][$i] ?? '',
+                'error'    => $_FILES['image_files']['error'][$i] ?? UPLOAD_ERR_NO_FILE,
+                'size'     => $_FILES['image_files']['size'][$i] ?? 0,
+            ];
+            [$ok, $result] = upload_image($file, 'products', 'product');
+            if (!$ok) {
+                flash('error', 'Image upload failed: ' . $result);
+                redirect('admin/product-edit.php' . ($id > 0 ? '?id=' . $id : ''));
+            }
+            $newUploads[] = $result;
+        }
+    }
+    if ($newUploads) {
+        if ($image === '') {
+            $image = array_shift($newUploads);
+        }
+        foreach ($newUploads as $path) {
+            $gallery[] = $path;
         }
     }
 

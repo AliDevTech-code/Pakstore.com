@@ -131,12 +131,7 @@ require __DIR__ . '/includes/header.php';
                         <span>Explore Catalog</span>
                         <i data-lucide="arrow-down" class="w-4 h-4"></i>
                     </a>
-                    <?php if ($products): ?>
-                        <a href="<?= e(url('checkout.php?product=' . (int) $products[0]['id'] . '&qty=1')) ?>" class="px-5 py-3 bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-md flex items-center gap-2">
-                            <i data-lucide="zap" class="w-4 h-4 fill-current"></i>
-                            <span>Quick COD Order</span>
-                        </a>
-                    <?php endif; ?>
+
                 </div>
 
                 <?php if (count($banners) > 1): ?>
@@ -292,7 +287,7 @@ require __DIR__ . '/includes/header.php';
                                        class="flex-1 py-1.5 sm:py-2 px-1.5 text-[11px] font-bold rounded-lg bg-[#00A651] hover:bg-[#008f45] text-white transition-colors flex items-center justify-center gap-1 whitespace-nowrap shadow-sm <?= $inStock ? '' : 'opacity-50 pointer-events-none' ?>"
                                        title="Instant Cash on Delivery Checkout">
                                         <i data-lucide="zap" class="w-3 h-3 fill-current shrink-0"></i>
-                                        <span>Order COD</span>
+                                        <span>Order Now</span>
                                     </a>
 
                                     <form action="<?= e(url('cart.php')) ?>" method="post">

@@ -103,12 +103,7 @@ require __DIR__ . '/includes/header.php';
                     </a>
                 </div>
 
-                <?php if (setting('whatsapp') !== ''): ?>
-                    <a href="https://wa.me/<?= e($waPhone) ?>?text=<?= $waText ?>" target="_blank" rel="noopener noreferrer" class="print-hide w-full py-2.5 bg-[#00A651] hover:bg-[#008f45] text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2">
-                        <i data-lucide="message-circle" class="w-4 h-4"></i>
-                        <span>Send Order Details on WhatsApp</span>
-                    </a>
-                <?php endif; ?>
+
             </div>
         </div>
     </div>

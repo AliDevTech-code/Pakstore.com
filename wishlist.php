@@ -107,7 +107,7 @@ require __DIR__ . '/includes/header.php';
                                     <?php if ($original > 0): ?><span class="text-[10px] text-slate-400 line-through font-mono"><?= e(money($original)) ?></span><?php endif; ?>
                                 </div>
                                 <a href="<?= e(url('checkout.php?product=' . (int) $p['id'] . '&qty=1')) ?>" class="w-full py-2 text-[11px] font-bold rounded-lg bg-[#00A651] hover:bg-[#008f45] text-white transition-colors flex items-center justify-center gap-1 <?= $inStock ? '' : 'opacity-50 pointer-events-none' ?>">
-                                    <i data-lucide="zap" class="w-3 h-3 fill-current"></i> Order COD
+                                    <i data-lucide="zap" class="w-3 h-3 fill-current"></i> Order Now
                                 </a>
                             </div>
                         </div>

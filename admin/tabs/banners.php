@@ -34,35 +34,19 @@ if ($editId > 0) {
             <?= csrf_field() ?>
             <input type="hidden" name="action" value="save">
             <input type="hidden" name="id" value="<?= $editing ? (int) $editing['id'] : 0 ?>">
+            <input type="hidden" name="subtitle" value="<?= e($editing['subtitle'] ?? '') ?>">
+            <input type="hidden" name="badge" value="<?= e($editing['badge'] ?? '') ?>">
+            <input type="hidden" name="category" value="<?= e($editing['category'] ?? '') ?>">
+            <input type="hidden" name="sort_order" value="<?= e($editing['sort_order'] ?? '0') ?>">
+            <?php if (!$editing || (int) $editing['is_active'] === 1): ?><input type="hidden" name="is_active" value="1"><?php endif; ?>
 
             <div>
-                <label for="title" class="block text-xs font-semibold text-slate-700 mb-1">Title *</label>
+                <label for="title" class="block text-xs font-semibold text-slate-700 mb-1">Banner Title *</label>
                 <input id="title" name="title" type="text" required maxlength="200" value="<?= e($editing['title'] ?? '') ?>" placeholder="e.g. Mega Winter Sale" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-[#00A651]">
             </div>
 
             <div>
-                <label for="subtitle" class="block text-xs font-semibold text-slate-700 mb-1">Subtitle</label>
-                <input id="subtitle" name="subtitle" type="text" maxlength="300" value="<?= e($editing['subtitle'] ?? '') ?>" placeholder="Short supporting line" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-[#00A651]">
-            </div>
-
-            <div class="grid grid-cols-2 gap-2">
-                <div>
-                    <label for="badge" class="block text-xs font-semibold text-slate-700 mb-1">Badge</label>
-                    <input id="badge" name="badge" type="text" maxlength="80" value="<?= e($editing['badge'] ?? '') ?>" placeholder="e.g. Limited" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-[#00A651]">
-                </div>
-                <div>
-                    <label for="category" class="block text-xs font-semibold text-slate-700 mb-1">Category Label</label>
-                    <input id="category" name="category" type="text" maxlength="120" value="<?= e($editing['category'] ?? '') ?>" placeholder="e.g. Audio" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-[#00A651]">
-                </div>
-            </div>
-
-            <div>
-                <label for="link" class="block text-xs font-semibold text-slate-700 mb-1">Button / Slide Link</label>
-                <input id="link" name="link" type="text" maxlength="300" value="<?= e($editing['link'] ?? '#catalog-section') ?>" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-mono focus:outline-[#00A651]">
-            </div>
-
-            <div>
-                <label for="image_file" class="block text-xs font-semibold text-slate-700 mb-1">Upload Image (max 3 MB)</label>
+                <label for="image_file" class="block text-xs font-semibold text-slate-700 mb-1">Banner Image (max 3 MB)</label>
                 <input id="image_file" name="image_file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="w-full text-xs border border-slate-300 rounded-lg p-1.5 bg-white file:mr-2 file:px-2.5 file:py-1 file:rounded file:border-0 file:bg-slate-900 file:text-white file:text-[11px] file:font-bold">
                 <?php if (!empty($editing['image'])): ?>
                     <img src="<?= e(image_url($editing['image'])) ?>" alt="" class="mt-2 h-20 w-full object-cover rounded-lg border border-slate-200">
@@ -70,18 +54,8 @@ if ($editId > 0) {
             </div>
 
             <div>
-                <label for="image_url" class="block text-xs font-semibold text-slate-700 mb-1">Or Image URL / Path</label>
-                <input id="image_url" name="image_url" type="text" value="" placeholder="assets/images/banner.jpg" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-mono focus:outline-[#00A651]">
-            </div>
-
-            <div class="grid grid-cols-2 gap-2 items-center">
-                <div>
-                    <label for="sort_order" class="block text-xs font-semibold text-slate-700 mb-1">Sort Order</label>
-                    <input id="sort_order" name="sort_order" type="number" step="1" value="<?= e($editing['sort_order'] ?? '0') ?>" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-mono focus:outline-[#00A651]">
-                </div>
-                <label class="flex items-center gap-2 mt-5 text-xs font-semibold text-slate-700 cursor-pointer">
-                    <input type="checkbox" name="is_active" value="1" <?= !$editing || (int) $editing['is_active'] === 1 ? 'checked' : '' ?> class="w-4 h-4 rounded border-slate-300"> Active
-                </label>
+                <label for="link" class="block text-xs font-semibold text-slate-700 mb-1">Button Link (optional)</label>
+                <input id="link" name="link" type="text" maxlength="300" value="<?= e($editing['link'] ?? '#catalog-section') ?>" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-mono focus:outline-[#00A651]">
             </div>
 
             <button type="submit" class="w-full py-2.5 bg-[#00A651] hover:bg-[#008f45] text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5">

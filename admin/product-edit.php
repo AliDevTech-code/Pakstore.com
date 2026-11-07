@@ -1,5 +1,5 @@
 <?php
-/** Add / edit product form. */
+/** Add / edit product form (simple: name, description, stock, price, images). */
 
 require_once __DIR__ . '/includes/auth.php';
 
@@ -38,17 +38,21 @@ require __DIR__ . '/includes/header.php';
 
 $galleryValue = implode("\n", json_array($product['gallery']));
 $featuresValue = implode("\n", json_array($product['features']));
-$suggestions = glob(dirname(__DIR__) . '/assets/images/*.{jpg,jpeg,png,webp}', GLOB_BRACE) ?: [];
+
+$previewImages = json_array($product['gallery']);
+if (trim((string) $product['image']) !== '' && !in_array($product['image'], $previewImages, true)) {
+    array_unshift($previewImages, $product['image']);
+}
 ?>
 
-<div class="max-w-4xl mx-auto">
+<div class="max-w-3xl mx-auto">
     <div class="flex items-center justify-between gap-3 mb-5">
         <div>
             <a href="<?= e(url('admin/index.php?tab=products')) ?>" class="text-[11px] font-bold text-slate-500 hover:text-[#00A651] flex items-center gap-1 mb-1">
                 <i data-lucide="arrow-left" class="w-3 h-3"></i> Back to products
             </a>
             <h1 class="text-2xl font-black text-slate-900 tracking-tight"><?= $editingId > 0 ? 'Edit Product' : 'Add New Product' ?></h1>
-            <p class="text-xs text-slate-500 mt-1"><?= $editingId > 0 ? 'Update the details below and save.' : 'Fill in the product details. It will appear on the storefront immediately.' ?></p>
+            <p class="text-xs text-slate-500 mt-1">Sirf zaroori details bharein — baqi automatic.</p>
         </div>
     </div>
 
@@ -56,16 +60,23 @@ $suggestions = glob(dirname(__DIR__) . '/assets/images/*.{jpg,jpeg,png,webp}', G
         <?= csrf_field() ?>
         <input type="hidden" name="action" value="save">
         <input type="hidden" name="id" value="<?= (int) $product['id'] ?>">
+        <input type="hidden" name="original_price" value="<?= e($product['original_price']) ?>">
+        <input type="hidden" name="badge" value="<?= e($product['badge']) ?>">
+        <input type="hidden" name="sku" value="<?= e($product['sku']) ?>">
+        <textarea name="gallery" class="hidden"><?= e($galleryValue) ?></textarea>
+        <textarea name="features" class="hidden"><?= e($featuresValue) ?></textarea>
 
         <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4">
-            <h2 class="text-sm font-bold text-slate-900 pb-2 border-b border-slate-100">Basic Information</h2>
+            <h2 class="text-sm font-bold text-slate-900 pb-2 border-b border-slate-100 flex items-center gap-1.5">
+                <i data-lucide="package" class="w-4 h-4 text-[#00A651]"></i> Product Details
+            </h2>
 
             <div>
-                <label for="title" class="block text-xs font-semibold text-slate-700 mb-1">Product Title *</label>
-                <input id="title" name="title" type="text" required maxlength="200" value="<?= e($product['title']) ?>" placeholder="e.g. Wireless Pro ANC Earbuds" class="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-lg focus:outline-[#00A651] font-medium">
+                <label for="title" class="block text-xs font-semibold text-slate-700 mb-1">Product Name *</label>
+                <input id="title" name="title" type="text" required maxlength="200" value="<?= e($product['title']) ?>" placeholder="e.g. Cotton Casual Shirt" class="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-lg focus:outline-[#00A651] font-medium">
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                     <label for="category_id" class="block text-xs font-semibold text-slate-700 mb-1">Category</label>
                     <select id="category_id" name="category_id" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg bg-white focus:outline-[#00A651]">
@@ -74,93 +85,47 @@ $suggestions = glob(dirname(__DIR__) . '/assets/images/*.{jpg,jpeg,png,webp}', G
                             <option value="<?= (int) $cat['id'] ?>" <?= (int) $product['category_id'] === (int) $cat['id'] ? 'selected' : '' ?>><?= e($cat['name']) ?></option>
                         <?php endforeach; ?>
                     </select>
-                    <?php if (!$categories): ?>
-                        <p class="text-[10px] text-amber-600 mt-1">No categories yet. <a href="<?= e(url('admin/index.php?tab=categories')) ?>" class="underline">Create one first</a>.</p>
-                    <?php endif; ?>
-                </div>
-
-                <div>
-                    <label for="sku" class="block text-xs font-semibold text-slate-700 mb-1">SKU (auto if blank)</label>
-                    <input id="sku" name="sku" type="text" maxlength="80" value="<?= e($product['sku']) ?>" placeholder="e.g. PAK-AUD-01" class="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-lg font-mono focus:outline-[#00A651]">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                    <label for="price" class="block text-xs font-semibold text-slate-700 mb-1">Selling Price (Rs.) *</label>
-                    <input id="price" name="price" type="number" min="0" step="0.01" required value="<?= e($product['price']) ?>" placeholder="3499" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-mono font-bold focus:outline-[#00A651]">
                 </div>
                 <div>
-                    <label for="original_price" class="block text-xs font-semibold text-slate-700 mb-1">Compare-at Price (Rs.)</label>
-                    <input id="original_price" name="original_price" type="number" min="0" step="0.01" value="<?= e($product['original_price']) ?>" placeholder="4999" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-mono text-slate-600 focus:outline-[#00A651]">
+                    <label for="price" class="block text-xs font-semibold text-slate-700 mb-1">Price (Rs.) *</label>
+                    <input id="price" name="price" type="number" min="0" step="0.01" required value="<?= e($product['price']) ?>" placeholder="1999" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-mono font-bold focus:outline-[#00A651]">
                 </div>
                 <div>
-                    <label for="stock" class="block text-xs font-semibold text-slate-700 mb-1">Stock Quantity *</label>
-                    <input id="stock" name="stock" type="number" min="0" step="1" required value="<?= e($product['stock']) ?>" placeholder="30" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-mono focus:outline-[#00A651]">
+                    <label for="stock" class="block text-xs font-semibold text-slate-700 mb-1">Stock *</label>
+                    <input id="stock" name="stock" type="number" min="0" step="1" required value="<?= e($product['stock']) ?>" placeholder="20" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-mono focus:outline-[#00A651]">
+                    <span class="text-[10px] text-slate-400">0 = out of stock</span>
                 </div>
             </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label for="badge" class="block text-xs font-semibold text-slate-700 mb-1">Badge (optional)</label>
-                    <input id="badge" name="badge" type="text" maxlength="40" value="<?= e($product['badge']) ?>" placeholder="e.g. Bestseller, New Arrival" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-[#00A651]">
-                </div>
-                <label class="flex items-center gap-2 mt-5 text-xs font-semibold text-slate-700 cursor-pointer">
-                    <input type="checkbox" name="in_stock" value="1" <?= (int) $product['in_stock'] === 1 ? 'checked' : '' ?> class="w-4 h-4 rounded border-slate-300">
-                    Available for purchase (in stock)
-                </label>
-            </div>
-        </div>
-
-        <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4">
-            <h2 class="text-sm font-bold text-slate-900 pb-2 border-b border-slate-100">Images</h2>
-
-            <div class="flex flex-col sm:flex-row gap-4">
-                <div class="w-24 h-24 rounded-xl bg-slate-50 border border-slate-200 overflow-hidden shrink-0">
-                    <img src="<?= e(image_url($product['image'])) ?>" alt="Current product image" class="w-full h-full object-cover">
-                </div>
-                <div class="flex-1 space-y-2">
-                    <div>
-                        <label for="image_file" class="block text-xs font-semibold text-slate-700 mb-1">Upload Image (JPG / PNG / WEBP, max 3 MB)</label>
-                        <input id="image_file" name="image_file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="w-full text-xs border border-slate-300 rounded-lg p-1.5 bg-white file:mr-2 file:px-2.5 file:py-1 file:rounded file:border-0 file:bg-slate-900 file:text-white file:text-[11px] file:font-bold">
-                    </div>
-                    <div>
-                        <label for="image_url" class="block text-xs font-semibold text-slate-700 mb-1">Or Image URL / Path</label>
-                        <input id="image_url" name="image_url" type="text" value="" placeholder="e.g. assets/images/product.jpg" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-mono focus:outline-[#00A651]">
-                    </div>
-                </div>
-            </div>
-
-            <?php if ($suggestions): ?>
-                <div class="flex flex-wrap items-center gap-2 text-[11px]">
-                    <span class="text-slate-500 font-medium">Quick pick:</span>
-                    <?php foreach ($suggestions as $file): ?>
-                        <?php $relative = 'assets/images/' . basename($file); ?>
-                        <button type="button" onclick="document.getElementById('image_url').value='<?= e($relative) ?>'" class="px-2 py-1 rounded border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-200 hover:text-[#00A651] font-mono">
-                            <?= e(basename($file)) ?>
-                        </button>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-
-            <div>
-                <label for="gallery" class="block text-xs font-semibold text-slate-700 mb-1">Gallery Image URLs (one per line, optional)</label>
-                <textarea id="gallery" name="gallery" rows="3" placeholder="uploads/products/extra-1.jpg&#10;https://example.com/extra-2.jpg" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-mono focus:outline-[#00A651]"><?= e($galleryValue) ?></textarea>
-            </div>
-        </div>
-
-        <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4">
-            <h2 class="text-sm font-bold text-slate-900 pb-2 border-b border-slate-100">Description &amp; Features</h2>
 
             <div>
                 <label for="description" class="block text-xs font-semibold text-slate-700 mb-1">Product Description</label>
-                <textarea id="description" name="description" rows="4" placeholder="Explain product specifications, craftsmanship and benefits..." class="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-lg focus:outline-[#00A651]"><?= e($product['description']) ?></textarea>
+                <textarea id="description" name="description" rows="4" placeholder="Product ki tafseel likhein..." class="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-lg focus:outline-[#00A651]"><?= e($product['description']) ?></textarea>
             </div>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4">
+            <h2 class="text-sm font-bold text-slate-900 pb-2 border-b border-slate-100 flex items-center gap-1.5">
+                <i data-lucide="images" class="w-4 h-4 text-[#00A651]"></i> Product Images
+            </h2>
 
             <div>
-                <label for="features" class="block text-xs font-semibold text-slate-700 mb-1">Key Features (one per line)</label>
-                <textarea id="features" name="features" rows="4" placeholder="1 Year Official Replacement Warranty&#10;Bluetooth 5.3 with 40ms Low Latency" class="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-lg focus:outline-[#00A651]"><?= e($featuresValue) ?></textarea>
+                <label for="image_files" class="block text-xs font-semibold text-slate-700 mb-1">Upload Images (JPG / PNG / WEBP, max 3 MB each)</label>
+                <input id="image_files" name="image_files[]" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple class="w-full text-xs border border-slate-300 rounded-lg p-1.5 bg-white file:mr-2 file:px-2.5 file:py-1 file:rounded file:border-0 file:bg-slate-900 file:text-white file:text-[11px] file:font-bold">
+                <p class="text-[10px] text-slate-500 mt-1">Ek hi product ki alag alag colors upload karein (e.g. white shirt, black shirt). Pehli image main image banegi, baqi gallery mein chali jayengi.</p>
             </div>
+
+            <?php if ($previewImages): ?>
+                <div>
+                    <span class="block text-[11px] font-semibold text-slate-600 mb-1.5">Current images (<?= count($previewImages) ?>)</span>
+                    <div class="flex flex-wrap gap-2">
+                        <?php foreach ($previewImages as $img): ?>
+                            <span class="w-16 h-16 rounded-lg border border-slate-200 overflow-hidden bg-slate-50 block">
+                                <img src="<?= e(image_url($img)) ?>" alt="" class="w-full h-full object-cover">
+                            </span>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
 
         <div class="flex flex-col sm:flex-row items-center justify-end gap-2 pb-4">
