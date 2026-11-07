@@ -82,7 +82,7 @@ require __DIR__ . '/includes/header.php';
 
 <main class="flex-1">
     <!-- ================= HERO ================= -->
-    <section data-hero-slider class="relative overflow-hidden bg-slate-950 text-white border-b border-slate-800 min-h-[460px] sm:min-h-[520px] flex flex-col justify-between">
+    <section data-hero-slider class="relative overflow-hidden bg-slate-950 text-white border-b border-slate-800 min-h-[240px] sm:min-h-[400px] lg:min-h-[520px] flex flex-col justify-end">
         <div class="absolute inset-0 z-0 overflow-hidden">
             <?php if ($banners): ?>
                 <?php foreach ($banners as $i => $banner): ?>
@@ -93,78 +93,24 @@ require __DIR__ . '/includes/header.php';
             <?php else: ?>
                 <div class="hero-slide is-active bg-gradient-to-br from-slate-950 via-emerald-950 to-slate-900"></div>
             <?php endif; ?>
-            <div class="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-950/45 to-slate-950/10"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/35"></div>
         </div>
 
         <?php if (count($banners) > 1): ?>
-            <div class="absolute right-4 top-1/2 -translate-y-1/2 z-20 hidden md:flex flex-col gap-2">
-                <button type="button" data-hero-prev class="p-2.5 rounded-full bg-slate-900/80 hover:bg-[#00A651] text-white border border-slate-700/80 transition-colors backdrop-blur-md" aria-label="Previous slide">
+            <div class="absolute right-3 top-1/2 -translate-y-1/2 z-20 hidden md:flex flex-col gap-2">
+                <button type="button" data-hero-prev class="p-2.5 rounded-full bg-slate-900/70 hover:bg-[#00A651] text-white border border-white/30 transition-colors backdrop-blur-md" aria-label="Previous slide">
                     <i data-lucide="chevron-left" class="w-4 h-4"></i>
                 </button>
-                <button type="button" data-hero-next class="p-2.5 rounded-full bg-slate-900/80 hover:bg-[#00A651] text-white border border-slate-700/80 transition-colors backdrop-blur-md" aria-label="Next slide">
+                <button type="button" data-hero-next class="p-2.5 rounded-full bg-slate-900/70 hover:bg-[#00A651] text-white border border-white/30 transition-colors backdrop-blur-md" aria-label="Next slide">
                     <i data-lucide="chevron-right" class="w-4 h-4"></i>
                 </button>
             </div>
+
+            <div class="relative z-20 flex items-center justify-center gap-1.5 pb-3 sm:pb-4">
+                <?php foreach ($banners as $idx => $banner): ?>
+                    <button type="button" data-hero-dot="<?= $idx ?>" class="hero-dot rounded-full h-1.5 <?= $idx === 0 ? 'w-7 bg-[#FF6B00]' : 'w-2 bg-white/50 hover:bg-white/80' ?>" aria-label="Go to slide <?= $idx + 1 ?>"></button>
+                <?php endforeach; ?>
+            </div>
         <?php endif; ?>
-
-        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 sm:pt-12 sm:pb-16 flex-1 flex flex-col justify-center items-center w-full">
-            <div class="max-w-3xl mx-auto text-center flex flex-col items-center space-y-4 sm:space-y-6">
-                <div class="flex flex-wrap items-center justify-center gap-2">
-                    <div class="inline-flex items-center gap-2 text-xs font-bold text-emerald-300 bg-emerald-950/90 border border-emerald-500/40 px-3.5 py-1.5 rounded-full backdrop-blur-md">
-                        <span class="w-2 h-2 rounded-full bg-[#00A651] animate-pulse"></span>
-                        <span>&#127477;&#127472; 100% Cash on Delivery All Over Pakistan</span>
-                    </div>
-                </div>
-
-                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1] drop-shadow-[0_2px_10px_rgba(2,6,23,0.9)]">
-                    Premium Lifestyle &amp; Audio. <br>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#00A651] via-emerald-300 to-[#FF6B00]">Pay Cash at Doorstep.</span>
-                </h1>
-
-                <p class="text-xs sm:text-sm md:text-base text-slate-100 leading-relaxed max-w-2xl mx-auto drop-shadow-[0_2px_8px_rgba(2,6,23,0.9)]">
-                    Authentic smartwatches, active noise-cancelling acoustics, genuine leather accessories, and royal fragrances. Check the parcel and pay cash to the rider upon arrival.
-                </p>
-
-                <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
-                    <a href="#catalog-section" class="px-6 py-3 bg-[#00A651] hover:bg-[#008f45] text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-lg flex items-center gap-2">
-                        <span>Explore Catalog</span>
-                        <i data-lucide="arrow-down" class="w-4 h-4"></i>
-                    </a>
-
-                </div>
-
-                <?php if (count($banners) > 1): ?>
-                    <div class="flex items-center justify-center gap-1.5 pt-2">
-                        <?php foreach ($banners as $idx => $banner): ?>
-                            <button type="button" data-hero-dot="<?= $idx ?>" class="hero-dot rounded-full h-1.5 <?= $idx === 0 ? 'w-7 bg-[#FF6B00]' : 'w-2 bg-white/40 hover:bg-white/70' ?>" aria-label="Go to slide <?= $idx + 1 ?>"></button>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <!-- Trust bar -->
-        <div class="relative z-10 bg-slate-900/90 backdrop-blur-md border-t border-slate-800 py-3.5 px-4 sm:px-6 lg:px-8">
-            <div class="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-                <div class="flex items-center gap-2.5">
-                    <div class="p-2 rounded-lg bg-emerald-500/10 text-[#00A651] shrink-0"><i data-lucide="truck" class="w-4 h-4"></i></div>
-                    <div><h4 class="font-bold text-white text-xs">Nationwide COD</h4><p class="text-[10px] text-slate-400">Pay cash upon delivery</p></div>
-                </div>
-                <div class="flex items-center gap-2.5">
-                    <div class="p-2 rounded-lg bg-amber-500/10 text-[#FF6B00] shrink-0"><i data-lucide="shield-check" class="w-4 h-4"></i></div>
-                    <div><h4 class="font-bold text-white text-xs">Inspected &amp; Sealed</h4><p class="text-[10px] text-slate-400">100% genuine tested</p></div>
-                </div>
-                <div class="flex items-center gap-2.5">
-                    <div class="p-2 rounded-lg bg-emerald-500/10 text-[#00A651] shrink-0"><i data-lucide="refresh-cw" class="w-4 h-4"></i></div>
-                    <div><h4 class="font-bold text-white text-xs">7-Day Replacement</h4><p class="text-[10px] text-slate-400">Hassle-free warranty</p></div>
-                </div>
-                <div class="flex items-center gap-2.5">
-                    <div class="p-2 rounded-lg bg-amber-500/10 text-[#FF6B00] shrink-0"><i data-lucide="headphones" class="w-4 h-4"></i></div>
-                    <div><h4 class="font-bold text-white text-xs">24/7 Helpline</h4><p class="text-[10px] text-slate-400">Customer order support</p></div>
-                </div>
-            </div>
-        </div>
     </section>
 
     <!-- ================= CATALOG ================= -->
