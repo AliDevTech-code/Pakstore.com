@@ -64,6 +64,23 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 
 .hero-dot { transition: all 250ms ease; }
 
+/* Product slider thumbnails must not inherit the full-bleed banner image size. */
+.hero-slide img.product-thumb {
+  width: 3.5rem;
+  height: 3.5rem;
+  object-fit: cover;
+}
+
+/* Small responsive helpers (the static Tailwind build has no arbitrary variants). */
+.desktop-search { display: none; }
+.mobile-menu-btn { display: inline-flex; }
+.mobile-categories { display: block; }
+@media (min-width: 1024px) {
+  .desktop-search { display: block; }
+  .mobile-menu-btn { display: none; }
+  .mobile-categories { display: none; }
+}
+
 /* ---------------------------------------------------------------
    Simple entrance animations (replacement for tailwindcss-animate)
    --------------------------------------------------------------- */

@@ -125,7 +125,7 @@ require __DIR__ . '/includes/header.php';
 
     <?php if ($featuredSlides): ?>
     <!-- ================= AUTO PRODUCT SLIDER ================= -->
-    <section data-hero-slider class="relative overflow-hidden bg-slate-50 border-b border-slate-200 min-h-[230px] sm:min-h-[260px]">
+    <section data-hero-slider class="relative overflow-hidden bg-slate-50 border-b border-slate-200" style="min-height: 250px;">
         <?php foreach ($featuredSlides as $slideIndex => $slideProducts): ?>
             <div class="hero-slide <?= $slideIndex === 0 ? 'is-active' : '' ?> bg-slate-50">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
@@ -140,9 +140,9 @@ require __DIR__ . '/includes/header.php';
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
                         <?php foreach ($slideProducts as $featured): ?>
                             <a href="<?= e(url('product.php?id=' . (int) $featured['id'])) ?>" class="bg-white rounded-xl border border-slate-200 overflow-hidden flex items-center gap-2.5 p-2 hover:shadow-md hover:border-[#00A651]/40 transition-all min-w-0">
-                                <img src="<?= e(image_url($featured['image'])) ?>" alt="<?= e($featured['title']) ?>" class="w-14 h-14 sm:w-16 sm:h-16 rounded-lg object-cover bg-slate-100 shrink-0" loading="lazy">
+                                <img src="<?= e(image_url($featured['image'])) ?>" alt="<?= e($featured['title']) ?>" class="product-thumb rounded-lg bg-slate-100 shrink-0" loading="lazy">
                                 <span class="min-w-0">
-                                    <span class="block text-[11px] sm:text-xs font-bold text-slate-900 line-clamp-2 leading-snug"><?= e($featured['title']) ?></span>
+                                    <span class="block text-[11px] sm:text-xs font-bold text-slate-900 truncate leading-snug" title="<?= e($featured['title']) ?>"><?= e($featured['title']) ?></span>
                                     <span class="block text-xs font-black text-[#00A651] mt-1"><?= e(money($featured['price'])) ?></span>
                                 </span>
                             </a>

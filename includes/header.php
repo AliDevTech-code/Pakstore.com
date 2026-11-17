@@ -87,7 +87,7 @@ if (empty($structuredData)) {
     <link rel="preload" href="<?= e(url('assets/fonts/outfit-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 
     <link rel="stylesheet" href="<?= e(url('assets/css/tailwind.css') . '?v=4') ?>">
-    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=4') ?>">
+    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=5') ?>">
     <script src="<?= e(url('assets/js/lucide.min.js')) ?>"></script>
     <style>
         /* Keep drawers closed by default even if the external stylesheet fails to load. */
@@ -98,20 +98,9 @@ if (empty($structuredData)) {
 
 <!-- Announcement bar -->
 <div class="bg-[#003d1e] text-emerald-100 text-xs py-1.5 px-4 border-b border-emerald-900/40 print-hide">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-        <div class="flex items-center gap-2 font-semibold">
-            <i data-lucide="truck" class="w-3.5 h-3.5 text-[#FF6B00] shrink-0"></i>
-            <span class="tracking-wide"><?= e($topBarText) ?></span>
-        </div>
-        <div class="hidden md:flex items-center gap-4 text-emerald-200 text-[11px]">
-            <span class="flex items-center gap-1.5 font-medium">
-                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#FF6B00]"></i> 100% Cash on Delivery
-            </span>
-            <span aria-hidden="true" class="text-emerald-700">&middot;</span>
-            <a href="tel:<?= e($phone) ?>" class="flex items-center gap-1.5 hover:text-white transition-colors">
-                <i data-lucide="phone-call" class="w-3 h-3 text-[#FF6B00]"></i> Helpline: <?= e($phone) ?>
-            </a>
-        </div>
+    <div class="max-w-7xl mx-auto flex items-center justify-center gap-2 font-semibold">
+        <i data-lucide="truck" class="w-3.5 h-3.5 text-[#FF6B00] shrink-0"></i>
+        <span class="tracking-wide">Free Delivery All Over Pakistan</span>
     </div>
 </div>
 
@@ -131,13 +120,13 @@ if (empty($structuredData)) {
                     <?php endif; ?>
                 </a>
 
-                <button type="button" data-open-drawer="category-drawer" class="lg:hidden p-2 rounded-lg text-slate-700 hover:text-[#00A651] hover:bg-emerald-50 border border-slate-200 transition-colors cursor-pointer flex items-center gap-1.5" title="Categories Menu" aria-label="Open Categories Menu">
+                <button type="button" data-open-drawer="category-drawer" class="mobile-menu-btn p-2 rounded-lg text-slate-700 hover:text-[#00A651] hover:bg-emerald-50 border border-slate-200 transition-colors cursor-pointer items-center gap-1.5" title="Categories Menu" aria-label="Open Categories Menu">
                     <i data-lucide="menu" class="w-5 h-5"></i>
                     <span class="hidden sm:inline text-xs font-bold">Categories</span>
                 </button>
             </div>
 
-            <div class="flex-1 min-w-0 max-w-2xl hidden lg:block">
+            <div class="flex-1 min-w-0 max-w-2xl desktop-search">
                 <form action="<?= e(url('index.php')) ?>" method="get" class="relative flex items-center" role="search">
                     <input type="search" name="q" value="<?= e($searchQuery) ?>" placeholder="Search products..." class="w-full pl-3 sm:pl-4 pr-10 sm:pr-12 py-2 sm:py-2.5 text-xs bg-slate-100/90 border border-slate-300 rounded-lg focus:outline-none focus:border-[#00A651] focus:bg-white text-slate-900 placeholder-slate-400 transition-all shadow-inner" aria-label="Search products">
                     <button type="submit" class="absolute right-1 top-1 bottom-1 px-2.5 sm:px-3.5 bg-[#FF6B00] hover:bg-[#e05e00] text-white rounded-md flex items-center justify-center transition-colors cursor-pointer" title="Search Products">
@@ -147,7 +136,7 @@ if (empty($structuredData)) {
             </div>
 
             <div class="flex items-center gap-1 sm:gap-2 shrink-0">
-                <button type="button" data-search-toggle class="lg:hidden p-2 rounded-lg border border-slate-200 text-slate-700 hover:text-[#00A651] hover:bg-emerald-50 transition-colors" title="Search products" aria-label="Open search">
+                <button type="button" data-search-toggle class="mobile-menu-btn p-2 rounded-lg border border-slate-200 text-slate-700 hover:text-[#00A651] hover:bg-emerald-50 transition-colors" title="Search products" aria-label="Open search">
                     <i data-lucide="search" class="w-5 h-5"></i>
                 </button>
                 <details class="relative group">
@@ -226,7 +215,7 @@ if (empty($structuredData)) {
     </div>
 
     <!-- Category quick strip -->
-    <div class="bg-slate-50 border-t border-slate-200 overflow-x-auto scrollbar-none">
+    <div class="mobile-categories bg-slate-50 border-t border-slate-200 overflow-x-auto scrollbar-none">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-4 py-2 text-xs font-semibold text-slate-700">
             <button type="button" data-open-drawer="category-drawer" class="flex items-center gap-1.5 text-[#00A651] hover:underline cursor-pointer font-bold shrink-0">
                 <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
