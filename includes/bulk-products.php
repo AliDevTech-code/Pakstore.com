@@ -329,6 +329,9 @@ function bulk_col_index(string $reference): int
 function bulk_xlsx_first_sheet(ZipArchive $zip): string
 {
     $fallback = 'xl/worksheets/sheet1.xml';
+    if (!function_exists('simplexml_load_string')) {
+        return $fallback;
+    }
     $workbookXml = $zip->getFromName('xl/workbook.xml');
     $relsXml = $zip->getFromName('xl/_rels/workbook.xml.rels');
     if ($workbookXml === false || $relsXml === false) {
@@ -364,28 +367,20 @@ function bulk_xlsx_first_sheet(ZipArchive $zip): string
     return $fallback;
 }
 
-/** Collect text from XLSX inline/shared string nodes (works with rich text runs). */
-function bulk_xlsx_text(SimpleXMLElement $node, string $namespace): string
+/** Decode XML entities inside an XLSX cell. */
+function bulk_xlsx_decode(string $value): string
 {
-    $text = '';
-    foreach ($node->children($namespace) as $child) {
-        if ($child->getName() === 't') {
-            $text .= (string) $child;
-        } else {
-            $text .= bulk_xlsx_text($child, $namespace);
-        }
-    }
-    return $text;
+    return html_entity_decode($value, ENT_QUOTES | ENT_XML1, 'UTF-8');
 }
 
-/** Minimal XLSX reader (no external libraries needed). */
+/**
+ * Minimal XLSX reader based on direct XML matching.
+ * Works with inline strings (Markaz export) and shared strings (Excel export).
+ */
 function bulk_read_xlsx(string $path): array
 {
     if (!class_exists('ZipArchive')) {
         throw new RuntimeException('XLSX needs the PHP zip extension. Please save the file as CSV and upload that instead.');
-    }
-    if (!function_exists('simplexml_load_string')) {
-        throw new RuntimeException('XLSX needs the PHP SimpleXML extension. Please save the file as CSV instead.');
     }
 
     $zip = new ZipArchive();
@@ -393,57 +388,62 @@ function bulk_read_xlsx(string $path): array
         throw new RuntimeException('the file is not a valid XLSX workbook');
     }
 
-    $namespace = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
     $shared = [];
     $sharedXml = $zip->getFromName('xl/sharedStrings.xml');
-    if ($sharedXml !== false) {
-        $xml = @simplexml_load_string($sharedXml);
-        if ($xml !== false) {
-            $xml->registerXPathNamespace('m', $namespace);
-            $stringNodes = $xml->xpath('//m:si');
-            foreach ($stringNodes ?: [] as $item) {
-                $shared[] = bulk_xlsx_text($item, $namespace);
+    if ($sharedXml !== false && preg_match_all('~<si\b[^>]*>(.*?)</si>~s', $sharedXml, $sharedMatches)) {
+        foreach ($sharedMatches[1] as $item) {
+            $text = '';
+            if (preg_match_all('~<t\b[^>]*>(.*?)</t>~s', $item, $textMatches)) {
+                foreach ($textMatches[1] as $part) {
+                    $text .= bulk_xlsx_decode($part);
+                }
             }
+            $shared[] = $text;
         }
     }
 
-    $sheetXml = $zip->getFromName(bulk_xlsx_first_sheet($zip));
+    $sheetXml = $zip->getFromName('xl/worksheets/sheet1.xml');
     if ($sheetXml === false) {
-        $zip->close();
+        $sheetXml = $zip->getFromName(bulk_xlsx_first_sheet($zip));
+    }
+    $zip->close();
+    if ($sheetXml === false) {
         throw new RuntimeException('worksheet not found in the workbook');
     }
 
-    $sheet = @simplexml_load_string($sheetXml);
-    $zip->close();
-    if ($sheet === false) {
-        throw new RuntimeException('worksheet could not be parsed');
-    }
-
-    $sheet->registerXPathNamespace('m', $namespace);
     $rows = [];
-    $rowNodes = $sheet->xpath('//m:sheetData/m:row');
-    if (!$rowNodes) {
+    if (!preg_match_all('~<row\b[^>]*>(.*?)</row>~s', $sheetXml, $rowMatches)) {
         return [];
     }
-    foreach ($rowNodes as $rowNode) {
-        $cells = [];
-        foreach ($rowNode->children($namespace) as $cell) {
-            if ($cell->getName() !== 'c') {
-                continue;
-            }
-            $column = bulk_col_index((string) $cell['r']);
-            $type = (string) $cell['t'];
-            $value = '';
 
+    foreach ($rowMatches[1] as $rowXml) {
+        if (!preg_match_all('~<c\b([^>]*)>(.*?)</c>~s', $rowXml, $cellsMatches, PREG_SET_ORDER)) {
+            continue;
+        }
+        $cells = [];
+        foreach ($cellsMatches as $cellMatch) {
+            $attributes = $cellMatch[1];
+            $body = $cellMatch[2];
+            $column = 0;
+            if (preg_match('~\br="([A-Z]+)\d+"~i', $attributes, $refMatch)) {
+                $column = bulk_col_index($refMatch[1]);
+            }
+            $type = '';
+            if (preg_match('~\bt="([^"]+)"~i', $attributes, $typeMatch)) {
+                $type = $typeMatch[1];
+            }
+
+            $value = '';
             if ($type === 'inlineStr') {
-                $value = bulk_xlsx_text($cell, $namespace);
-            } else {
-                $cellChildren = $cell->children($namespace);
-                if (isset($cellChildren->v)) {
-                    $value = (string) $cellChildren->v;
+                if (preg_match_all('~<t\b[^>]*>(.*?)</t>~s', $body, $textMatches)) {
+                    foreach ($textMatches[1] as $part) {
+                        $value .= bulk_xlsx_decode($part);
+                    }
                 }
-                if ($type === 's' && isset($shared[(int) $value])) {
-                    $value = $shared[(int) $value];
+            } elseif (preg_match('~<v\b[^>]*>(.*?)</v>~s', $body, $valueMatch)) {
+                $value = bulk_xlsx_decode($valueMatch[1]);
+                if ($type === 's') {
+                    $value = $shared[(int) $value] ?? '';
                 } elseif ($type === 'b') {
                     $value = $value === '1' ? 'TRUE' : 'FALSE';
                 }
