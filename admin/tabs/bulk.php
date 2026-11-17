@@ -149,9 +149,9 @@ foreach ($preview as $item) {
                     <p class="text-[10px] text-slate-500 mt-1">Maximum 12 MB aur 2000 rows. Pehle preview dikhega, phir confirm karna hoga.</p>
                 </div>
                 <div>
-                    <label for="default-stock" class="block text-xs font-semibold text-slate-700 mb-1">Default stock (agar sheet mein qty na ho)</label>
-                    <input id="default-stock" name="default_stock" type="number" min="0" step="1" value="<?= BULK_DEFAULT_STOCK ?>" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-mono focus:outline-[#00A651]">
-                    <p class="text-[10px] text-slate-500 mt-1">Markaz export mein qty empty hoti hai — to ye stock lagega.</p>
+                    <label for="default-stock" class="block text-xs font-semibold text-slate-700 mb-1">Default stock (0 = random 20-80)</label>
+                    <input id="default-stock" name="default_stock" type="number" min="0" step="1" value="0" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-mono focus:outline-[#00A651]">
+                    <p class="text-[10px] text-slate-500 mt-1">Markaz export mein qty empty hoti hai — 0 rakhein to har product ko random stock milega.</p>
                 </div>
                 <label class="flex items-center gap-2 text-[11px] text-slate-600 cursor-pointer">
                     <input type="checkbox" name="create_categories" value="1" checked class="w-3.5 h-3.5 accent-[#00A651]">

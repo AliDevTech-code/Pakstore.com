@@ -21,28 +21,28 @@ if ($activeSlug !== '' && !$activeCategoryRow) {
 
 $categories = all_categories();
 
-/* ---------------- Banner slides ---------------- */
-$banners = [];
-ensure_banner_size_columns();
+/* ---------------- Auto product slider (replaces banner) ---------------- */
 try {
-    $banners = db()->query(
-        'SELECT * FROM banners WHERE is_active = 1 ORDER BY sort_order ASC, id DESC'
+    $featuredProducts = db()->query(
+        "SELECT p.*, c.name AS category_name
+         FROM products p LEFT JOIN categories c ON c.id = p.category_id
+         WHERE p.in_stock = 1 AND p.stock > 0 AND p.image <> ''
+         ORDER BY p.created_at DESC, p.id DESC
+         LIMIT 12"
     )->fetchAll();
-} catch (Throwable $e) {
-    error_log('Banner query failed: ' . $e->getMessage());
-}
-
-/* Display shape follows the first banner's saved width/height (default 1600x400). */
-$bannerWidth  = 1600;
-$bannerHeight = 400;
-if ($banners) {
-    $savedW = (int) ($banners[0]['image_width'] ?? 0);
-    $savedH = (int) ($banners[0]['image_height'] ?? 0);
-    if ($savedW > 0 && $savedH > 0) {
-        $bannerWidth  = $savedW;
-        $bannerHeight = $savedH;
+    if (!$featuredProducts) {
+        $featuredProducts = db()->query(
+            "SELECT p.*, c.name AS category_name
+             FROM products p LEFT JOIN categories c ON c.id = p.category_id
+             WHERE p.image <> ''
+             ORDER BY p.id DESC LIMIT 12"
+        )->fetchAll();
     }
+} catch (Throwable $e) {
+    error_log('Featured products query failed: ' . $e->getMessage());
+    $featuredProducts = [];
 }
+$featuredSlides = array_chunk($featuredProducts, 4);
 
 /* ---------------- Product query ---------------- */
 $where = ['1 = 1'];
@@ -123,30 +123,47 @@ require __DIR__ . '/includes/header.php';
         </div>
     </section>
 
-    <?php if ($banners): ?>
-    <!-- ================= BANNER SLIDER ================= -->
-    <section data-hero-slider class="relative overflow-hidden bg-slate-950 text-white border-b border-slate-800 min-h-[150px] sm:min-h-[220px] flex flex-col justify-end" style="aspect-ratio: <?= (int) $bannerWidth ?> / <?= (int) $bannerHeight ?>; max-height: <?= (int) $bannerHeight ?>px;">
-        <div class="absolute inset-0 z-0 overflow-hidden">
-            <?php foreach ($banners as $i => $banner): ?>
-                <div class="hero-slide <?= $i === 0 ? 'is-active' : '' ?>">
-                    <img src="<?= e(image_url($banner['image'])) ?>" alt="<?= e($banner['title']) ?>" loading="<?= $i === 0 ? 'eager' : 'lazy' ?>">
+    <?php if ($featuredSlides): ?>
+    <!-- ================= AUTO PRODUCT SLIDER ================= -->
+    <section data-hero-slider class="relative overflow-hidden bg-slate-50 border-b border-slate-200 min-h-[230px] sm:min-h-[260px]">
+        <?php foreach ($featuredSlides as $slideIndex => $slideProducts): ?>
+            <div class="hero-slide <?= $slideIndex === 0 ? 'is-active' : '' ?> bg-slate-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+                    <div class="flex items-center justify-between gap-3 mb-3">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="sparkles" class="w-4 h-4 text-[#FF6B00]"></i>
+                            <h2 class="text-sm sm:text-base font-black text-slate-900 tracking-tight">Featured Products</h2>
+                            <span class="text-[10px] text-slate-500 hidden sm:inline">&middot; Cash on Delivery available</span>
+                        </div>
+                        <a href="<?= e(url('index.php#catalog-section')) ?>" class="text-[11px] font-bold text-[#00A651] hover:underline shrink-0">View all &rarr;</a>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
+                        <?php foreach ($slideProducts as $featured): ?>
+                            <a href="<?= e(url('product.php?id=' . (int) $featured['id'])) ?>" class="bg-white rounded-xl border border-slate-200 overflow-hidden flex items-center gap-2.5 p-2 hover:shadow-md hover:border-[#00A651]/40 transition-all min-w-0">
+                                <img src="<?= e(image_url($featured['image'])) ?>" alt="<?= e($featured['title']) ?>" class="w-14 h-14 sm:w-16 sm:h-16 rounded-lg object-cover bg-slate-100 shrink-0" loading="lazy">
+                                <span class="min-w-0">
+                                    <span class="block text-[11px] sm:text-xs font-bold text-slate-900 line-clamp-2 leading-snug"><?= e($featured['title']) ?></span>
+                                    <span class="block text-xs font-black text-[#00A651] mt-1"><?= e(money($featured['price'])) ?></span>
+                                </span>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
-            <?php endforeach; ?>
-        </div>
+            </div>
+        <?php endforeach; ?>
 
-        <?php if (count($banners) > 1): ?>
-            <div class="absolute right-3 top-1/2 -translate-y-1/2 z-20 hidden md:flex flex-col gap-2">
-                <button type="button" data-hero-prev class="p-2.5 rounded-full bg-slate-900/70 hover:bg-[#00A651] text-white border border-white/30 transition-colors backdrop-blur-md" aria-label="Previous slide">
+        <?php if (count($featuredSlides) > 1): ?>
+            <div class="absolute left-2 right-2 top-1/2 -translate-y-1/2 z-20 flex justify-between pointer-events-none">
+                <button type="button" data-hero-prev class="pointer-events-auto p-2 rounded-full bg-white/90 hover:bg-[#00A651] text-slate-800 hover:text-white border border-slate-200 shadow-md transition-colors" aria-label="Previous products">
                     <i data-lucide="chevron-left" class="w-4 h-4"></i>
                 </button>
-                <button type="button" data-hero-next class="p-2.5 rounded-full bg-slate-900/70 hover:bg-[#00A651] text-white border border-white/30 transition-colors backdrop-blur-md" aria-label="Next slide">
+                <button type="button" data-hero-next class="pointer-events-auto p-2 rounded-full bg-white/90 hover:bg-[#00A651] text-slate-800 hover:text-white border border-slate-200 shadow-md transition-colors" aria-label="Next products">
                     <i data-lucide="chevron-right" class="w-4 h-4"></i>
                 </button>
             </div>
-
-            <div class="relative z-20 flex items-center justify-center gap-1.5 pb-3 sm:pb-4">
-                <?php foreach ($banners as $idx => $banner): ?>
-                    <button type="button" data-hero-dot="<?= $idx ?>" class="hero-dot rounded-full h-1.5 <?= $idx === 0 ? 'w-7 bg-[#FF6B00]' : 'w-2 bg-white/50 hover:bg-white/80' ?>" aria-label="Go to slide <?= $idx + 1 ?>"></button>
+            <div class="relative z-20 flex items-center justify-center gap-1.5 pb-2 pt-1">
+                <?php foreach ($featuredSlides as $idx => $unused): ?>
+                    <button type="button" data-hero-dot="<?= $idx ?>" class="hero-dot rounded-full h-1.5 <?= $idx === 0 ? 'w-7 bg-[#FF6B00]' : 'w-2 bg-slate-300 hover:bg-slate-400' ?>" aria-label="Go to slide <?= $idx + 1 ?>"></button>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>

@@ -3,6 +3,11 @@
 Options -Indexes
 DirectoryIndex index.php index.html
 
+# SEO: serve dynamic XML sitemap and robots.txt at their standard URLs.
+RewriteEngine On
+RewriteRule ^sitemap\.xml$ sitemap.php [L,NC]
+RewriteRule ^robots\.txt$ robots.php [L,NC]
+
 # Never allow direct access to source / database / documentation files.
 <FilesMatch "\.(sql|md|lock|ini|log|sh|bak|example)$">
     Require all denied

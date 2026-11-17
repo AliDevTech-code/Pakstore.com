@@ -131,13 +131,13 @@ if (empty($structuredData)) {
                     <?php endif; ?>
                 </a>
 
-                <button type="button" data-open-drawer="category-drawer" class="p-2 rounded-lg text-slate-700 hover:text-[#00A651] hover:bg-emerald-50 border border-slate-200 transition-colors cursor-pointer flex items-center gap-1.5" title="Categories Menu" aria-label="Open Categories Menu">
+                <button type="button" data-open-drawer="category-drawer" class="lg:hidden p-2 rounded-lg text-slate-700 hover:text-[#00A651] hover:bg-emerald-50 border border-slate-200 transition-colors cursor-pointer flex items-center gap-1.5" title="Categories Menu" aria-label="Open Categories Menu">
                     <i data-lucide="menu" class="w-5 h-5"></i>
                     <span class="hidden sm:inline text-xs font-bold">Categories</span>
                 </button>
             </div>
 
-            <div class="flex-1 min-w-0 max-w-2xl">
+            <div class="flex-1 min-w-0 max-w-2xl hidden lg:block">
                 <form action="<?= e(url('index.php')) ?>" method="get" class="relative flex items-center" role="search">
                     <input type="search" name="q" value="<?= e($searchQuery) ?>" placeholder="Search products..." class="w-full pl-3 sm:pl-4 pr-10 sm:pr-12 py-2 sm:py-2.5 text-xs bg-slate-100/90 border border-slate-300 rounded-lg focus:outline-none focus:border-[#00A651] focus:bg-white text-slate-900 placeholder-slate-400 transition-all shadow-inner" aria-label="Search products">
                     <button type="submit" class="absolute right-1 top-1 bottom-1 px-2.5 sm:px-3.5 bg-[#FF6B00] hover:bg-[#e05e00] text-white rounded-md flex items-center justify-center transition-colors cursor-pointer" title="Search Products">
@@ -147,6 +147,9 @@ if (empty($structuredData)) {
             </div>
 
             <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+                <button type="button" data-search-toggle class="lg:hidden p-2 rounded-lg border border-slate-200 text-slate-700 hover:text-[#00A651] hover:bg-emerald-50 transition-colors" title="Search products" aria-label="Open search">
+                    <i data-lucide="search" class="w-5 h-5"></i>
+                </button>
                 <details class="relative group">
                     <summary class="list-none flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-lg bg-[#00A651] hover:bg-[#008f45] border border-[#00A651] text-xs font-bold text-white transition-colors cursor-pointer shadow-sm">
                         <i data-lucide="user" class="w-4 h-4"></i>
@@ -210,6 +213,16 @@ if (empty($structuredData)) {
                 </details>
             </div>
         </div>
+    </div>
+
+    <!-- Mobile search panel (opens from the 🔍 button) -->
+    <div id="mobile-search-panel" class="hidden lg:hidden px-3 pb-3 pt-1 border-t border-slate-100 bg-white">
+        <form action="<?= e(url('index.php')) ?>" method="get" class="relative flex items-center" role="search">
+            <input type="search" name="q" value="<?= e($searchQuery) ?>" placeholder="Search products..." class="w-full pl-3 pr-12 py-2.5 text-xs bg-slate-100 border border-slate-300 rounded-lg focus:outline-none focus:border-[#00A651] text-slate-900" aria-label="Search products">
+            <button type="submit" class="absolute right-1 top-1 bottom-1 px-3 bg-[#FF6B00] text-white rounded-md flex items-center justify-center" aria-label="Submit search">
+                <i data-lucide="search" class="w-4 h-4"></i>
+            </button>
+        </form>
     </div>
 
     <!-- Category quick strip -->

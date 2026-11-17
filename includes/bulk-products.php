@@ -17,7 +17,7 @@ const BULK_IMPORT_SESSION_KEY = 'pakstore_bulk_import';
 const BULK_IMPORT_MAX_ROWS    = 2000;
 const BULK_IMPORT_MAX_BYTES   = 12582912; // 12 MB
 const BULK_EXPORT_IMAGE_SLOTS = 6;
-const BULK_DEFAULT_STOCK      = 10; // used when the sheet has no quantity column/values
+const BULK_DEFAULT_STOCK      = 0; // 0 = random 20-80 when the sheet has no quantity values
 
 /** Columns used by the CSV export (also the sample import file). */
 function bulk_export_columns(): array
@@ -704,7 +704,8 @@ function bulk_group_variant_rows(array $rows, array $map, int $defaultStock): ar
             }
         }
 
-        $product = bulk_normalize_rows([$merged], $map, $stockSeen ? $stockTotal : $defaultStock)[0];
+        $finalStock = $stockSeen ? $stockTotal : ($defaultStock > 0 ? $defaultStock : random_int(20, 80));
+        $product = bulk_normalize_rows([$merged], $map, $finalStock)[0];
         $product['source_row'] = $group['source_row'];
         $products[] = $product;
     }
@@ -738,7 +739,9 @@ function bulk_normalize_rows(array $rows, array $map, int $defaultStock = 0): ar
         $price = bulk_number($priceRaw);
         $original = bulk_number($get('original_price'));
         $stockRaw = $get('stock');
-        $stock = $stockRaw === '' ? $defaultStock : (int) bulk_number($stockRaw);
+        $stock = $stockRaw === ''
+            ? ($defaultStock > 0 ? $defaultStock : random_int(20, 80))
+            : (int) bulk_number($stockRaw);
         $errors = [];
 
         if ($name === '') {

@@ -48,6 +48,21 @@
     }
   });
 
+  /* ---------------- Mobile search toggle ---------------- */
+  document.addEventListener('click', function (event) {
+    var toggle = event.target.closest('[data-search-toggle]');
+    if (!toggle) return;
+    event.preventDefault();
+    var panel = document.getElementById('mobile-search-panel');
+    if (!panel) return;
+    var opening = panel.classList.contains('hidden');
+    panel.classList.toggle('hidden', !opening);
+    if (opening) {
+      var input = panel.querySelector('input[type="search"]');
+      if (input) input.focus();
+    }
+  });
+
   /* ---------------- Hero slider ---------------- */
   function initSlider() {
     var root = qs('[data-hero-slider]');
