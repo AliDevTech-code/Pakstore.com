@@ -33,9 +33,14 @@ $categories = all_categories();
         <h1 class="text-2xl font-black text-slate-900 tracking-tight">Products</h1>
         <p class="text-xs text-slate-500 mt-1"><?= count($products) ?> product<?= count($products) === 1 ? '' : 's' ?> in the catalog.</p>
     </div>
-    <a href="<?= e(url('admin/product-edit.php')) ?>" class="px-3.5 py-2 bg-[#00A651] hover:bg-[#008f45] text-white rounded-lg text-xs font-bold flex items-center gap-1.5">
-        <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add New Product
-    </a>
+    <div class="flex items-center gap-2">
+        <a href="<?= e(url('admin/index.php?tab=bulk')) ?>" class="px-3.5 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-bold flex items-center gap-1.5">
+            <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Import / Export
+        </a>
+        <a href="<?= e(url('admin/product-edit.php')) ?>" class="px-3.5 py-2 bg-[#00A651] hover:bg-[#008f45] text-white rounded-lg text-xs font-bold flex items-center gap-1.5">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add New Product
+        </a>
+    </div>
 </div>
 
 <form method="get" action="<?= e(url('admin/index.php')) ?>" class="bg-white border border-slate-200 rounded-xl p-3 mb-4 flex flex-col sm:flex-row gap-2">

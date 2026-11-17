@@ -14,6 +14,7 @@ function admin_tabs(): array
         'dashboard'  => ['label' => 'Dashboard', 'icon' => 'gauge', 'file' => 'dashboard.php'],
         'orders'     => ['label' => 'Orders', 'icon' => 'package', 'file' => 'orders.php'],
         'products'   => ['label' => 'Products', 'icon' => 'shopping-bag', 'file' => 'products.php'],
+        'bulk'       => ['label' => 'Import / Export', 'icon' => 'file-spreadsheet', 'file' => 'bulk.php'],
         'categories' => ['label' => 'Categories', 'icon' => 'tag', 'file' => 'categories.php'],
         'banners'    => ['label' => 'Banners', 'icon' => 'image', 'file' => 'banners.php'],
         'users'      => ['label' => 'Customers', 'icon' => 'users', 'file' => 'users.php'],

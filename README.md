@@ -125,12 +125,42 @@ The seeded password hash is SHA-256. On the first successful login it is automat
 - Cancelling an order automatically returns its items to stock
 - Printable A5 courier slip / packing label
 - Products: add, edit, delete, image upload (JPG/PNG/WEBP/GIF, max 3 MB), gallery, features, SKU, stock, badge, compare-at price
+- **Bulk Import / Export**: download the whole catalog as a UTF-8 Excel/CSV file and import sheets exported from other apps (e.g. Markaz). Multiple image URLs per product are supported in one `images` column (comma separated) or across several image columns
 - Categories: add, edit, delete; products become uncategorized when a category is deleted
 - Hero banners: upload image, subtitle, badge, link, sort order, active/hidden
 - Customers: list, search, order count, total spent, delete
 - Analytics: sales today / 7 days / 30 days, average order, fulfilment rate, best sellers, sales by city and a 14-day revenue chart
 - Settings: store name, logo upload, phone, WhatsApp, email, delivery charges, announcement bar
 - Admin account management and password change
+
+---
+
+## 4.1 Bulk Import / Export (Admin → Store → Import / Export)
+
+**Export:** click *Download Products CSV*. The file contains `id, name, sku, category, price,
+original_price, stock, badge, description, features, image, images, in_stock`.
+When a product has more than one image, every URL is written to `images`, separated by commas
+(main image first), and also as `image` + extra URLs in the gallery. The file is UTF-8 with a BOM,
+so Excel opens Urdu/Unicode text correctly. *Sample Format* downloads two example rows.
+
+**Import:** upload a `.csv`, `.txt` or `.xlsx` sheet (max 12 MB / 2000 rows), review the preview,
+then confirm. The first row must be a header. Column names are matched by aliases, for example:
+
+| Field | Accepted header examples |
+|---|---|
+| Name | `name`, `product name`, `title` |
+| Description | `description`, `details`, `product description` |
+| Price | `price`, `sale price`, `selling price` |
+| Images | `images`, `image`, `image url`, `gallery`, `photo` |
+| Category / SKU / Stock | `category`, `sku`, `stock` / `qty` |
+
+Image URLs can be comma/pipe/newline separated in one cell, a JSON array, Markdown links, or split
+across `image 1`, `image 2`, … columns. The first URL becomes the main image; the rest are stored in
+the gallery. Rows are matched by ID first, then SKU; unmatched rows are inserted. Missing categories
+are created automatically (toggle in the import form).
+
+`.xlsx` support needs PHP's `zip` and `simplexml` extensions. If they are unavailable on the host,
+save the sheet as CSV and upload that instead.
 
 ---
 

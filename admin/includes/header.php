@@ -8,7 +8,7 @@ $pageTitle = $pageTitle ?? ('Admin - ' . $adminStoreName);
 
 $adminNavGroups = [
     'Overview' => ['dashboard', 'analytics'],
-    'Store'    => ['orders', 'products', 'categories', 'banners'],
+    'Store'    => ['orders', 'products', 'bulk', 'categories', 'banners'],
     'People'   => ['users'],
     'System'   => ['settings'],
 ];
