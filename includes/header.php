@@ -87,7 +87,7 @@ if (empty($structuredData)) {
     <link rel="preload" href="<?= e(url('assets/fonts/outfit-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 
     <link rel="stylesheet" href="<?= e(url('assets/css/tailwind.css') . '?v=4') ?>">
-    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=5') ?>">
+    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=6') ?>">
     <script src="<?= e(url('assets/js/lucide.min.js')) ?>"></script>
     <style>
         /* Keep drawers closed by default even if the external stylesheet fails to load. */
@@ -108,7 +108,7 @@ if (empty($structuredData)) {
 <header class="sticky top-0 z-30 bg-white border-b border-slate-200 text-slate-800 shadow-sm print-hide">
     <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between gap-2 sm:gap-4 h-[64px] sm:h-[72px]">
-            <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
+            <div class="nav-left flex items-center gap-1.5 sm:gap-3 shrink-0">
                 <a href="<?= e(url('index.php')) ?>" class="flex items-center gap-1.5 text-left group cursor-pointer shrink-0" aria-label="<?= e($storeName) ?> home">
                     <span id="store-text-logo" class="<?= $logoUrl !== '' ? 'hidden ' : 'flex ' ?>items-end">
                         <span class="text-xl sm:text-3xl font-black tracking-tight text-[#00A651]">Pak</span>
@@ -135,9 +135,22 @@ if (empty($structuredData)) {
                 </form>
             </div>
 
+            <!-- Mobile inline search: opens inside the navbar on the left -->
+            <div class="mobile-inline-search flex-1 min-w-0">
+                <form action="<?= e(url('index.php')) ?>" method="get" class="relative flex items-center" role="search">
+                    <input type="search" name="q" value="<?= e($searchQuery) ?>" placeholder="Search products..." class="w-full pl-3 pr-11 py-2 text-xs bg-slate-100 border border-slate-300 rounded-lg focus:outline-none focus:border-[#00A651] text-slate-900" aria-label="Search products">
+                    <button type="submit" class="absolute right-1 top-1 bottom-1 px-2.5 bg-[#FF6B00] text-white rounded-md flex items-center justify-center" aria-label="Submit search">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                    </button>
+                </form>
+            </div>
+
             <div class="flex items-center gap-1 sm:gap-2 shrink-0">
                 <button type="button" data-search-toggle class="mobile-menu-btn p-2 rounded-lg border border-slate-200 text-slate-700 hover:text-[#00A651] hover:bg-emerald-50 transition-colors" title="Search products" aria-label="Open search">
                     <i data-lucide="search" class="w-5 h-5"></i>
+                </button>
+                <button type="button" data-search-close class="search-close-btn p-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors" title="Close search" aria-label="Close search">
+                    <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
                 <details class="relative group">
                     <summary class="list-none flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-lg bg-[#00A651] hover:bg-[#008f45] border border-[#00A651] text-xs font-bold text-white transition-colors cursor-pointer shadow-sm">
@@ -206,34 +219,32 @@ if (empty($structuredData)) {
 
     <script>
     (function () {
+      var header = document.currentScript ? document.currentScript.closest('header') : null;
+      function setSearch(open) {
+        header = header || document.querySelector('header.sticky');
+        if (!header) return;
+        header.classList.toggle('search-open', open);
+        var btn = header.querySelector('[data-search-toggle]');
+        if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (open) {
+          var i = header.querySelector('.mobile-inline-search input[type=search]');
+          if (i) { try { i.focus(); } catch (x) {} }
+        }
+      }
+      window.setSearch = setSearch;
       function bind() {
-        var btn = document.querySelector('[data-search-toggle]');
-        var panel = document.getElementById('mobile-search-panel');
-        if (!btn || !panel || btn.dataset.searchToggleBound) return;
-        btn.dataset.searchToggleBound = '1';
-        btn.addEventListener('click', function (e) {
-          e.preventDefault(); e.stopPropagation();
-          var open = panel.classList.contains('hidden') || panel.hidden;
-          panel.classList.toggle('hidden', !open);
-          panel.hidden = !open;
-          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-          if (open) { var i = panel.querySelector('input[type=search]'); if (i) try { i.focus(); } catch (x) {} }
-        });
+        header = header || document.querySelector('header.sticky');
+        if (!header || header.dataset.searchBound) return;
+        header.dataset.searchBound = '1';
+        var openBtn = header.querySelector('[data-search-toggle]');
+        var closeBtn = header.querySelector('[data-search-close]');
+        if (openBtn) openBtn.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); setSearch(true); });
+        if (closeBtn) closeBtn.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); setSearch(false); });
       }
       bind();
       document.addEventListener('DOMContentLoaded', bind);
     })();
     </script>
-
-    <!-- Mobile search panel (opens from the 🔍 button) -->
-    <div id="mobile-search-panel" class="hidden lg:hidden px-3 pb-3 pt-1 border-t border-slate-100 bg-white">
-        <form action="<?= e(url('index.php')) ?>" method="get" class="relative flex items-center" role="search">
-            <input type="search" name="q" value="<?= e($searchQuery) ?>" placeholder="Search products..." class="w-full pl-3 pr-12 py-2.5 text-xs bg-slate-100 border border-slate-300 rounded-lg focus:outline-none focus:border-[#00A651] text-slate-900" aria-label="Search products">
-            <button type="submit" class="absolute right-1 top-1 bottom-1 px-3 bg-[#FF6B00] text-white rounded-md flex items-center justify-center" aria-label="Submit search">
-                <i data-lucide="search" class="w-4 h-4"></i>
-            </button>
-        </form>
-    </div>
 
     <!-- Category quick strip -->
     <div class="mobile-categories bg-slate-50 border-t border-slate-200 overflow-x-auto scrollbar-none">

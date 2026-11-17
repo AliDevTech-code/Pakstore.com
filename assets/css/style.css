@@ -75,6 +75,17 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 .desktop-search { display: none; }
 .mobile-menu-btn { display: inline-flex; }
 .mobile-categories { display: block; }
+.mobile-inline-search { display: none; }
+.search-close-btn { display: none; }
+
+/* Mobile: 🔍 opens the search inline on the LEFT of the navbar. */
+@media (max-width: 1023px) {
+  header.search-open .nav-left { display: none; }
+  header.search-open .mobile-inline-search { display: block; }
+  header.search-open [data-search-toggle] { display: none; }
+  header.search-open .search-close-btn { display: inline-flex; }
+}
+
 @media (min-width: 1024px) {
   .desktop-search { display: block; }
   .mobile-menu-btn { display: none; }
