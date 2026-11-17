@@ -354,7 +354,7 @@ function bulk_xlsx_first_sheet(ZipArchive $zip): string
         return $fallback;
     }
 
-    foreach ($rels->xpath('//r:Relationship') as $relation) {
+    foreach ($rels->xpath('//r:Relationship') ?: [] as $relation) {
         if ((string) $relation['Id'] !== $relationId) {
             continue;
         }
@@ -362,6 +362,20 @@ function bulk_xlsx_first_sheet(ZipArchive $zip): string
         return str_starts_with($target, 'xl/') ? $target : 'xl/' . $target;
     }
     return $fallback;
+}
+
+/** Collect text from XLSX inline/shared string nodes (works with rich text runs). */
+function bulk_xlsx_text(SimpleXMLElement $node, string $namespace): string
+{
+    $text = '';
+    foreach ($node->children($namespace) as $child) {
+        if ($child->getName() === 't') {
+            $text .= (string) $child;
+        } else {
+            $text .= bulk_xlsx_text($child, $namespace);
+        }
+    }
+    return $text;
 }
 
 /** Minimal XLSX reader (no external libraries needed). */
@@ -379,18 +393,16 @@ function bulk_read_xlsx(string $path): array
         throw new RuntimeException('the file is not a valid XLSX workbook');
     }
 
+    $namespace = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
     $shared = [];
     $sharedXml = $zip->getFromName('xl/sharedStrings.xml');
     if ($sharedXml !== false) {
         $xml = @simplexml_load_string($sharedXml);
         if ($xml !== false) {
-            $xml->registerXPathNamespace('m', 'http://schemas.openxmlformats.org/spreadsheetml/2006/main');
-            foreach ($xml->xpath('//m:si') as $item) {
-                $text = '';
-                foreach ($item->xpath('.//m:t') as $node) {
-                    $text .= (string) $node;
-                }
-                $shared[] = $text;
+            $xml->registerXPathNamespace('m', $namespace);
+            $stringNodes = $xml->xpath('//m:si');
+            foreach ($stringNodes ?: [] as $item) {
+                $shared[] = bulk_xlsx_text($item, $namespace);
             }
         }
     }
@@ -407,23 +419,28 @@ function bulk_read_xlsx(string $path): array
         throw new RuntimeException('worksheet could not be parsed');
     }
 
-    $sheet->registerXPathNamespace('m', 'http://schemas.openxmlformats.org/spreadsheetml/2006/main');
+    $sheet->registerXPathNamespace('m', $namespace);
     $rows = [];
-    foreach ($sheet->xpath('//m:sheetData/m:row') as $rowNode) {
+    $rowNodes = $sheet->xpath('//m:sheetData/m:row');
+    if (!$rowNodes) {
+        return [];
+    }
+    foreach ($rowNodes as $rowNode) {
         $cells = [];
-        foreach ($rowNode->xpath('./m:c') as $cell) {
+        foreach ($rowNode->children($namespace) as $cell) {
+            if ($cell->getName() !== 'c') {
+                continue;
+            }
             $column = bulk_col_index((string) $cell['r']);
             $type = (string) $cell['t'];
             $value = '';
 
             if ($type === 'inlineStr') {
-                foreach ($cell->xpath('.//m:t') as $node) {
-                    $value .= (string) $node;
-                }
+                $value = bulk_xlsx_text($cell, $namespace);
             } else {
-                $valueNodes = $cell->xpath('./m:v');
-                if ($valueNodes) {
-                    $value = (string) $valueNodes[0];
+                $cellChildren = $cell->children($namespace);
+                if (isset($cellChildren->v)) {
+                    $value = (string) $cellChildren->v;
                 }
                 if ($type === 's' && isset($shared[(int) $value])) {
                     $value = $shared[(int) $value];
