@@ -204,6 +204,27 @@ if (empty($structuredData)) {
         </div>
     </div>
 
+    <script>
+    (function () {
+      function bind() {
+        var btn = document.querySelector('[data-search-toggle]');
+        var panel = document.getElementById('mobile-search-panel');
+        if (!btn || !panel || btn.dataset.searchToggleBound) return;
+        btn.dataset.searchToggleBound = '1';
+        btn.addEventListener('click', function (e) {
+          e.preventDefault(); e.stopPropagation();
+          var open = panel.classList.contains('hidden') || panel.hidden;
+          panel.classList.toggle('hidden', !open);
+          panel.hidden = !open;
+          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+          if (open) { var i = panel.querySelector('input[type=search]'); if (i) try { i.focus(); } catch (x) {} }
+        });
+      }
+      bind();
+      document.addEventListener('DOMContentLoaded', bind);
+    })();
+    </script>
+
     <!-- Mobile search panel (opens from the 🔍 button) -->
     <div id="mobile-search-panel" class="hidden lg:hidden px-3 pb-3 pt-1 border-t border-slate-100 bg-white">
         <form action="<?= e(url('index.php')) ?>" method="get" class="relative flex items-center" role="search">

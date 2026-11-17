@@ -84,6 +84,6 @@ $footerCount      = cart_count();
     </div>
 </footer>
 
-<script src="<?= e(url('assets/js/main.js') . '?v=3') ?>"></script>
+<script src="<?= e(url('assets/js/main.js') . '?v=4') ?>"></script>
 </body>
 </html>

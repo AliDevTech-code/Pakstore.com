@@ -49,19 +49,38 @@
   });
 
   /* ---------------- Mobile search toggle ---------------- */
-  document.addEventListener('click', function (event) {
-    var toggle = event.target.closest('[data-search-toggle]');
-    if (!toggle) return;
-    event.preventDefault();
+  function toggleSearchPanel(forceOpen) {
     var panel = document.getElementById('mobile-search-panel');
     if (!panel) return;
-    var opening = panel.classList.contains('hidden');
+    var isHidden = panel.classList.contains('hidden') || panel.hidden;
+    var opening = typeof forceOpen === 'boolean' ? forceOpen : isHidden;
     panel.classList.toggle('hidden', !opening);
+    panel.hidden = !opening;
+    qsa('[data-search-toggle]').forEach(function (btn) {
+      btn.setAttribute('aria-expanded', opening ? 'true' : 'false');
+    });
     if (opening) {
       var input = panel.querySelector('input[type="search"]');
-      if (input) input.focus();
+      if (input) { try { input.focus(); } catch (e) {} }
     }
-  });
+  }
+  window.toggleSearchPanel = toggleSearchPanel;
+
+  function bindSearchToggle() {
+    qsa('[data-search-toggle]').forEach(function (btn) {
+      if (btn.dataset.searchToggleBound) return;
+      btn.dataset.searchToggleBound = '1';
+      btn.addEventListener('click', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        toggleSearchPanel();
+      });
+    });
+  }
+
+  // Bind now (footer script runs after the markup) and again on DOM ready.
+  bindSearchToggle();
+  document.addEventListener('DOMContentLoaded', bindSearchToggle);
 
   /* ---------------- Hero slider ---------------- */
   function initSlider() {
