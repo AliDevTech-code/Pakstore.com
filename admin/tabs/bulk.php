@@ -103,8 +103,14 @@ foreach ($preview as $item) {
         </div>
 
         <?php if ($preview): ?>
+            <?php if (!empty($import['grouped'])): ?>
+                <div class="mt-3 p-3 rounded-lg bg-sky-50 border border-sky-200 text-[11px] text-sky-800">
+                    <i data-lucide="layers" class="w-3.5 h-3.5 inline-block align-text-bottom"></i>
+                    Markaz / Shopify variant sheet detect ho gayi: <strong><?= (int) $import['sheet_rows'] ?></strong> sheet rows ko group kar ke <strong><?= count($preview) ?></strong> products banaye gaye (same Handle wale variants + extra image rows ek hi product).
+                </div>
+            <?php endif; ?>
             <div class="mt-3 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-800">
-                <strong><?= count($preview) ?></strong> row(s) preview ke liye taiyar hain &middot;
+                <strong><?= count($preview) ?></strong> product(s) preview ke liye taiyar hain &middot;
                 <strong><?= $readyCount ?></strong> import ho sakte hain &middot;
                 <strong><?= $multiImageCount ?></strong> mein 1 se ziyada images hain
                 <?php if ($errorCount): ?> &middot; <strong class="text-rose-700"><?= $errorCount ?></strong> row(s) skip honge<?php endif; ?>
@@ -141,6 +147,11 @@ foreach ($preview as $item) {
                     <label for="bulk-file" class="block text-xs font-semibold text-slate-700 mb-1">Sheet file choose karein</label>
                     <input id="bulk-file" name="file" type="file" accept=".csv,.txt,.xlsx" required class="w-full text-xs border border-slate-300 rounded-lg p-2 bg-white file:mr-2 file:px-2.5 file:py-1 file:rounded file:border-0 file:bg-slate-900 file:text-white file:text-[11px] file:font-bold">
                     <p class="text-[10px] text-slate-500 mt-1">Maximum 12 MB aur 2000 rows. Pehle preview dikhega, phir confirm karna hoga.</p>
+                </div>
+                <div>
+                    <label for="default-stock" class="block text-xs font-semibold text-slate-700 mb-1">Default stock (agar sheet mein qty na ho)</label>
+                    <input id="default-stock" name="default_stock" type="number" min="0" step="1" value="<?= BULK_DEFAULT_STOCK ?>" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-mono focus:outline-[#00A651]">
+                    <p class="text-[10px] text-slate-500 mt-1">Markaz export mein qty empty hoti hai — to ye stock lagega.</p>
                 </div>
                 <label class="flex items-center gap-2 text-[11px] text-slate-600 cursor-pointer">
                     <input type="checkbox" name="create_categories" value="1" checked class="w-3.5 h-3.5 accent-[#00A651]">

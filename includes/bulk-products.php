@@ -17,6 +17,7 @@ const BULK_IMPORT_SESSION_KEY = 'pakstore_bulk_import';
 const BULK_IMPORT_MAX_ROWS    = 2000;
 const BULK_IMPORT_MAX_BYTES   = 12582912; // 12 MB
 const BULK_EXPORT_IMAGE_SLOTS = 6;
+const BULK_DEFAULT_STOCK      = 10; // used when the sheet has no quantity column/values
 
 /** Columns used by the CSV export (also the sample import file). */
 function bulk_export_columns(): array
@@ -462,14 +463,16 @@ function bulk_field_aliases(): array
 {
     return [
         'id'             => ['id', 'product id', 'productid'],
+        'handle'         => ['handle', 'product handle', 'url handle'],
         'name'           => ['name', 'title', 'product name', 'product title', 'product', 'item name', 'item', 'product name english', 'name english'],
-        'description'    => ['description', 'desc', 'details', 'detail', 'product description', 'product details', 'about product', 'long description', 'description english'],
-        'price'          => ['price', 'sale price', 'selling price', 'sell price', 'product price', 'rate', 'amount', 'discounted price', 'special price', 'offer price'],
+        'description'    => ['description', 'desc', 'details', 'detail', 'product description', 'product details', 'about product', 'long description', 'description english', 'body (html)', 'body html', 'body'],
+        'price'          => ['price', 'sale price', 'selling price', 'sell price', 'product price', 'rate', 'amount', 'discounted price', 'special price', 'offer price', 'variant price'],
         'original_price' => ['original price', 'mrp', 'old price', 'regular price', 'compare at price', 'compare price', 'list price', 'retail price'],
-        'stock'          => ['stock', 'quantity', 'qty', 'inventory', 'available', 'available stock', 'stock quantity'],
-        'sku'            => ['sku', 'code', 'product code', 'productcode', 'barcode', 'item code'],
-        'category'       => ['category', 'category name', 'cat', 'product category', 'categoryname', 'type'],
-        'images'         => ['images', 'image', 'image url', 'image urls', 'imageurl', 'imageurls', 'gallery', 'gallery images', 'photos', 'photo', 'pictures', 'picture', 'product images', 'product image', 'image link', 'image links', 'main image', 'image 1', 'image1'],
+        'stock'          => ['stock', 'quantity', 'qty', 'inventory', 'available', 'available stock', 'stock quantity', 'variant inventory qty', 'variant qty', 'inventory qty'],
+        'sku'            => ['sku', 'code', 'product code', 'productcode', 'barcode', 'item code', 'variant sku'],
+        'category'       => ['category', 'category name', 'cat', 'product category', 'categoryname', 'type', 'product type'],
+        'tags'           => ['tags', 'tag', 'product tags'],
+        'images'         => ['images', 'image', 'image url', 'image urls', 'imageurl', 'imageurls', 'gallery', 'gallery images', 'photos', 'photo', 'pictures', 'picture', 'product images', 'product image', 'image link', 'image links', 'main image', 'image 1', 'image1', 'image src', 'image source', 'featured image'],
         'badge'          => ['badge', 'label', 'tag', 'ribbon'],
         'features'       => ['features', 'key features', 'specifications', 'specs', 'highlights'],
         'in_stock'       => ['in stock', 'instock', 'availability'],
@@ -500,16 +503,20 @@ function bulk_map_columns(array $header): array
             // Loose fallback for differently worded exports.
             if (str_contains($key, 'image') || str_contains($key, 'photo') || str_contains($key, 'picture') || str_contains($key, 'gallery')) {
                 $matched = 'images';
-            } elseif (str_contains($key, 'description') || str_contains($key, 'detail')) {
+            } elseif (str_contains($key, 'body') || str_contains($key, 'description') || str_contains($key, 'detail')) {
                 $matched = 'description';
             } elseif (str_contains($key, 'price') || str_contains($key, 'mrp')) {
                 $matched = 'price';
-            } elseif (str_contains($key, 'category')) {
+            } elseif (str_contains($key, 'category') || str_contains($key, 'product type')) {
                 $matched = 'category';
             } elseif (str_contains($key, 'sku') || str_contains($key, 'code')) {
                 $matched = 'sku';
-            } elseif (str_contains($key, 'stock') || str_contains($key, 'quantity')) {
+            } elseif (str_contains($key, 'stock') || str_contains($key, 'quantity') || str_contains($key, 'qty') || str_contains($key, 'inventory')) {
                 $matched = 'stock';
+            } elseif (str_contains($key, 'handle')) {
+                $matched = 'handle';
+            } elseif (str_contains($key, 'tags')) {
+                $matched = 'tags';
             } elseif (str_contains($key, 'name') || str_contains($key, 'title')) {
                 $matched = 'name';
             }
@@ -603,8 +610,102 @@ function bulk_extract_images(array $values): array
     return $images;
 }
 
+/** Convert HTML descriptions (Markaz / Shopify export) into readable plain text. */
+function bulk_html_to_text(string $html): string
+{
+    if (trim($html) === '') {
+        return '';
+    }
+    $text = (string) (preg_replace('~<(br\s*/?|/p>|/div>|/li>|/h[1-6]|/tr)>~i', "\n", $html) ?? $html);
+    $text = (string) (preg_replace('~<li[^>]*>~i', '- ', $text) ?? $text);
+    $text = strip_tags($text);
+    $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $text = (string) (preg_replace('~[ \t]+~', ' ', $text) ?? $text);
+    $text = (string) (preg_replace('~\n[ \t]*\n[ \t]*\n+~', "\n\n", $text) ?? $text);
+    return trim($text);
+}
+
+/** Detect Shopify/Markaz style exports where several rows belong to one product. */
+function bulk_is_variant_sheet(array $header, array $map): bool
+{
+    if (empty($map['handle'])) {
+        return false;
+    }
+    $keys = array_map('bulk_header_key', $header);
+    return in_array('variant price', $keys, true)
+        || in_array('variant sku', $keys, true)
+        || in_array('option1 value', $keys, true);
+}
+
+/** Merge variant / extra-image rows that share a Handle into one product. */
+function bulk_group_variant_rows(array $rows, array $map, int $defaultStock): array
+{
+    $groups = [];
+    foreach ($rows as $index => $row) {
+        $handle = trim((string) ($row[$map['handle'][0]] ?? ''));
+        $nameColumn = $map['name'][0] ?? null;
+        $title = $nameColumn === null ? '' : trim((string) ($row[$nameColumn] ?? ''));
+        $key = $handle !== '' ? $handle : $title;
+        if ($key === '') {
+            continue;
+        }
+        if (!isset($groups[$key])) {
+            $groups[$key] = ['source_row' => $index + 2, 'rows' => []];
+        }
+        $groups[$key]['rows'][] = $row;
+    }
+
+    $products = [];
+    foreach ($groups as $group) {
+        $merged = [];
+        foreach ($map as $field => $columns) {
+            foreach ($columns as $column) {
+                foreach ($group['rows'] as $row) {
+                    $value = trim((string) ($row[$column] ?? ''));
+                    if ($value === '') {
+                        continue;
+                    }
+                    if ($field === 'images') {
+                        $merged[$column] = trim((($merged[$column] ?? '') . ',' . $value), ',');
+                    } elseif (!isset($merged[$column])) {
+                        $merged[$column] = $value;
+                    }
+                }
+            }
+        }
+
+        $stockTotal = 0;
+        $stockSeen = false;
+        foreach ($map['stock'] ?? [] as $column) {
+            foreach ($group['rows'] as $row) {
+                $raw = trim((string) ($row[$column] ?? ''));
+                if ($raw === '') {
+                    continue;
+                }
+                $stockSeen = true;
+                $stockTotal += (int) bulk_number($raw);
+            }
+        }
+
+        $product = bulk_normalize_rows([$merged], $map, $stockSeen ? $stockTotal : $defaultStock)[0];
+        $product['source_row'] = $group['source_row'];
+        $products[] = $product;
+    }
+
+    return $products;
+}
+
+/** Choose the right strategy for the uploaded sheet. */
+function bulk_prepare_products(array $rows, array $map, array $header, int $defaultStock): array
+{
+    if (bulk_is_variant_sheet($header, $map)) {
+        return bulk_group_variant_rows($rows, $map, $defaultStock);
+    }
+    return bulk_normalize_rows($rows, $map, $defaultStock);
+}
+
 /** Convert parsed sheet rows into normalised product arrays. */
-function bulk_normalize_rows(array $rows, array $map): array
+function bulk_normalize_rows(array $rows, array $map, int $defaultStock = 0): array
 {
     $products = [];
 
@@ -619,7 +720,8 @@ function bulk_normalize_rows(array $rows, array $map): array
         $name = $nameRaw;
         $price = bulk_number($priceRaw);
         $original = bulk_number($get('original_price'));
-        $stock = (int) bulk_number($get('stock'));
+        $stockRaw = $get('stock');
+        $stock = $stockRaw === '' ? $defaultStock : (int) bulk_number($stockRaw);
         $errors = [];
 
         if ($name === '') {
@@ -632,6 +734,20 @@ function bulk_normalize_rows(array $rows, array $map): array
             $original = 0.0;
         }
 
+        $description = $get('description');
+        if (preg_match('~<[a-z][^>]*>~i', $description)) {
+            $description = bulk_html_to_text($description);
+        }
+
+        $category = $get('category');
+        if ($category === '') {
+            $tags = $get('tags');
+            if ($tags !== '') {
+                $firstTag = array_shift(preg_split('/[,|]/', $tags) ?: []);
+                $category = trim((string) $firstTag);
+            }
+        }
+
         $imageValues = [];
         foreach ($map['images'] ?? [] as $column) {
             $imageValues[] = (string) ($row[$column] ?? '');
@@ -642,12 +758,12 @@ function bulk_normalize_rows(array $rows, array $map): array
             'id'             => (int) bulk_number($get('id')),
             'name'           => $name,
             'sku'            => $get('sku'),
-            'category'       => $get('category'),
+            'category'       => $category,
             'price'          => $price,
             'original_price' => $original > 0 ? $original : null,
             'stock'          => max(0, $stock),
             'badge'          => $get('badge'),
-            'description'    => $get('description'),
+            'description'    => $description,
             'features'       => $get('features'),
             'images'         => bulk_extract_images($imageValues),
             'errors'         => $errors,

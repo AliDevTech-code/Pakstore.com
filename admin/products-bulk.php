@@ -33,21 +33,22 @@ if ($action === 'preview') {
     if (empty($map['price'])) {
         $missing[] = 'price';
     }
-    if (empty($map['images'])) {
-        $missing[] = 'image URL';
-    }
     if ($missing) {
         flash('error', 'Required column(s) missing: ' . implode(', ', $missing) . '. Download the sample file to see the expected format.');
         redirect($returnTo);
     }
 
-    $products = bulk_normalize_rows($parsed['rows'], $map);
+    $defaultStock = max(0, (int) post_string('default_stock', (string) BULK_DEFAULT_STOCK));
+    $grouped = bulk_is_variant_sheet($parsed['header'], $map);
+    $products = bulk_prepare_products($parsed['rows'], $map, $parsed['header'], $defaultStock);
     $_SESSION[BULK_IMPORT_SESSION_KEY] = [
         'created_at'        => time(),
         'header'            => $parsed['header'],
         'map'               => $map,
         'products'          => $products,
         'create_categories' => !empty($_POST['create_categories']),
+        'grouped'           => $grouped,
+        'sheet_rows'        => count($parsed['rows']),
     ];
 
     $ready = 0;

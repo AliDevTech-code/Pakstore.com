@@ -159,6 +159,12 @@ across `image 1`, `image 2`, … columns. The first URL becomes the main image; 
 the gallery. Rows are matched by ID first, then SKU; unmatched rows are inserted. Missing categories
 are created automatically (toggle in the import form).
 
+**Markaz / Shopify exports are auto-detected** (`Handle`, `Title`, `Body (HTML)`, `Variant Price`,
+`Variant SKU`, `Image Src`, `Type`, …). Rows sharing a `Handle` are merged into one product: the
+title, HTML body (converted to readable text), price, category and first SKU come from the group,
+while `Image Src` values from all rows become the gallery. When the sheet has no quantity values,
+the *Default stock* entered in the import form is used (10 by default).
+
 `.xlsx` support needs PHP's `zip` and `simplexml` extensions. If they are unavailable on the host,
 save the sheet as CSV and upload that instead.
 
