@@ -75,6 +75,10 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 .desktop-search { display: none; }
 .mobile-menu-btn { display: inline-flex; }
 .mobile-categories { display: block; }
+/* Slide-out menu drawer - compact width */
+.menu-drawer-panel { width: 78vw; max-width: 260px; padding: 16px; }
+@media (min-width: 640px) { .menu-drawer-panel { width: 300px; padding: 20px; } }
+
 .menu-icon-btn {
   width: 32px;
   height: 32px;
@@ -89,6 +93,16 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 .mobile-inline-search { display: none; }
 .search-close-btn { display: none; }
 .desktop-nav { display: none; }
+@media (min-width: 1024px) {
+  .desktop-nav {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-left: 10px;
+    padding-left: 14px;
+    border-left: 1px solid #e2e8f0;
+  }
+}
 .desktop-nav a {
   color: #334155;
   font-size: 12px;
@@ -98,7 +112,7 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   transition: color 150ms ease;
 }
 .desktop-nav a:hover, .desktop-nav a.is-active { color: #00A651; }
-.desktop-nav .desktop-nav-sep { color: #cbd5e1; font-size: 12px; margin: 0 7px; }
+.desktop-nav .desktop-nav-sep { color: #cbd5e1; font-size: 12px; margin: 0 6px; }
 .desktop-nav a.is-active + .desktop-nav-sep { color: #00A651; }
 
 @media (min-width: 640px) {

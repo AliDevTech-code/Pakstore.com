@@ -85,7 +85,7 @@ if (empty($structuredData)) {
     <link rel="preload" href="<?= e(url('assets/fonts/outfit-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 
     <link rel="stylesheet" href="<?= e(url('assets/css/tailwind.css') . '?v=4') ?>">
-    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=8') ?>">
+    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=9') ?>">
     <script src="<?= e(url('assets/js/lucide.min.js')) ?>"></script>
     <style>
         /* Keep drawers closed by default even if the external stylesheet fails to load. */
@@ -122,20 +122,20 @@ if (empty($structuredData)) {
                     <i data-lucide="menu" class="w-5 h-5"></i>
                     <span class="menu-label text-xs font-bold">Menu</span>
                 </button>
-            </div>
 
-            <!-- Desktop navigation -->
-            <nav class="desktop-nav">
-                <a href="<?= e(url('index.php')) ?>" class="<?= $currentPage === 'index.php' ? 'is-active' : '' ?>">Home</a>
-                <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
-                <a href="<?= e(url('index.php#catalog-section')) ?>">Shop</a>
-                <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
-                <a href="<?= e(url('track-order.php')) ?>" class="<?= $currentPage === 'track-order.php' ? 'is-active' : '' ?>">Track Order</a>
-                <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
-                <a href="<?= e(url('about.php')) ?>" class="<?= $currentPage === 'about.php' ? 'is-active' : '' ?>">About Us</a>
-                <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
-                <a href="<?= e(url('contact.php')) ?>" class="<?= $currentPage === 'contact.php' ? 'is-active' : '' ?>">Contact Us</a>
-            </nav>
+                <!-- Desktop navigation (replaces the Menu button on large screens) -->
+                <nav class="desktop-nav">
+                    <a href="<?= e(url('index.php')) ?>" class="<?= $currentPage === 'index.php' ? 'is-active' : '' ?>">Home</a>
+                    <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
+                    <a href="<?= e(url('index.php#catalog-section')) ?>">Shop</a>
+                    <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
+                    <a href="<?= e(url('track-order.php')) ?>" class="<?= $currentPage === 'track-order.php' ? 'is-active' : '' ?>">Track Order</a>
+                    <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
+                    <a href="<?= e(url('about.php')) ?>" class="<?= $currentPage === 'about.php' ? 'is-active' : '' ?>">About Us</a>
+                    <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
+                    <a href="<?= e(url('contact.php')) ?>" class="<?= $currentPage === 'contact.php' ? 'is-active' : '' ?>">Contact Us</a>
+                </nav>
+            </div>
 
             <div class="flex-1 min-w-0 max-w-2xl desktop-search">
                 <form action="<?= e(url('index.php')) ?>" method="get" class="relative flex items-center" role="search">
@@ -279,7 +279,7 @@ if (empty($structuredData)) {
 
 <!-- ============ Category drawer ============ -->
 <div id="category-drawer" data-drawer hidden class="fixed inset-0 z-50 overflow-hidden bg-slate-950/60 backdrop-blur-sm flex print-hide">
-    <div class="w-full max-w-xs sm:max-w-sm bg-white text-slate-900 h-full p-5 shadow-2xl flex flex-col justify-between animate-slide-left overflow-y-auto">
+    <div class="menu-drawer-panel bg-white text-slate-900 h-full shadow-2xl flex flex-col justify-between animate-slide-left overflow-y-auto">
         <div>
             <div class="flex items-center justify-between pb-3 border-b border-slate-200">
                 <div class="flex items-center gap-2">
