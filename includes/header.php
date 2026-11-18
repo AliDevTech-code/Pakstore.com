@@ -85,7 +85,7 @@ if (empty($structuredData)) {
     <link rel="preload" href="<?= e(url('assets/fonts/outfit-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 
     <link rel="stylesheet" href="<?= e(url('assets/css/tailwind.css') . '?v=4') ?>">
-    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=10') ?>">
+    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=11') ?>">
     <script src="<?= e(url('assets/js/lucide.min.js')) ?>"></script>
     <style>
         /* Keep drawers closed by default even if the external stylesheet fails to load. */
@@ -121,20 +121,20 @@ if (empty($structuredData)) {
                 <button type="button" data-open-drawer="category-drawer" class="mobile-menu-btn menu-icon-btn rounded-lg text-slate-700 hover:text-[#00A651] hover:bg-emerald-50 border border-slate-200 transition-colors cursor-pointer items-center gap-1.5" title="Menu" aria-label="Open Menu">
                     <i data-lucide="menu" class="w-5 h-5"></i>
                 </button>
-
-                <!-- Desktop navigation (replaces the Menu button on large screens) -->
-                <nav class="desktop-nav">
-                    <a href="<?= e(url('index.php')) ?>" class="<?= $currentPage === 'index.php' ? 'is-active' : '' ?>">Home</a>
-                    <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
-                    <a href="<?= e(url('index.php#catalog-section')) ?>">Shop</a>
-                    <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
-                    <a href="<?= e(url('track-order.php')) ?>" class="<?= $currentPage === 'track-order.php' ? 'is-active' : '' ?>">Track Order</a>
-                    <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
-                    <a href="<?= e(url('about.php')) ?>" class="<?= $currentPage === 'about.php' ? 'is-active' : '' ?>">About Us</a>
-                    <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
-                    <a href="<?= e(url('contact.php')) ?>" class="<?= $currentPage === 'contact.php' ? 'is-active' : '' ?>">Contact Us</a>
-                </nav>
             </div>
+
+            <!-- Desktop navigation (horizontal links beside the logo) -->
+            <nav class="desktop-nav">
+                <a href="<?= e(url('index.php')) ?>" class="<?= $currentPage === 'index.php' ? 'is-active' : '' ?>">Home</a>
+                <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
+                <a href="<?= e(url('index.php#catalog-section')) ?>">Shop</a>
+                <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
+                <a href="<?= e(url('track-order.php')) ?>" class="<?= $currentPage === 'track-order.php' ? 'is-active' : '' ?>">Track Order</a>
+                <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
+                <a href="<?= e(url('about.php')) ?>" class="<?= $currentPage === 'about.php' ? 'is-active' : '' ?>">About Us</a>
+                <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
+                <a href="<?= e(url('contact.php')) ?>" class="<?= $currentPage === 'contact.php' ? 'is-active' : '' ?>">Contact Us</a>
+            </nav>
 
             <div class="flex-1 min-w-0 max-w-2xl desktop-search">
                 <form action="<?= e(url('index.php')) ?>" method="get" class="relative flex items-center" role="search">

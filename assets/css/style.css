@@ -93,13 +93,15 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 .mobile-inline-search { display: none; }
 .search-close-btn { display: none; }
 .desktop-nav { display: none; }
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
   .desktop-nav {
     display: flex;
     align-items: center;
     gap: 0;
-    margin-left: 10px;
-    padding-left: 14px;
+    flex-shrink: 1;
+    min-width: 0;
+    margin-left: 4px;
+    padding-left: 12px;
     border-left: 1px solid #e2e8f0;
   }
 }
@@ -127,10 +129,14 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   header.search-open .search-close-btn { display: inline-flex; }
 }
 
+/* From tablets up: hamburger gone, horizontal links visible. */
+@media (min-width: 768px) {
+  [data-open-drawer="category-drawer"].mobile-menu-btn { display: none !important; }
+}
+
 @media (min-width: 1024px) {
   .desktop-search { display: block; }
-  .desktop-nav { display: flex; align-items: center; flex-shrink: 0; }
-  .mobile-menu-btn, .menu-icon-btn { display: none !important; }
+  [data-search-toggle].mobile-menu-btn { display: none !important; }
   .mobile-categories { display: none; }
 }
 
