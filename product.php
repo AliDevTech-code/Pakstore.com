@@ -73,17 +73,22 @@ if (count($related) < 4) {
 $shareText  = 'Check out "' . $product['title'] . '" on ' . setting('store_name', 'PakStore') . ' for ' . money($price) . ' with 100% Cash on Delivery!';
 $whatsappShare = 'https://wa.me/?text=' . rawurlencode($shareText . ' ' . (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? '') . ($_SERVER['REQUEST_URI'] ?? ''));
 
-$pageTitle = $product['title'] . ' - ' . setting('store_name', 'PakStore');
-$metaDescription = mb_substr(trim((string) $product['description']), 0, 160);
-if ($metaDescription === '') {
-    $metaDescription = $product['title'] . ' - Cash on Delivery available all over Pakistan.';
+$pageTitle = $product['title'] . ' - ' . money($price) . ' | ' . setting('store_name', 'PakStore');
+$productDesc = trim((string) $product['description']);
+$metaDescription = $product['title'] . ' for ' . money($price) . '. Cash on Delivery available all over Pakistan.';
+if ($productDesc !== '') {
+    $metaDescription = $product['title'] . ' for ' . money($price) . '. ' . mb_substr($productDesc, 0, 120);
 }
 
 $seoScheme = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http');
 $seoOrigin = $seoScheme . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
-$seoImage = preg_match('~^https?://~i', (string) $product['image'])
-    ? $product['image']
-    : $seoOrigin . image_url($product['image']);
+$productImage = trim((string) $product['image']);
+if ($productImage === '') {
+    $productImage = 'assets/images/hero_pakstore_banner_1793814622604.jpg';
+}
+$seoImage = preg_match('~^https?://~i', $productImage)
+    ? $productImage
+    : rtrim($seoOrigin, '/') . image_url($productImage);
 $ogImage = $seoImage;
 $ogType = 'product';
 $structuredData = '<script type="application/ld+json">' . json_encode([

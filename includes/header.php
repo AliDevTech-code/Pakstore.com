@@ -39,9 +39,19 @@ $cartTotals = cart_totals();
 $siteOrigin = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
 $canonicalUrl = $siteOrigin . ($_SERVER['REQUEST_URI'] ?? '/');
 $ogType = $ogType ?? 'website';
-$shareImage = $ogImage ?? setting('logo_url', '');
-if ($shareImage !== '' && !preg_match('~^https?://~i', $shareImage)) {
-    $shareImage = $siteOrigin . image_url($shareImage);
+$shareImage = trim((string) ($ogImage ?? ''));
+if ($shareImage === '') {
+    $shareImage = trim((string) setting('logo_url', ''));
+}
+if ($shareImage === '') {
+    $shareImage = 'assets/images/hero_pakstore_banner_1793814622604.jpg';
+}
+if (!preg_match('~^https?://~i', $shareImage)) {
+    $localImagePath = dirname(__DIR__) . '/' . ltrim($shareImage, '/');
+    if (!is_file($localImagePath)) {
+        $shareImage = 'assets/images/hero_pakstore_banner_1793814622604.jpg';
+    }
+    $shareImage = rtrim($siteOrigin, '/') . image_url($shareImage);
 }
 if (empty($structuredData)) {
     $structuredData = '<script type="application/ld+json">' . json_encode([
