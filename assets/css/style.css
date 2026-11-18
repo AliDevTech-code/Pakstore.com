@@ -77,6 +77,18 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 .mobile-categories { display: block; }
 .mobile-inline-search { display: none; }
 .search-close-btn { display: none; }
+.desktop-nav { display: none; }
+.desktop-nav a {
+  color: #334155;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  padding: 6px 2px;
+  transition: color 150ms ease;
+}
+.desktop-nav a:hover, .desktop-nav a.is-active { color: #00A651; }
+.desktop-nav .desktop-nav-sep { color: #cbd5e1; font-size: 12px; margin: 0 7px; }
+.desktop-nav a.is-active + .desktop-nav-sep { color: #00A651; }
 
 /* Mobile: 🔍 opens the search inline on the LEFT of the navbar. */
 @media (max-width: 1023px) {
@@ -88,6 +100,7 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 
 @media (min-width: 1024px) {
   .desktop-search { display: block; }
+  .desktop-nav { display: flex; align-items: center; flex-shrink: 0; }
   .mobile-menu-btn { display: none; }
   .mobile-categories { display: none; }
 }

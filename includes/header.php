@@ -85,7 +85,7 @@ if (empty($structuredData)) {
     <link rel="preload" href="<?= e(url('assets/fonts/outfit-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 
     <link rel="stylesheet" href="<?= e(url('assets/css/tailwind.css') . '?v=4') ?>">
-    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=6') ?>">
+    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=7') ?>">
     <script src="<?= e(url('assets/js/lucide.min.js')) ?>"></script>
     <style>
         /* Keep drawers closed by default even if the external stylesheet fails to load. */
@@ -123,6 +123,19 @@ if (empty($structuredData)) {
                     <span class="hidden sm:inline text-xs font-bold">Menu</span>
                 </button>
             </div>
+
+            <!-- Desktop navigation -->
+            <nav class="desktop-nav">
+                <a href="<?= e(url('index.php')) ?>" class="<?= $currentPage === 'index.php' ? 'is-active' : '' ?>">Home</a>
+                <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
+                <a href="<?= e(url('index.php#catalog-section')) ?>">Shop</a>
+                <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
+                <a href="<?= e(url('track-order.php')) ?>" class="<?= $currentPage === 'track-order.php' ? 'is-active' : '' ?>">Track Order</a>
+                <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
+                <a href="<?= e(url('about.php')) ?>" class="<?= $currentPage === 'about.php' ? 'is-active' : '' ?>">About Us</a>
+                <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
+                <a href="<?= e(url('contact.php')) ?>" class="<?= $currentPage === 'contact.php' ? 'is-active' : '' ?>">Contact Us</a>
+            </nav>
 
             <div class="flex-1 min-w-0 max-w-2xl desktop-search">
                 <form action="<?= e(url('index.php')) ?>" method="get" class="relative flex items-center" role="search">
