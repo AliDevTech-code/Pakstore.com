@@ -75,6 +75,17 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 .desktop-search { display: none; }
 .mobile-menu-btn { display: inline-flex; }
 .mobile-categories { display: block; }
+.menu-icon-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 32px;
+}
+.menu-icon-btn svg { width: 16px; height: 16px; display: block; }
+.menu-label { display: none; }
 .mobile-inline-search { display: none; }
 .search-close-btn { display: none; }
 .desktop-nav { display: none; }
@@ -89,6 +100,10 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 .desktop-nav a:hover, .desktop-nav a.is-active { color: #00A651; }
 .desktop-nav .desktop-nav-sep { color: #cbd5e1; font-size: 12px; margin: 0 7px; }
 .desktop-nav a.is-active + .desktop-nav-sep { color: #00A651; }
+
+@media (min-width: 640px) {
+  .menu-label { display: inline; }
+}
 
 /* Mobile: 🔍 opens the search inline on the LEFT of the navbar. */
 @media (max-width: 1023px) {

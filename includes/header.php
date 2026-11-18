@@ -85,7 +85,7 @@ if (empty($structuredData)) {
     <link rel="preload" href="<?= e(url('assets/fonts/outfit-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 
     <link rel="stylesheet" href="<?= e(url('assets/css/tailwind.css') . '?v=4') ?>">
-    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=7') ?>">
+    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=8') ?>">
     <script src="<?= e(url('assets/js/lucide.min.js')) ?>"></script>
     <style>
         /* Keep drawers closed by default even if the external stylesheet fails to load. */
@@ -118,9 +118,9 @@ if (empty($structuredData)) {
                     <?php endif; ?>
                 </a>
 
-                <button type="button" data-open-drawer="category-drawer" class="mobile-menu-btn p-2 rounded-lg text-slate-700 hover:text-[#00A651] hover:bg-emerald-50 border border-slate-200 transition-colors cursor-pointer items-center gap-1.5" title="Menu" aria-label="Open Menu">
+                <button type="button" data-open-drawer="category-drawer" class="mobile-menu-btn menu-icon-btn rounded-lg text-slate-700 hover:text-[#00A651] hover:bg-emerald-50 border border-slate-200 transition-colors cursor-pointer items-center gap-1.5" title="Menu" aria-label="Open Menu">
                     <i data-lucide="menu" class="w-5 h-5"></i>
-                    <span class="hidden sm:inline text-xs font-bold">Menu</span>
+                    <span class="menu-label text-xs font-bold">Menu</span>
                 </button>
             </div>
 
@@ -157,7 +157,7 @@ if (empty($structuredData)) {
             </div>
 
             <div class="flex items-center gap-1 sm:gap-2 shrink-0">
-                <button type="button" data-search-toggle class="mobile-menu-btn p-2 rounded-lg border border-slate-200 text-slate-700 hover:text-[#00A651] hover:bg-emerald-50 transition-colors" title="Search products" aria-label="Open search">
+                <button type="button" data-search-toggle class="mobile-menu-btn menu-icon-btn rounded-lg border border-slate-200 text-slate-700 hover:text-[#00A651] hover:bg-emerald-50 transition-colors" title="Search products" aria-label="Open search">
                     <i data-lucide="search" class="w-5 h-5"></i>
                 </button>
                 <button type="button" data-search-close class="search-close-btn p-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors" title="Close search" aria-label="Close search">
