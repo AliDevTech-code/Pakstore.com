@@ -120,9 +120,9 @@ if (empty($structuredData)) {
                     <?php endif; ?>
                 </a>
 
-                <button type="button" data-open-drawer="category-drawer" class="mobile-menu-btn p-2 rounded-lg text-slate-700 hover:text-[#00A651] hover:bg-emerald-50 border border-slate-200 transition-colors cursor-pointer items-center gap-1.5" title="Categories Menu" aria-label="Open Categories Menu">
+                <button type="button" data-open-drawer="category-drawer" class="mobile-menu-btn p-2 rounded-lg text-slate-700 hover:text-[#00A651] hover:bg-emerald-50 border border-slate-200 transition-colors cursor-pointer items-center gap-1.5" title="Menu" aria-label="Open Menu">
                     <i data-lucide="menu" class="w-5 h-5"></i>
-                    <span class="hidden sm:inline text-xs font-bold">Categories</span>
+                    <span class="hidden sm:inline text-xs font-bold">Menu</span>
                 </button>
             </div>
 
@@ -273,25 +273,30 @@ if (empty($structuredData)) {
             <div class="flex items-center justify-between pb-3 border-b border-slate-200">
                 <div class="flex items-center gap-2">
                     <span class="bg-[#00A651] text-white font-black text-xs px-2 py-0.5 rounded">PAK</span>
-                    <h3 class="font-bold text-sm text-slate-900">All Store Categories</h3>
+                    <h3 class="font-bold text-sm text-slate-900">Menu</h3>
                 </div>
                 <button type="button" data-close-drawer="category-drawer" class="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
-            <div class="mt-4 space-y-1">
-                <a href="<?= e(url('index.php#catalog-section')) ?>" class="w-full text-left px-3.5 py-2.5 rounded-xl font-semibold text-xs flex items-center justify-between transition-colors <?= $activeCategory === '' ? 'bg-emerald-50 text-[#00A651] font-bold' : 'hover:bg-slate-100 text-slate-800' ?>">
-                    <span>All Categories</span>
-                    <span class="text-[#00A651] text-xs">&rarr;</span>
+            <nav class="mt-4 space-y-1">
+                <a href="<?= e(url('index.php')) ?>" class="w-full text-left px-3.5 py-3 rounded-xl font-bold text-sm flex items-center gap-3 transition-colors hover:bg-emerald-50 hover:text-[#00A651] text-slate-800">
+                    <i data-lucide="home" class="w-4 h-4 text-[#FF6B00]"></i><span>Home</span>
                 </a>
-                <?php foreach ($navCategories as $cat): ?>
-                    <a href="<?= e(url('index.php?category=' . urlencode($cat['slug']) . '#catalog-section')) ?>" class="w-full text-left px-3.5 py-2.5 rounded-xl font-semibold text-xs flex items-center justify-between transition-colors <?= $activeCategory === $cat['slug'] ? 'bg-emerald-50 text-[#00A651] font-bold' : 'hover:bg-slate-100 text-slate-800' ?>">
-                        <span><?= e($cat['name']) ?></span>
-                        <span class="text-[#FF6B00] text-xs">&rarr;</span>
-                    </a>
-                <?php endforeach; ?>
-            </div>
+                <a href="<?= e(url('index.php#catalog-section')) ?>" class="w-full text-left px-3.5 py-3 rounded-xl font-bold text-sm flex items-center gap-3 transition-colors hover:bg-emerald-50 hover:text-[#00A651] text-slate-800">
+                    <i data-lucide="shopping-bag" class="w-4 h-4 text-[#FF6B00]"></i><span>Shop</span>
+                </a>
+                <a href="<?= e(url('track-order.php')) ?>" class="w-full text-left px-3.5 py-3 rounded-xl font-bold text-sm flex items-center gap-3 transition-colors hover:bg-emerald-50 hover:text-[#00A651] text-slate-800">
+                    <i data-lucide="package-check" class="w-4 h-4 text-[#FF6B00]"></i><span>Track Order</span>
+                </a>
+                <a href="<?= e(url('about.php')) ?>" class="w-full text-left px-3.5 py-3 rounded-xl font-bold text-sm flex items-center gap-3 transition-colors hover:bg-emerald-50 hover:text-[#00A651] text-slate-800">
+                    <i data-lucide="info" class="w-4 h-4 text-[#FF6B00]"></i><span>About Us</span>
+                </a>
+                <a href="<?= e(url('contact.php')) ?>" class="w-full text-left px-3.5 py-3 rounded-xl font-bold text-sm flex items-center gap-3 transition-colors hover:bg-emerald-50 hover:text-[#00A651] text-slate-800">
+                    <i data-lucide="mail" class="w-4 h-4 text-[#FF6B00]"></i><span>Contact Us</span>
+                </a>
+            </nav>
         </div>
 
         <div class="pt-4 mt-4 border-t border-slate-200 bg-slate-50 p-3 rounded-xl text-center text-xs text-slate-600">
