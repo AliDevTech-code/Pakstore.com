@@ -29,18 +29,6 @@ require __DIR__ . '/includes/header.php';
                     </span>
                 </a>
 
-                <?php if (setting('phone', '') !== ''): ?>
-                <a href="tel:<?= e(setting('phone', '')) ?>" class="flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-[#00A651] hover:bg-emerald-50 transition-colors">
-                    <span class="w-10 h-10 rounded-full bg-emerald-100 text-[#00A651] flex items-center justify-center shrink-0">
-                        <i data-lucide="phone" class="w-5 h-5"></i>
-                    </span>
-                    <span>
-                        <span class="block text-[11px] text-slate-500 font-semibold uppercase tracking-wide">Phone</span>
-                        <span class="block text-sm font-bold text-slate-900"><?= e(setting('phone', '')) ?></span>
-                    </span>
-                </a>
-                <?php endif; ?>
-
                 <a href="<?= e(url('track-order.php')) ?>" class="flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-[#00A651] hover:bg-emerald-50 transition-colors">
                     <span class="w-10 h-10 rounded-full bg-emerald-100 text-[#00A651] flex items-center justify-center shrink-0">
                         <i data-lucide="package-check" class="w-5 h-5"></i>

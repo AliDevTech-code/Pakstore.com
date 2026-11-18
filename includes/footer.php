@@ -51,20 +51,10 @@ $footerCount      = cart_count();
             <div class="space-y-3 text-xs">
                 <h4 class="font-bold text-white uppercase tracking-wider text-[11px]">Direct Contact</h4>
                 <div class="space-y-2 text-slate-400">
-                    <a href="tel:<?= e(setting('phone')) ?>" class="flex items-center gap-2 hover:text-white transition-colors">
-                        <i data-lucide="phone-call" class="w-4 h-4 text-emerald-400 shrink-0"></i>
-                        <span>Helpline: <?= e(setting('phone')) ?></span>
-                    </a>
-                    <div class="flex items-center gap-2">
+                    <a href="mailto:pakstore63@gmail.com" class="flex items-center gap-2 hover:text-white transition-colors">
                         <i data-lucide="mail" class="w-4 h-4 text-emerald-400 shrink-0"></i>
-                        <span>Email: <?= e(setting('email')) ?></span>
-                    </div>
-                    <?php if (setting('whatsapp') !== ''): ?>
-                        <a href="https://wa.me/<?= e(clean_phone_wa(setting('whatsapp'))) ?>" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 hover:text-white transition-colors">
-                            <i data-lucide="message-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
-                            <span>WhatsApp Support</span>
-                        </a>
-                    <?php endif; ?>
+                        <span>Email: pakstore63@gmail.com</span>
+                    </a>
                     <div class="flex items-center gap-2">
                         <i data-lucide="truck" class="w-4 h-4 text-emerald-400 shrink-0"></i>
                         <span>Shipments: Dispatched Daily</span>

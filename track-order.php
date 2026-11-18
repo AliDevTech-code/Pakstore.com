@@ -22,7 +22,6 @@ $steps = [
 ];
 
 $currentStep = $order ? order_status_step($order['status']) : 0;
-$waPhone = clean_phone_wa(setting('whatsapp', setting('phone', '')));
 
 $pageTitle = 'Track Your Order - ' . setting('store_name', 'PakStore');
 require __DIR__ . '/includes/header.php';
@@ -53,11 +52,9 @@ require __DIR__ . '/includes/header.php';
                 <i data-lucide="search-x" class="w-8 h-8 text-rose-400 mx-auto mb-2"></i>
                 <h2 class="text-sm font-bold text-slate-900">No order found</h2>
                 <p class="text-xs text-slate-500 mt-1">We could not find an order matching &ldquo;<?= e($query) ?>&rdquo;. Please check the Order ID or phone number and try again.</p>
-                <?php if (setting('whatsapp') !== ''): ?>
-                    <a href="https://wa.me/<?= e($waPhone) ?>" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 mt-4 px-3.5 py-2 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-lg text-xs font-bold">
-                        <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Contact support on WhatsApp
-                    </a>
-                <?php endif; ?>
+                <a href="mailto:pakstore63@gmail.com" class="inline-flex items-center gap-1.5 mt-4 px-3.5 py-2 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-lg text-xs font-bold">
+                    <i data-lucide="mail" class="w-3.5 h-3.5"></i> Email us at pakstore63@gmail.com
+                </a>
             </div>
         <?php endif; ?>
 

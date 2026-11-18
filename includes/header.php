@@ -19,8 +19,6 @@ if ($logoUrl !== '' && !preg_match('~^https?://~i', $logoUrl)) {
     }
 }
 $topBarText    = setting('top_bar_text', 'Cash on Delivery All Over Pakistan');
-$phone         = setting('phone', '');
-$whatsapp      = setting('whatsapp', '');
 $supportEmail  = setting('email', '');
 $announcement  = setting('announcement', $topBarText);
 
