@@ -82,13 +82,22 @@ if ($action === 'save') {
         }
     }
 
+    $removeImages = $_POST['remove_images'] ?? [];
+    if (!is_array($removeImages)) {
+        $removeImages = [];
+    }
+    $removeImages = array_values(array_filter(array_map('strval', $removeImages), static fn($v) => $v !== ''));
+
     $galleryLines = preg_split('/\r\n|\r|\n/', $galleryText) ?: [];
     $gallery = [];
     foreach ($galleryLines as $line) {
         $line = trim($line);
-        if ($line !== '') {
+        if ($line !== '' && !in_array($line, $removeImages, true)) {
             $gallery[] = $line;
         }
+    }
+    if ($image !== '' && in_array($image, $removeImages, true)) {
+        $image = '';
     }
 
     /* Multiple image uploads: first image becomes main, rest go to gallery (color variants). */
@@ -121,6 +130,9 @@ if ($action === 'save') {
         foreach ($newUploads as $path) {
             $gallery[] = $path;
         }
+    }
+    if ($image === '' && $gallery) {
+        $image = array_shift($gallery);
     }
 
     $featureLines = preg_split('/\r\n|\r|\n/', $features) ?: [];

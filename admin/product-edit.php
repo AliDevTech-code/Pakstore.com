@@ -119,11 +119,16 @@ if (trim((string) $product['image']) !== '' && !in_array($product['image'], $pre
                     <span class="block text-[11px] font-semibold text-slate-600 mb-1.5">Current images (<?= count($previewImages) ?>)</span>
                     <div class="flex flex-wrap gap-2">
                         <?php foreach ($previewImages as $img): ?>
-                            <span class="w-16 h-16 rounded-lg border border-slate-200 overflow-hidden bg-slate-50 block">
+                            <div class="relative w-16 h-16 rounded-lg border border-slate-200 overflow-hidden bg-slate-50 group" data-image-card>
                                 <img src="<?= e(image_url($img)) ?>" alt="" class="w-full h-full object-cover">
-                            </span>
+                                <button type="button" class="absolute inset-0 bg-black/45 text-white opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity flex items-center justify-center" title="Delete image" aria-label="Delete image" data-remove-image data-image-path="<?= e($img) ?>">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                                <input type="checkbox" name="remove_images[]" value="<?= e($img) ?>" class="hidden" data-remove-input>
+                            </div>
                         <?php endforeach; ?>
                     </div>
+                    <p class="text-[10px] text-slate-500 mt-1">Kisi image ko hatane ke liye us par delete (balti) icon dabayein, phir Save Changes karein.</p>
                 </div>
             <?php endif; ?>
         </div>
@@ -136,5 +141,22 @@ if (trim((string) $product['image']) !== '' && !in_array($product['image'], $pre
         </div>
     </form>
 </div>
+
+<script>
+document.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-remove-image]');
+    if (!btn) return;
+    var card = btn.closest('[data-image-card]');
+    var input = card ? card.querySelector('[data-remove-input]') : null;
+    if (!card || !input) return;
+    var removing = !input.checked;
+    input.checked = removing;
+    card.classList.toggle('opacity-40', removing);
+    card.classList.toggle('ring-2', removing);
+    card.classList.toggle('ring-rose-500', removing);
+    btn.classList.toggle('opacity-100', removing);
+    btn.classList.toggle('bg-rose-600/70', removing);
+});
+</script>
 
 <?php require __DIR__ . '/includes/footer.php'; ?>

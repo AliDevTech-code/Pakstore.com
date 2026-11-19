@@ -75,6 +75,7 @@ if (empty($structuredData)) {
     <meta name="google-site-verification" content="ByRh6Xdd-AWXEIN41Nqmz-gGEdc7mCFRaK4RiSkRrEc">
     <title><?= e($pageTitle) ?></title>
     <meta name="description" content="<?= e($metaDescription) ?>">
+    <meta name="robots" content="index,follow,max-image-preview:large">
     <meta property="og:title" content="<?= e($pageTitle) ?>">
     <meta property="og:description" content="<?= e($metaDescription) ?>">
     <meta property="og:type" content="<?= e($ogType) ?>">

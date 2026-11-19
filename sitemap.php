@@ -30,9 +30,10 @@ try {
 
 foreach ($rows as $row) {
     $urls[] = [
-        'loc'      => $origin . url('product.php?id=' . (int) $row['id']),
-        'lastmod'  => date('Y-m-d', strtotime((string) $row['updated_at'])),
-        'priority' => '0.8',
+        'loc'        => $origin . url('product.php?id=' . (int) $row['id']),
+        'lastmod'    => date('Y-m-d', strtotime((string) $row['updated_at'])),
+        'changefreq' => 'weekly',
+        'priority'   => '0.8',
     ];
 }
 
@@ -43,6 +44,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
     <url>
         <loc><?= e($item['loc']) ?></loc>
         <lastmod><?= e($item['lastmod']) ?></lastmod>
+        <?php if (!empty($item['changefreq'])): ?><changefreq><?= e($item['changefreq']) ?></changefreq><?php endif; ?>
         <priority><?= e($item['priority']) ?></priority>
     </url>
 <?php endforeach; ?>
