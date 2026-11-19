@@ -89,7 +89,8 @@ if ($productImage === '') {
 $seoImage = preg_match('~^https?://~i', $productImage)
     ? $productImage
     : rtrim($seoOrigin, '/') . image_url($productImage);
-$ogImage = $seoImage;
+$ogImage = rtrim($seoOrigin, '/') . url('og-image.php?id=' . (int) $product['id'])
+    . '&v=' . (int) strtotime((string) ($product['updated_at'] ?? 'now'));
 $ogType = 'product';
 $structuredData = '<script type="application/ld+json">' . json_encode([
     '@context'    => 'https://schema.org',

@@ -40,18 +40,21 @@ $siteOrigin = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'htt
 $canonicalUrl = $siteOrigin . ($_SERVER['REQUEST_URI'] ?? '/');
 $ogType = $ogType ?? 'website';
 $shareImage = trim((string) ($ogImage ?? ''));
-if ($shareImage === '') {
-    $shareImage = trim((string) setting('logo_url', ''));
-}
-if ($shareImage === '') {
-    $shareImage = 'assets/images/hero_pakstore_banner_1793814622604.jpg';
-}
-if (!preg_match('~^https?://~i', $shareImage)) {
+if ($shareImage !== '' && !preg_match('~^https?://~i', $shareImage)) {
     $localImagePath = dirname(__DIR__) . '/' . ltrim($shareImage, '/');
-    if (!is_file($localImagePath)) {
-        $shareImage = 'assets/images/hero_pakstore_banner_1793814622604.jpg';
+    $shareImage = is_file($localImagePath)
+        ? rtrim($siteOrigin, '/') . image_url($shareImage)
+        : '';
+}
+if ($shareImage === '') {
+    /* Always give crawlers a real 1200x630 JPG: small logos and WebP
+       uploads are ignored by WhatsApp / Facebook, so the card is rendered
+       by og-image.php instead of linking the raw file. */
+    $siteCard = url('og-image.php?type=site');
+    if ($logoVersion !== '') {
+        $siteCard .= '&v=' . rawurlencode(trim(substr($logoVersion, 3)));
     }
-    $shareImage = rtrim($siteOrigin, '/') . image_url($shareImage);
+    $shareImage = rtrim($siteOrigin, '/') . $siteCard;
 }
 if (empty($structuredData)) {
     $structuredData = '<script type="application/ld+json">' . json_encode([
@@ -83,6 +86,9 @@ if (empty($structuredData)) {
     <meta property="og:site_name" content="<?= e($storeName) ?>">
     <?php if ($shareImage !== ''): ?>
         <meta property="og:image" content="<?= e($shareImage) ?>">
+        <meta property="og:image:type" content="image/jpeg">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="630">
         <meta name="twitter:image" content="<?= e($shareImage) ?>">
     <?php endif; ?>
     <meta name="twitter:card" content="summary_large_image">
