@@ -57,8 +57,6 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         $fullName = post_string('full_name');
         $phone    = post_string('phone');
         $email    = strtolower(post_string('email'));
-        $city     = post_string('city');
-        $address  = post_string('address');
         $password = (string) ($_POST['password'] ?? '');
 
         if (mb_strlen($fullName) < 3) {
@@ -69,12 +67,6 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         }
         if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors[] = 'Please enter a valid email address or leave it blank.';
-        }
-        if (mb_strlen($city) < 2) {
-            $errors[] = 'Please enter your city.';
-        }
-        if (mb_strlen($address) < 8) {
-            $errors[] = 'Please enter your full delivery address.';
         }
         if (strlen($password) < 6) {
             $errors[] = 'Password must be at least 6 characters long.';
@@ -95,10 +87,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
                     'INSERT INTO users (full_name, phone, email, password_hash, city, address)
                      VALUES (?, ?, ?, ?, ?, ?)'
                 );
-                $stmt->execute([$fullName, $phone, $email, password_hash($password, PASSWORD_DEFAULT), $city, $address]);
+                $stmt->execute([$fullName, $phone, $email, password_hash($password, PASSWORD_DEFAULT), '', '']);
                 $_SESSION['customer_id'] = (int) db()->lastInsertId();
                 session_regenerate_id(true);
-                flash('success', 'Account created. Your delivery details are saved for 1-click COD orders.');
+                flash('success', 'Account created. Your delivery address will be collected when you place an order.');
                 redirect('account.php');
             }
         } else {
@@ -205,7 +197,7 @@ require __DIR__ . '/includes/header.php';
                             <i data-lucide="user" class="w-5 h-5"></i>
                         </div>
                         <h1 class="text-base font-bold tracking-tight"><?= $mode === 'signup' ? 'Create Your Account' : 'Sign In to PakStore' ?></h1>
-                        <p class="text-[11px] text-slate-400 mt-0.5">Save your address for faster Cash on Delivery orders.</p>
+                        <p class="text-[11px] text-slate-400 mt-0.5">Sign up in seconds — your address is only needed when you order.</p>
                     </div>
 
                     <div class="p-6">
@@ -226,15 +218,9 @@ require __DIR__ . '/includes/header.php';
                                     <input id="full_name" name="full_name" type="text" required maxlength="150" placeholder="e.g. Usman Tariq" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-[#00A651] focus:border-[#00A651]">
                                 </div>
 
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div>
-                                        <label for="phone" class="block text-xs font-semibold text-slate-700 mb-1">Mobile *</label>
-                                        <input id="phone" name="phone" type="tel" required maxlength="30" placeholder="0300-1234567" class="w-full px-2.5 py-2 text-xs border border-slate-300 rounded-lg font-mono focus:outline-[#00A651]">
-                                    </div>
-                                    <div>
-                                        <label for="city" class="block text-xs font-semibold text-slate-700 mb-1">City *</label>
-                                        <input id="city" name="city" type="text" required maxlength="100" placeholder="e.g. Lahore" class="w-full px-2.5 py-2 text-xs border border-slate-300 rounded-lg focus:outline-[#00A651]">
-                                    </div>
+                                <div>
+                                    <label for="phone" class="block text-xs font-semibold text-slate-700 mb-1">WhatsApp Number *</label>
+                                    <input id="phone" name="phone" type="tel" required maxlength="30" placeholder="0300-1234567" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-mono focus:outline-[#00A651] focus:border-[#00A651]">
                                 </div>
 
                                 <div>
@@ -243,17 +229,12 @@ require __DIR__ . '/includes/header.php';
                                 </div>
 
                                 <div>
-                                    <label for="address" class="block text-xs font-semibold text-slate-700 mb-1">Delivery Address *</label>
-                                    <textarea id="address" name="address" rows="2" required maxlength="1000" placeholder="House #, Street #, Sector / Area, Landmark..." class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-[#00A651]"></textarea>
-                                </div>
-
-                                <div>
                                     <label for="signup-password" class="block text-xs font-semibold text-slate-700 mb-1">Password *</label>
                                     <input id="signup-password" name="password" type="password" required minlength="6" placeholder="Choose a password (min 6 chars)" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-[#00A651]">
                                 </div>
 
                                 <button type="submit" class="w-full py-2.5 bg-[#00A651] hover:bg-[#008f45] text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors">
-                                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Create Account &amp; Save Address
+                                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Create Account
                                 </button>
 
                                 <p class="text-center text-[11px] text-slate-500 pt-1">
