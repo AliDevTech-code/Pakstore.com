@@ -77,6 +77,30 @@ $stmt = db()->prepare($sql);
 $stmt->execute($params);
 $products = $stmt->fetchAll();
 
+/* Group products by category so the home catalog shows each category name
+   followed by its own products, in the site's normal category order. */
+$groupedProducts = [];
+foreach ($products as $product) {
+    $categoryId = (int) ($product['category_id'] ?? 0);
+    if (!isset($groupedProducts[$categoryId])) {
+        $groupedProducts[$categoryId] = [
+            'name'  => (string) ($product['category_name'] ?: 'Uncategorized'),
+            'slug'  => (string) ($product['category_slug'] ?? ''),
+            'items' => [],
+        ];
+    }
+    $groupedProducts[$categoryId]['items'][] = $product;
+}
+$orderedGroups = [];
+foreach ($categories as $category) {
+    $categoryId = (int) $category['id'];
+    if (isset($groupedProducts[$categoryId])) {
+        $orderedGroups[$categoryId] = $groupedProducts[$categoryId];
+        unset($groupedProducts[$categoryId]);
+    }
+}
+$groupedProducts = $orderedGroups + $groupedProducts;
+
 $pageTitle = $activeCategoryRow
     ? ($activeCategoryRow['name'] . ' - ' . setting('store_name', 'PakStore'))
     : (setting('store_name', 'PakStore') . ' - Cash on Delivery Store Pakistan');
@@ -217,8 +241,20 @@ require __DIR__ . '/includes/header.php';
         <?php endif; ?>
 
         <?php if ($products): ?>
-            <div class="mt-6 sm:mt-8 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 lg:gap-6">
-                <?php foreach ($products as $p): ?>
+            <?php foreach ($groupedProducts as $group): ?>
+                <section class="mt-7 sm:mt-9">
+                    <div class="flex items-center justify-between gap-3 mb-3">
+                        <h3 class="flex items-center gap-2 text-base sm:text-lg font-black text-slate-900 tracking-tight">
+                            <span class="w-1 h-5 rounded-full bg-[#00A651] shrink-0"></span>
+                            <?= e($group['name']) ?>
+                            <span class="text-[11px] font-semibold text-slate-400">(<?= count($group['items']) ?>)</span>
+                        </h3>
+                        <?php if ($group['slug'] !== ''): ?>
+                            <a href="<?= e(url('index.php?category=' . urlencode($group['slug']) . '#catalog-section')) ?>" class="text-[11px] font-bold text-[#00A651] hover:underline whitespace-nowrap">View all &rarr;</a>
+                        <?php endif; ?>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 lg:gap-6">
+                <?php foreach ($group['items'] as $p): ?>
                     <?php
                     $price = (float) $p['price'];
                     $original = $p['original_price'] !== null && (float) $p['original_price'] > $price ? (float) $p['original_price'] : 0.0;
@@ -306,7 +342,9 @@ require __DIR__ . '/includes/header.php';
                         </div>
                     </div>
                 <?php endforeach; ?>
-            </div>
+                    </div>
+                </section>
+            <?php endforeach; ?>
         <?php else: ?>
             <div class="py-16 text-center bg-white rounded-2xl border border-slate-200 mt-8">
                 <i data-lucide="search-x" class="w-10 h-10 text-slate-400 mx-auto mb-3"></i>
