@@ -49,7 +49,7 @@
         dot.style.width = i === index ? '28px' : '8px';
       });
     }
-    function start() { stop(); timer = setInterval(function () { show(index + 1); }, 4500); }
+    function start() { stop(); timer = setInterval(function () { show(index + 1); }, 5000); }
     function stop() { if (timer) clearInterval(timer); timer = null; }
     qsa('[data-hero-prev]', root).forEach(function (btn) { btn.addEventListener('click', function () { show(index - 1); start(); }); });
     qsa('[data-hero-next]', root).forEach(function (btn) { btn.addEventListener('click', function () { show(index + 1); start(); }); });

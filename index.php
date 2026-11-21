@@ -86,28 +86,34 @@ function pk_product_card(array $p, string $badgeType = '') {
         </div>
 
         <div class="w-full">
-          <div class="relative rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-sm h-[220px] sm:h-[280px] md:h-[340px] lg:h-[380px]">
-            <?php
-              $heroBanners = !empty($homeBanners) ? $homeBanners : [];
-              $hb = $heroBanners[0] ?? null;
-              $desk = $hb ? trim((string)($hb['image'] ?? '')) : '';
-              $mob = $hb ? trim((string)($hb['image_mobile'] ?? '')) : '';
+          <div data-hero-slider class="relative rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-sm h-[220px] sm:h-[280px] md:h-[340px] lg:h-[380px]">
+            <?php $heroBanners = !empty($homeBanners) ? $homeBanners : []; ?>
+            <?php if (!empty($heroBanners)): foreach ($heroBanners as $i => $hb):
+              $desk = trim((string)($hb['image'] ?? ''));
+              $mob = trim((string)($hb['image_mobile'] ?? ''));
               if ($mob === '') $mob = $desk;
-              $hLink = $hb ? trim((string)($hb['link'] ?? '')) : '';
+              $hLink = trim((string)($hb['link'] ?? ''));
               if ($hLink === '') $hLink = url('shop.php');
               $hLink = str_starts_with($hLink,'http') ? $hLink : url(ltrim($hLink,'/'));
             ?>
-            <?php if ($desk !== '' || $mob !== ''): ?>
-              <a href="<?= e($hLink) ?>" class="block w-full h-full">
+              <a href="<?= e($hLink) ?>" class="hero-slide <?= $i===0?'is-active':'' ?> block w-full h-full">
                 <img src="<?= e(image_url($mob ?: $desk)) ?>" alt="<?= e($hb['title'] ?? 'Banner') ?>" class="block md:hidden w-full h-full object-cover">
                 <img src="<?= e(image_url($desk ?: $mob)) ?>" alt="<?= e($hb['title'] ?? 'Banner') ?>" class="hidden md:block w-full h-full object-cover">
               </a>
-            <?php else: ?>
-              <div class="w-full h-full bg-gradient-to-br from-green-50 to-orange-50 flex items-center justify-center text-gray-400">
+            <?php endforeach; else: ?>
+              <div class="hero-slide is-active w-full h-full bg-gradient-to-br from-green-50 to-orange-50 flex items-center justify-center text-gray-400">
                 <div class="text-center px-6">
                   <i data-lucide="image-plus" class="w-12 h-12 mx-auto mb-2 text-[#166534]/40"></i>
                   <p class="text-sm font-semibold text-gray-500">Admin panel se banner add karein</p>
                 </div>
+              </div>
+            <?php endif; ?>
+
+            <?php if (count($heroBanners) > 1): ?>
+              <div class="absolute bottom-3 left-0 right-0 z-20 flex justify-center gap-2">
+                <?php foreach ($heroBanners as $i => $_): ?>
+                  <button type="button" data-hero-dot="<?= $i ?>" class="rounded-full h-2.5 transition-all" style="width:<?= $i===0?'28px':'8px' ?>;background:<?= $i===0?'#f97316':'rgba(255,255,255,.75)' ?>;border:1px solid rgba(0,0,0,.08)"></button>
+                <?php endforeach; ?>
               </div>
             <?php endif; ?>
           </div>
