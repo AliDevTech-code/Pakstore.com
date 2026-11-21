@@ -253,7 +253,7 @@ $hasSale = $original > 0;
                   </button>
                 </form>
                 <?php if ($rInStock): ?>
-                  <a href="<?= e(url('checkout.php?product='.(int)$item['id'].'&qty=1')) ?>" class="pk-btn pk-btn-orange flex-1 text-xs py-2.5">Buy Now <i data-lucide="chevron-right" class="w-4 h-4"></i></a>
+                  <a href="<?= e(url('checkout.php?product='.(int)$item['id'].'&qty=1')) ?>" class="pk-btn pk-btn-orange flex-1 text-[11px] sm:text-xs py-2 px-2 sm:px-3 whitespace-nowrap">Buy Now</a>
                 <?php else: ?>
                   <span class="pk-btn flex-1 text-xs py-2.5 bg-gray-100 text-gray-400 cursor-not-allowed">Out of Stock</span>
                 <?php endif; ?>
