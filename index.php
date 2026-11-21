@@ -87,20 +87,24 @@ function pk_product_card(array $p, string $badgeType = '') {
 
         <div class="w-full">
           <div data-hero-slider class="relative rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-sm h-[220px] sm:h-[280px] md:h-[340px] lg:h-[380px]">
-            <?php $heroBanners = !empty($homeBanners) ? $homeBanners : []; ?>
-            <?php if (!empty($heroBanners)): foreach ($heroBanners as $i => $hb):
+            <?php $heroBanners = !empty($homeBanners) ? $homeBanners : []; $heroSlideCount = 0; ?>
+            <?php if (!empty($heroBanners)): foreach ($heroBanners as $hb):
               $desk = trim((string)($hb['image'] ?? ''));
               $mob = trim((string)($hb['image_mobile'] ?? ''));
               if ($mob === '') $mob = $desk;
+              if ($desk === '' && $mob === '') continue;
               $hLink = trim((string)($hb['link'] ?? ''));
               if ($hLink === '') $hLink = url('shop.php');
               $hLink = str_starts_with($hLink,'http') ? $hLink : url(ltrim($hLink,'/'));
+              $active = $heroSlideCount === 0 ? 'is-active' : '';
+              $heroSlideCount++;
             ?>
-              <a href="<?= e($hLink) ?>" class="hero-slide <?= $i===0?'is-active':'' ?> block w-full h-full">
+              <a href="<?= e($hLink) ?>" class="hero-slide <?= $active ?> block w-full h-full">
                 <img src="<?= e(image_url($mob ?: $desk)) ?>" alt="<?= e($hb['title'] ?? 'Banner') ?>" class="block md:hidden w-full h-full object-cover">
                 <img src="<?= e(image_url($desk ?: $mob)) ?>" alt="<?= e($hb['title'] ?? 'Banner') ?>" class="hidden md:block w-full h-full object-cover">
               </a>
-            <?php endforeach; else: ?>
+            <?php endforeach; endif; ?>
+            <?php if ($heroSlideCount === 0): ?>
               <div class="hero-slide is-active w-full h-full bg-gradient-to-br from-green-50 to-orange-50 flex items-center justify-center text-gray-400">
                 <div class="text-center px-6">
                   <i data-lucide="image-plus" class="w-12 h-12 mx-auto mb-2 text-[#166534]/40"></i>
@@ -109,11 +113,11 @@ function pk_product_card(array $p, string $badgeType = '') {
               </div>
             <?php endif; ?>
 
-            <?php if (count($heroBanners) > 1): ?>
+            <?php if ($heroSlideCount > 1): ?>
               <div class="absolute bottom-3 left-0 right-0 z-20 flex justify-center gap-2">
-                <?php foreach ($heroBanners as $i => $_): ?>
+                <?php for ($i=0; $i<$heroSlideCount; $i++): ?>
                   <button type="button" data-hero-dot="<?= $i ?>" class="rounded-full h-2.5 transition-all" style="width:<?= $i===0?'28px':'8px' ?>;background:<?= $i===0?'#f97316':'rgba(255,255,255,.75)' ?>;border:1px solid rgba(0,0,0,.08)"></button>
-                <?php endforeach; ?>
+                <?php endfor; ?>
               </div>
             <?php endif; ?>
           </div>
