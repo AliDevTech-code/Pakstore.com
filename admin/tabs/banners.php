@@ -47,10 +47,21 @@ if ($editId > 0) {
             </div>
 
             <div>
-                <label for="image_file" class="block text-xs font-semibold text-slate-700 mb-1">Banner Image (max 3 MB)</label>
-                <input id="image_file" name="image_file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="w-full text-xs border border-slate-300 rounded-lg p-1.5 bg-white file:mr-2 file:px-2.5 file:py-1 file:rounded file:border-0 file:bg-slate-900 file:text-white file:text-[11px] file:font-bold">
+            <div>
+                <label for="image_file" class="block text-xs font-semibold text-slate-700 mb-1">Desktop Banner Image (max 3 MB)</label>
+                <input id="image_file" name="image_file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="w-full text-xs border border-slate-300 rounded-lg p-1.5 bg-white file:mr-2 file:px-2.5 file:py-1 file:rounded file:border-0 file:bg-slate-900 file:text-gray-900 file:text-[11px] file:font-bold">
+                <p class="text-[10px] text-slate-500 mt-1">Recommended desktop size: <strong>1600 × 500 px</strong></p>
                 <?php if (!empty($editing['image'])): ?>
                     <img src="<?= e(image_url($editing['image'])) ?>" alt="" class="mt-2 h-20 w-full object-cover rounded-lg border border-slate-200">
+                <?php endif; ?>
+            </div>
+
+            <div>
+                <label for="image_mobile_file" class="block text-xs font-semibold text-slate-700 mb-1">Mobile Banner Image (max 3 MB)</label>
+                <input id="image_mobile_file" name="image_mobile_file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="w-full text-xs border border-slate-300 rounded-lg p-1.5 bg-white file:mr-2 file:px-2.5 file:py-1 file:rounded file:border-0 file:bg-slate-900 file:text-gray-900 file:text-[11px] file:font-bold">
+                <p class="text-[10px] text-slate-500 mt-1">Recommended mobile size: <strong>768 × 500 px</strong></p>
+                <?php if (!empty($editing['image_mobile'])): ?>
+                    <img src="<?= e(image_url($editing['image_mobile'])) ?>" alt="" class="mt-2 h-20 w-full object-cover rounded-lg border border-slate-200">
                 <?php endif; ?>
             </div>
 

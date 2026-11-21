@@ -17,6 +17,7 @@ try {
 } catch (Throwable $e) { $sale = []; }
 
 $slides = array_slice($featured, 0, 5);
+try { if(function_exists("ensure_banner_size_columns")) ensure_banner_size_columns(); $homeBanners = db()->query("SELECT * FROM banners WHERE is_active=1 ORDER BY sort_order ASC, id DESC LIMIT 10")->fetchAll(); } catch (Throwable $e) { $homeBanners = []; }
 $pageTitle = setting('store_name', 'PakStore') . ' - Cash on Delivery Store Pakistan';
 $metaDescription = 'Shop premium products in Pakistan with Cash on Delivery, free delivery offers, 7-day return, and fast nationwide shipping.';
 require __DIR__ . '/includes/header.php';
@@ -80,57 +81,6 @@ function pk_product_card(array $p, string $badgeType = '') {
     </div>
   </section>
 
-  <!-- AUTOPLAY PRODUCT SLIDER -->
-  <section data-hero-slider class="relative bg-[#f3f4f6] border-y border-gray-200 overflow-hidden" style="min-height:380px;">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="flex items-end justify-between gap-3 mb-5">
-        <div>
-          <p class="text-xs font-bold uppercase tracking-wider text-[#f97316]">Featured Picks</p>
-          <h2 class="pk-title text-2xl sm:text-3xl">Trending Products</h2>
-        </div>
-        <a href="<?= e(url('shop.php')) ?>" class="text-sm font-bold text-[#166534] hover:text-[#f97316]">View All →</a>
-      </div>
-
-      <div class="relative">
-        <?php if ($slides): foreach ($slides as $i => $s):
-          $price=(float)$s['price']; $orig=(float)($s['original_price']??0); $hasSale=$orig>$price;
-        ?>
-          <div class="hero-slide <?= $i===0?'is-active':'' ?>">
-            <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-              <div class="grid grid-cols-1 md:grid-cols-2 items-center">
-                <a href="<?= e(url('product.php?id='.(int)$s['id'])) ?>" class="block bg-gray-50 p-6 sm:p-8 flex items-center justify-center min-h-[260px] sm:min-h-[340px]">
-                  <img src="<?= e(image_url($s['image'])) ?>" alt="<?= e($s['title']) ?>" class="max-h-[240px] sm:max-h-[300px] w-auto max-w-full object-contain mx-auto">
-                </a>
-                <div class="p-6 sm:p-8">
-                  <span class="inline-block text-xs font-bold uppercase tracking-wider text-[#166534] bg-green-50 px-3 py-1 rounded-full mb-3"><?= e($s['category_name'] ?: 'Featured') ?></span>
-                  <h3 class="text-2xl sm:text-3xl font-black text-gray-900 leading-tight"><?= e($s['title']) ?></h3>
-                  <p class="mt-3 text-gray-600 text-sm leading-7"><?= e(mb_substr(trim(strip_tags((string)($s['description'] ?? 'Quality product with Cash on Delivery all over Pakistan.'))), 0, 140)) ?></p>
-                  <div class="mt-4 flex items-baseline gap-3">
-                    <span class="text-3xl font-black text-[#166534] font-heading"><?= e(money($price)) ?></span>
-                    <?php if ($hasSale): ?><span class="text-lg text-gray-400 line-through"><?= e(money($orig)) ?></span><?php endif; ?>
-                  </div>
-                  <div class="mt-5 flex flex-wrap gap-3">
-                    <a href="<?= e(url('product.php?id='.(int)$s['id'])) ?>" class="pk-btn pk-btn-orange">Shop Now</a>
-                    <a href="<?= e(url('checkout.php?product='.(int)$s['id'].'&qty=1')) ?>" class="pk-btn pk-btn-green">Buy Now</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        <?php endforeach; else: ?>
-          <div class="hero-slide is-active"><div class="bg-white border border-gray-200 rounded-2xl p-10 text-center"><p class="text-gray-600">Products coming soon.</p></div></div>
-        <?php endif; ?>
-
-        <?php if (count($slides) > 1): ?>
-          <button type="button" data-hero-prev class="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white border border-gray-200 text-[#166534] hover:bg-[#f97316] hover:text-gray-900 flex items-center justify-center shadow"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
-          <button type="button" data-hero-next class="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white border border-gray-200 text-[#166534] hover:bg-[#f97316] hover:text-gray-900 flex items-center justify-center shadow"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
-          <div class="flex justify-center gap-2 mt-4">
-            <?php foreach ($slides as $i => $_): ?><button type="button" data-hero-dot="<?= $i ?>" class="hero-dot rounded-full h-2.5 <?= $i===0?'w-7':'w-2.5' ?>" style="background:<?= $i===0?'#f97316':'#d1d5db' ?>"></button><?php endforeach; ?>
-          </div>
-        <?php endif; ?>
-      </div>
-    </div>
-  </section>
   <!-- CATEGORIES -->
   <section class="pk-section pk-section-surface">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -152,7 +102,67 @@ function pk_product_card(array $p, string $badgeType = '') {
     </div>
   </section>
 
-  <!-- BEST SELLERS -->
+    <!-- AUTOPLAY PRODUCT SLIDER -->
+  <section data-hero-slider class="relative bg-[#f3f4f6] border-y border-gray-200 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+      <div class="flex items-end justify-between gap-3 mb-5">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-wider text-[#f97316]">Featured Picks</p>
+          <h2 class="pk-title text-2xl sm:text-3xl">Trending Offers</h2>
+        </div>
+        <a href="<?= e(url('shop.php')) ?>" class="text-sm font-bold text-[#166534] hover:text-[#f97316]">View All →</a>
+      </div>
+
+      <div class="relative rounded-2xl overflow-hidden bg-white border border-gray-200 shadow-sm">
+        <?php if (!empty($homeBanners)): foreach ($homeBanners as $i => $b):
+          $desk = trim((string)($b['image'] ?? ''));
+          $mob = trim((string)($b['image_mobile'] ?? ''));
+          if ($mob === '') $mob = $desk;
+          $link = trim((string)($b['link'] ?? ''));
+          if ($link === '') $link = url('shop.php');
+        ?>
+          <div class="hero-slide <?= $i===0?'is-active':'' ?>">
+            <a href="<?= e(str_starts_with($link,'http') ? $link : url(ltrim($link,'/'))) ?>" class="block w-full">
+              <img src="<?= e(image_url($mob)) ?>" alt="<?= e($b['title'] ?? 'Banner') ?>" class="block md:hidden w-full h-auto object-cover" loading="<?= $i===0?'eager':'lazy' ?>">
+              <img src="<?= e(image_url($desk)) ?>" alt="<?= e($b['title'] ?? 'Banner') ?>" class="hidden md:block w-full h-auto object-cover" loading="<?= $i===0?'eager':'lazy' ?>">
+            </a>
+          </div>
+        <?php endforeach; elseif (!empty($slides)): foreach ($slides as $i => $s):
+          $price=(float)$s['price']; $orig=(float)($s['original_price']??0); $hasSale=$orig>$price;
+        ?>
+          <div class="hero-slide <?= $i===0?'is-active':'' ?>">
+            <div class="grid grid-cols-1 md:grid-cols-2 items-center">
+              <a href="<?= e(url('product.php?id='.(int)$s['id'])) ?>" class="block bg-gray-50 p-6 sm:p-8 flex items-center justify-center min-h-[260px] sm:min-h-[360px]">
+                <img src="<?= e(image_url($s['image'])) ?>" alt="<?= e($s['title']) ?>" class="max-h-[240px] sm:max-h-[320px] w-auto max-w-full object-contain mx-auto">
+              </a>
+              <div class="p-6 sm:p-8">
+                <span class="inline-block text-xs font-bold uppercase tracking-wider text-[#166534] bg-green-50 px-3 py-1 rounded-full mb-3"><?= e($s['category_name'] ?: 'Featured') ?></span>
+                <h3 class="text-2xl sm:text-3xl font-black text-gray-900 leading-tight"><?= e($s['title']) ?></h3>
+                <p class="mt-3 text-gray-600 text-sm leading-7"><?= e(mb_substr(trim(strip_tags((string)($s['description'] ?? 'Quality product with Cash on Delivery all over Pakistan.'))), 0, 140)) ?></p>
+                <div class="mt-4 flex items-baseline gap-3">
+                  <span class="text-3xl font-black text-[#166534] font-heading"><?= e(money($price)) ?></span>
+                  <?php if ($hasSale): ?><span class="text-lg text-gray-400 line-through"><?= e(money($orig)) ?></span><?php endif; ?>
+                </div>
+                <div class="mt-5 flex flex-wrap gap-3">
+                  <a href="<?= e(url('product.php?id='.(int)$s['id'])) ?>" class="pk-btn pk-btn-orange">Shop Now</a>
+                  <a href="<?= e(url('checkout.php?product='.(int)$s['id'].'&qty=1')) ?>" class="pk-btn pk-btn-green">Buy Now</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        <?php endforeach; else: ?>
+          <div class="hero-slide is-active"><div class="p-10 text-center text-gray-600">Banners yahan admin panel se add honge.</div></div>
+        <?php endif; ?>
+
+        <?php $dotsCount = !empty($homeBanners) ? count($homeBanners) : count($slides); if ($dotsCount > 1): ?>
+          <div class="absolute bottom-3 left-0 right-0 z-20 flex justify-center gap-2">
+            <?php for($i=0;$i<$dotsCount;$i++): ?><button type="button" data-hero-dot="<?= $i ?>" class="hero-dot rounded-full h-2.5 <?= $i===0?'w-7':'w-2.5' ?>" style="background:<?= $i===0?'#f97316':'rgba(255,255,255,.85)' ?>;border:1px solid rgba(0,0,0,.08)"></button><?php endfor; ?>
+          </div>
+        <?php endif; ?>
+      </div>
+    </div>
+  </section>
+<!-- BEST SELLERS -->
   <section class="pk-section pk-section-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-end justify-between gap-4 mb-6">

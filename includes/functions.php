@@ -620,6 +620,9 @@ function ensure_banner_size_columns(): void
         if (!in_array('image_height', $columns, true)) {
             db()->exec('ALTER TABLE banners ADD COLUMN image_height INT UNSIGNED NULL DEFAULT NULL AFTER image_width');
         }
+        if (!in_array('image_mobile', $columns, true)) {
+            db()->exec('ALTER TABLE banners ADD COLUMN image_mobile VARCHAR(500) NULL DEFAULT NULL AFTER image');
+        }
     } catch (Throwable $e) {
         error_log('Banner size migration failed: ' . $e->getMessage());
     }
