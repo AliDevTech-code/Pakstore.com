@@ -69,18 +69,42 @@ function pk_product_card(array $p, string $badgeType = '') {
 <main class="flex-1">
 
     <!-- HERO -->
-  <section class="bg-white text-gray-900 border-b border-gray-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 text-center">
-      <p class="text-sm font-bold uppercase tracking-wider text-[#f97316]">Pakistan's Trusted Online Store</p>
-      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black mt-3 leading-tight" style="color:#111827">Premium Shopping, <span style="color:#f97316">Cash on Delivery</span></h1>
-      <p class="mt-4 text-base sm:text-lg text-gray-700 max-w-2xl mx-auto">Quality products, best prices, aur poore Pakistan mein fast delivery. Abhi shop karein.</p>
-      <div class="mt-7 flex flex-wrap justify-center gap-3">
-        <a href="<?= e(url('shop.php')) ?>" class="pk-btn pk-btn-orange text-base px-7 py-3.5">Shop Now <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
-        <a href="<?= e(url('categories.php')) ?>" class="pk-btn pk-btn-outline bg-white text-base px-7 py-3.5">Browse Categories</a>
+  <section class="bg-white border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-50 border border-green-100 text-[#166534] text-xs font-bold mb-5">
+            <span class="w-2 h-2 rounded-full bg-[#f97316]"></span> Trusted Online Shopping in Pakistan
+          </div>
+          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight" style="color:#111827">
+            Premium Products.<br><span style="color:#166534">Cash on Delivery.</span>
+          </h1>
+          <p class="mt-5 text-base sm:text-lg text-gray-600 max-w-xl leading-7">
+            Quality products, best prices aur poore Pakistan mein reliable delivery — order karein aur payment delivery par dein.
+          </p>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href="<?= e(url('shop.php')) ?>" class="pk-btn pk-btn-orange px-7 py-3.5 text-sm sm:text-base">Shop Now <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+            <a href="<?= e(url('categories.php')) ?>" class="pk-btn pk-btn-outline px-7 py-3.5 text-sm sm:text-base">Browse Categories</a>
+          </div>
+          <div class="mt-8 flex flex-wrap gap-x-5 gap-y-2 text-sm text-gray-600">
+            <span class="inline-flex items-center gap-1.5"><i data-lucide="check-circle" class="w-4 h-4 text-[#166534]"></i>Cash on Delivery</span>
+            <span class="inline-flex items-center gap-1.5"><i data-lucide="check-circle" class="w-4 h-4 text-[#166534]"></i>7-Day Return</span>
+            <span class="inline-flex items-center gap-1.5"><i data-lucide="check-circle" class="w-4 h-4 text-[#166534]"></i>Nationwide Delivery</span>
+          </div>
+        </div>
+        <div class="relative">
+          <div class="bg-gradient-to-br from-green-50 to-orange-50 border border-gray-200 rounded-3xl p-6 sm:p-8 shadow-sm">
+            <?php $heroImg = !empty($featured[0]['image']) ? $featured[0]['image'] : (!empty($slides[0]['image']) ? $slides[0]['image'] : ''); ?>
+            <?php if ($heroImg): ?>
+              <img src="<?= e(image_url($heroImg)) ?>" alt="<?= e(setting('store_name','PakStore')) ?>" class="w-full h-[280px] sm:h-[360px] object-contain mx-auto">
+            <?php else: ?>
+              <div class="w-full h-[280px] sm:h-[360px] flex items-center justify-center text-gray-400"><i data-lucide="shopping-bag" class="w-20 h-20"></i></div>
+            <?php endif; ?>
+          </div>
+        </div>
       </div>
     </div>
   </section>
-
   <!-- CATEGORIES -->
   <section class="pk-section pk-section-surface">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -222,7 +246,7 @@ function pk_product_card(array $p, string $badgeType = '') {
     </div>
   </section>
   <!-- CTA -->
-  <section class="py-14 bg-[#166534] text-gray-900">
+  <section class="py-14 bg-[#166534] text-white">
     <div class="max-w-4xl mx-auto px-4 text-center">
       <h2 class="text-3xl sm:text-4xl font-black" style="color:#111827">Ready to Shop?</h2>
       <p class="mt-3 text-green-100">Quality products, best prices, aur Cash on Delivery — all over Pakistan.</p>

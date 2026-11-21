@@ -161,3 +161,6 @@ img{max-width:100%;height:auto}
 input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--pk-green);outline-offset:1px}
 input[type="radio"],input[type="checkbox"]{accent-color:var(--pk-green)}
 @media print{body{background:#fff!important}.print-hide,header,footer,nav{display:none!important}.print-area{position:static!important;box-shadow:none!important;border:none!important;max-width:100%!important;margin:0!important;padding:0!important}.print-area *{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+
+.text-white{color:#fff!important}
+.text-gray-900-on-dark{color:#f9fafb!important}

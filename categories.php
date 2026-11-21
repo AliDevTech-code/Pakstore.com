@@ -14,7 +14,7 @@ try {
 } catch (Throwable $e) {}
 ?>
 <main class="flex-1 bg-[#f3f4f6]">
-  <section class="bg-[#166534] text-gray-900 py-10 sm:py-14">
+  <section class="bg-[#166534] text-white py-10 sm:py-14">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
       <p class="text-sm font-semibold text-green-200">Browse by Category</p>
       <h1 class="text-3xl sm:text-4xl font-black mt-1" style="color:#111827">Product Categories</h1>

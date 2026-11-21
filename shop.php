@@ -36,7 +36,7 @@ $metaDescription = 'Shop quality products in Pakistan with Cash on Delivery. Bro
 require __DIR__ . '/includes/header.php';
 ?>
 <main class="flex-1 bg-[#f3f4f6]">
-  <section class="bg-[#166534] text-gray-900 py-10 sm:py-14">
+  <section class="bg-[#166534] text-white py-10 sm:py-14">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <p class="text-sm font-semibold text-green-200">PakStore Collection</p>
       <h1 class="text-3xl sm:text-4xl font-black mt-1" style="color:#111827"><?= e($activeCategoryRow ? $activeCategoryRow['name'] : 'Shop All Products') ?></h1>
@@ -62,9 +62,9 @@ require __DIR__ . '/includes/header.php';
               <div class="pk-label mb-2">Category</div>
               <div class="flex flex-wrap gap-2">
                 <?php $catBase = array_filter(['q'=>$q,'min_price'=>$minPrice,'max_price'=>$maxPrice,'sort'=>$sort]); ?>
-                <a href="<?= e(url('shop.php?' . http_build_query($catBase))) ?>" class="px-3 py-1.5 rounded-full text-xs font-bold border <?= $activeSlug==='' ? 'bg-[#166534] text-gray-900 border-[#166534]' : 'bg-white text-gray-700 border-gray-200 hover:border-[#166534]' ?>">All</a>
+                <a href="<?= e(url('shop.php?' . http_build_query($catBase))) ?>" class="px-3 py-1.5 rounded-full text-xs font-bold border <?= $activeSlug==='' ? 'bg-[#166534] text-white border-[#166534]' : 'bg-white text-gray-700 border-gray-200 hover:border-[#166534]' ?>">All</a>
                 <?php foreach ($categories as $cat): $pms = $catBase; $pms['category']=$cat['slug']; ?>
-                  <a href="<?= e(url('shop.php?' . http_build_query($pms))) ?>" class="px-3 py-1.5 rounded-full text-xs font-bold border <?= $activeSlug===$cat['slug'] ? 'bg-[#166534] text-gray-900 border-[#166534]' : 'bg-white text-gray-700 border-gray-200 hover:border-[#166534]' ?>"><?= e($cat['name']) ?></a>
+                  <a href="<?= e(url('shop.php?' . http_build_query($pms))) ?>" class="px-3 py-1.5 rounded-full text-xs font-bold border <?= $activeSlug===$cat['slug'] ? 'bg-[#166534] text-white border-[#166534]' : 'bg-white text-gray-700 border-gray-200 hover:border-[#166534]' ?>"><?= e($cat['name']) ?></a>
                 <?php endforeach; ?>
               </div>
               <?php if ($activeSlug !== ''): ?><input type="hidden" name="category" value="<?= e($activeSlug) ?>"><?php endif; ?>

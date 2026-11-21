@@ -49,7 +49,7 @@ require __DIR__ . '/includes/header.php';
 
     <?php if ($order): ?>
       <div class="mt-5 bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
-        <div class="px-5 py-4 bg-[#166534] text-gray-900 flex flex-wrap items-center justify-between gap-3">
+        <div class="px-5 py-4 bg-[#166534] text-white flex flex-wrap items-center justify-between gap-3">
           <div><span class="text-[10px] uppercase tracking-widest text-green-200 font-bold block">Order ID</span><span class="font-mono text-base font-black">#<?= e($order['order_code']) ?></span></div>
           <span class="px-2.5 py-1 rounded-full text-xs font-bold <?= e(order_status_classes($order['status'])) ?>"><?= e($order['status']) ?></span>
         </div>
