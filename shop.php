@@ -101,7 +101,7 @@ require __DIR__ . '/includes/header.php';
             <?php $catBaseTop = array_filter(['q'=>$q,'min_price'=>$minPrice,'max_price'=>$maxPrice,'sort'=>$sort]); ?>
             <a href="<?= e(url('shop.php?' . http_build_query($catBaseTop))) ?>" class="<?= $activeSlug==='' ? 'text-[#166534] font-bold' : 'text-gray-500 hover:text-[#166534] font-semibold' ?>">All</a>
             <?php foreach ($categories as $cat): $pms = $catBaseTop; $pms['category']=$cat['slug']; ?>
-              <span class="text-gray-300">/</span>
+              <span class="text-gray-300">&gt;</span>
               <a href="<?= e(url('shop.php?' . http_build_query($pms))) ?>" class="<?= $activeSlug===$cat['slug'] ? 'text-[#166534] font-bold' : 'text-gray-500 hover:text-[#166534] font-semibold' ?>"><?= e($cat['name']) ?></a>
             <?php endforeach; ?>
           </div>
