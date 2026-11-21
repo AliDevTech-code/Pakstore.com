@@ -99,13 +99,13 @@ function pk_product_card(array $p, string $badgeType = '') {
               $active = $heroSlideCount === 0 ? 'is-active' : '';
               $heroSlideCount++;
             ?>
-              <a href="<?= e($hLink) ?>" class="hero-slide <?= $active ?> block w-full h-full">
+              <a href="<?= e($hLink) ?>" class="hero-slide <?= $active ?> block w-full h-full"<?= $active ? ' style="opacity:1;pointer-events:auto"' : '' ?>>
                 <img src="<?= e(image_url($mob ?: $desk)) ?>" alt="<?= e($hb['title'] ?? 'Banner') ?>" class="block md:hidden w-full h-full object-cover">
                 <img src="<?= e(image_url($desk ?: $mob)) ?>" alt="<?= e($hb['title'] ?? 'Banner') ?>" class="hidden md:block w-full h-full object-cover">
               </a>
             <?php endforeach; endif; ?>
             <?php if ($heroSlideCount === 0): ?>
-              <div class="hero-slide is-active w-full h-full bg-gradient-to-br from-green-50 to-orange-50 flex items-center justify-center text-gray-400">
+              <div class="hero-slide is-active w-full h-full bg-gradient-to-br from-green-50 to-orange-50 flex items-center justify-center text-gray-400" style="opacity:1;pointer-events:auto">
                 <div class="text-center px-6">
                   <i data-lucide="image-plus" class="w-12 h-12 mx-auto mb-2 text-[#166534]/40"></i>
                   <p class="text-sm font-semibold text-gray-500">Admin panel se banner add karein</p>

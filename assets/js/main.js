@@ -37,7 +37,12 @@
     var index = 0, timer = null;
     function show(next) {
       index = (next + slides.length) % slides.length;
-      slides.forEach(function (slide, i) { slide.classList.toggle('is-active', i === index); });
+      slides.forEach(function (slide, i) {
+        var active = i === index;
+        slide.classList.toggle('is-active', active);
+        slide.style.opacity = active ? '1' : '0';
+        slide.style.pointerEvents = active ? 'auto' : 'none';
+      });
       dots.forEach(function (dot, i) {
         dot.classList.toggle('bg-[#f97316]', i === index);
         dot.classList.toggle('bg-[#FF6B00]', i === index);
