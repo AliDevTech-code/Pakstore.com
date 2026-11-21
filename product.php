@@ -241,6 +241,23 @@ $hasSale = $original > 0;
               <a href="<?= e(url('product.php?id='.(int)$item['id'])) ?>" class="name"><?= e($item['title']) ?></a>
               <div class="mt-2 flex items-baseline gap-2"><span class="pk-price"><?= e(money($rPrice)) ?></span><?php if($rSale): ?><span class="pk-old"><?= e(money($rOrig)) ?></span><?php endif; ?></div>
               <div class="text-[11px] mt-1 font-semibold <?= $rInStock?'text-[#166534]':'text-red-500' ?>"><?= $rInStock?'In Stock':'Out of Stock' ?></div>
+              <div class="mt-auto pt-3 flex items-center gap-2">
+                <?php $wished = function_exists('wishlist_has') && wishlist_has((int)$item['id']); ?>
+                <form action="<?= e(url('wishlist.php')) ?>" method="post" class="shrink-0">
+                  <?= csrf_field() ?>
+                  <input type="hidden" name="action" value="toggle">
+                  <input type="hidden" name="product_id" value="<?= (int)$item['id'] ?>">
+                  <input type="hidden" name="redirect" value="<?= e($_SERVER['REQUEST_URI'] ?? 'index.php') ?>">
+                  <button type="submit" class="w-10 h-10 rounded-xl border flex items-center justify-center transition-colors <?= $wished ? 'bg-red-50 border-red-200 text-red-500' : 'bg-white border-gray-200 text-gray-500 hover:text-red-500 hover:border-red-200' ?>" title="<?= $wished ? 'Remove from Wishlist' : 'Add to Wishlist' ?>" aria-label="Wishlist">
+                    <i data-lucide="heart" class="w-4 h-4 <?= $wished ? 'fill-red-500' : '' ?>"></i>
+                  </button>
+                </form>
+                <?php if ($rInStock): ?>
+                  <a href="<?= e(url('checkout.php?product='.(int)$item['id'].'&qty=1')) ?>" class="pk-btn pk-btn-orange flex-1 text-xs py-2.5">Buy Now <i data-lucide="chevron-right" class="w-4 h-4"></i></a>
+                <?php else: ?>
+                  <span class="pk-btn flex-1 text-xs py-2.5 bg-gray-100 text-gray-400 cursor-not-allowed">Out of Stock</span>
+                <?php endif; ?>
+              </div>
             </div>
           </div>
         <?php endforeach; ?>

@@ -102,7 +102,7 @@ if (empty($structuredData)) {
     <link rel="preload" href="<?= e(url('assets/fonts/outfit-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 
     <link rel="stylesheet" href="<?= e(url('assets/css/tailwind.css') . '?v=4') ?>">
-    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=34') ?>">
+    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=35') ?>">
     <script src="<?= e(url('assets/js/lucide.min.js')) ?>"></script>
     <style>
         /* Keep drawers closed by default even if the external stylesheet fails to load. */

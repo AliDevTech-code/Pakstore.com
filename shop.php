@@ -120,11 +120,21 @@ require __DIR__ . '/includes/header.php';
                     <?php if ($hasSale): ?><span class="pk-old"><?= e(money($orig)) ?></span><?php endif; ?>
                   </div>
                   <div class="text-[11px] mt-1 <?= $inStock ? 'text-[#166534]' : 'text-red-500' ?> font-semibold"><?= $inStock ? 'In Stock' : 'Out of Stock' ?></div>
-                  <div class="mt-auto pt-3">
+                  <div class="mt-auto pt-3 flex items-center gap-2">
+                    <?php $wished = function_exists('wishlist_has') && wishlist_has((int)$p['id']); ?>
+                    <form action="<?= e(url('wishlist.php')) ?>" method="post" class="shrink-0">
+                      <?= csrf_field() ?>
+                      <input type="hidden" name="action" value="toggle">
+                      <input type="hidden" name="product_id" value="<?= (int)$p['id'] ?>">
+                      <input type="hidden" name="redirect" value="<?= e($_SERVER['REQUEST_URI'] ?? 'shop.php') ?>">
+                      <button type="submit" class="w-10 h-10 rounded-xl border flex items-center justify-center transition-colors <?= $wished ? 'bg-red-50 border-red-200 text-red-500' : 'bg-white border-gray-200 text-gray-500 hover:text-red-500 hover:border-red-200' ?>" title="<?= $wished ? 'Remove from Wishlist' : 'Add to Wishlist' ?>" aria-label="Wishlist">
+                        <i data-lucide="heart" class="w-4 h-4 <?= $wished ? 'fill-red-500' : '' ?>"></i>
+                      </button>
+                    </form>
                     <?php if ($inStock): ?>
-                      <form action="<?= e(url('cart.php')) ?>" method="post"><?= csrf_field() ?><input type="hidden" name="action" value="add"><input type="hidden" name="product_id" value="<?= (int)$p['id'] ?>"><input type="hidden" name="quantity" value="1"><button type="submit" class="pk-btn pk-btn-orange w-full text-xs py-2.5">Add to Cart</button></form>
+                      <a href="<?= e(url('checkout.php?product='.(int)$p['id'].'&qty=1')) ?>" class="pk-btn pk-btn-orange flex-1 text-xs py-2.5">Buy Now <i data-lucide="chevron-right" class="w-4 h-4"></i></a>
                     <?php else: ?>
-                      <span class="pk-btn w-full text-xs py-2.5 bg-gray-100 text-gray-400 cursor-not-allowed">Out of Stock</span>
+                      <span class="pk-btn flex-1 text-xs py-2.5 bg-gray-100 text-gray-400 cursor-not-allowed">Out of Stock</span>
                     <?php endif; ?>
                   </div>
                 </div>
