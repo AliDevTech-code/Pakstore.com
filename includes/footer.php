@@ -67,6 +67,6 @@ $footerTiktok = setting('tiktok_url', '#');
   </div>
 </footer>
 
-<script src="<?= e(url('assets/js/main.js') . '?v=28') ?>"></script>
+<script src="<?= e(url('assets/js/main.js') . '?v=29') ?>"></script>
 </body>
 </html>
