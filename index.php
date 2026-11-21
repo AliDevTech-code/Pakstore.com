@@ -69,36 +69,48 @@ function pk_product_card(array $p, string $badgeType = '') {
 <main class="flex-1">
 
     <!-- HERO -->
-  <section class="bg-white border-b border-gray-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-        <div>
-          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-50 border border-green-100 text-[#166534] text-xs font-bold mb-5">
-            <span class="w-2 h-2 rounded-full bg-[#f97316]"></span> Trusted Online Shopping in Pakistan
-          </div>
-          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight" style="color:#111827">
+  <section class="bg-[#f8fafc] border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
+        <div class="max-w-xl">
+          <span class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-[#166534] text-[11px] font-bold uppercase tracking-wide mb-4">Cash on Delivery</span>
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight" style="color:#111827">
             Premium Products.<br><span style="color:#166534">Cash on Delivery.</span>
           </h1>
-          <p class="mt-5 text-base sm:text-lg text-gray-600 max-w-xl leading-7">
-            Quality products, best prices aur poore Pakistan mein reliable delivery — order karein aur payment delivery par dein.
+          <p class="mt-4 text-sm sm:text-base text-gray-600 leading-6 max-w-lg">
+            Quality products, best prices aur poore Pakistan mein fast delivery.
           </p>
-          <div class="mt-8 flex flex-wrap gap-3">
-            <a href="<?= e(url('shop.php')) ?>" class="pk-btn pk-btn-orange px-7 py-3.5 text-sm sm:text-base">Shop Now <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
-            <a href="<?= e(url('categories.php')) ?>" class="pk-btn pk-btn-outline px-7 py-3.5 text-sm sm:text-base">Browse Categories</a>
-          </div>
-          <div class="mt-8 flex flex-wrap gap-x-5 gap-y-2 text-sm text-gray-600">
-            <span class="inline-flex items-center gap-1.5"><i data-lucide="check-circle" class="w-4 h-4 text-[#166534]"></i>Cash on Delivery</span>
-            <span class="inline-flex items-center gap-1.5"><i data-lucide="check-circle" class="w-4 h-4 text-[#166534]"></i>7-Day Return</span>
-            <span class="inline-flex items-center gap-1.5"><i data-lucide="check-circle" class="w-4 h-4 text-[#166534]"></i>Nationwide Delivery</span>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="<?= e(url('shop.php')) ?>" class="pk-btn pk-btn-orange px-6 py-3 text-sm font-bold">Shop Now <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+            <a href="<?= e(url('categories.php')) ?>" class="pk-btn pk-btn-outline px-6 py-3 text-sm font-bold">Browse Categories</a>
           </div>
         </div>
-        <div class="relative">
-          <div class="bg-gradient-to-br from-green-50 to-orange-50 border border-gray-200 rounded-3xl p-6 sm:p-8 shadow-sm">
-            <?php $heroImg = !empty($featured[0]['image']) ? $featured[0]['image'] : (!empty($slides[0]['image']) ? $slides[0]['image'] : ''); ?>
-            <?php if ($heroImg): ?>
-              <img src="<?= e(image_url($heroImg)) ?>" alt="<?= e(setting('store_name','PakStore')) ?>" class="w-full h-[280px] sm:h-[360px] object-contain mx-auto">
+
+        <div class="w-full">
+          <div class="relative rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-sm">
+            <?php
+              $heroBanners = !empty($homeBanners) ? $homeBanners : [];
+              $hb = $heroBanners[0] ?? null;
+              $desk = $hb ? trim((string)($hb['image'] ?? '')) : '';
+              $mob = $hb ? trim((string)($hb['image_mobile'] ?? '')) : '';
+              if ($mob === '') $mob = $desk;
+              $hLink = $hb ? trim((string)($hb['link'] ?? '')) : '';
+              if ($hLink === '') $hLink = url('shop.php');
+              $hLink = str_starts_with($hLink,'http') ? $hLink : url(ltrim($hLink,'/'));
+            ?>
+            <?php if ($desk !== '' || $mob !== ''): ?>
+              <a href="<?= e($hLink) ?>" class="block">
+                <img src="<?= e(image_url($mob ?: $desk)) ?>" alt="<?= e($hb['title'] ?? 'Banner') ?>" class="block md:hidden w-full h-[220px] sm:h-[280px] object-cover">
+                <img src="<?= e(image_url($desk ?: $mob)) ?>" alt="<?= e($hb['title'] ?? 'Banner') ?>" class="hidden md:block w-full h-[320px] lg:h-[360px] object-cover">
+              </a>
+            <?php elseif (!empty($featured[0]['image'])): ?>
+              <a href="<?= e(url('product.php?id='.(int)$featured[0]['id'])) ?>" class="block bg-gray-50 p-6">
+                <img src="<?= e(image_url($featured[0]['image'])) ?>" alt="<?= e($featured[0]['title']) ?>" class="w-full h-[220px] sm:h-[280px] md:h-[320px] lg:h-[360px] object-contain">
+              </a>
             <?php else: ?>
-              <div class="w-full h-[280px] sm:h-[360px] flex items-center justify-center text-gray-400"><i data-lucide="shopping-bag" class="w-20 h-20"></i></div>
+              <div class="w-full h-[220px] sm:h-[280px] md:h-[320px] lg:h-[360px] bg-gray-50 flex items-center justify-center text-gray-400">
+                <i data-lucide="image" class="w-16 h-16"></i>
+              </div>
             <?php endif; ?>
           </div>
         </div>
@@ -126,66 +138,7 @@ function pk_product_card(array $p, string $badgeType = '') {
     </div>
   </section>
 
-    <!-- AUTOPLAY PRODUCT SLIDER -->
-  <section data-hero-slider class="relative bg-[#f3f4f6] border-y border-gray-200 overflow-hidden">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
-      <div class="flex items-end justify-between gap-3 mb-5">
-        <div>
-          <p class="text-xs font-bold uppercase tracking-wider text-[#f97316]">Featured Picks</p>
-          <h2 class="pk-title text-2xl sm:text-3xl">Trending Offers</h2>
-        </div>
-        <a href="<?= e(url('shop.php')) ?>" class="text-sm font-bold text-[#166534] hover:text-[#f97316]">View All →</a>
-      </div>
 
-      <div class="relative rounded-2xl overflow-hidden bg-white border border-gray-200 shadow-sm">
-        <?php if (!empty($homeBanners)): foreach ($homeBanners as $i => $b):
-          $desk = trim((string)($b['image'] ?? ''));
-          $mob = trim((string)($b['image_mobile'] ?? ''));
-          if ($mob === '') $mob = $desk;
-          $link = trim((string)($b['link'] ?? ''));
-          if ($link === '') $link = url('shop.php');
-        ?>
-          <div class="hero-slide <?= $i===0?'is-active':'' ?>">
-            <a href="<?= e(str_starts_with($link,'http') ? $link : url(ltrim($link,'/'))) ?>" class="block w-full">
-              <img src="<?= e(image_url($mob)) ?>" alt="<?= e($b['title'] ?? 'Banner') ?>" class="block md:hidden w-full h-auto object-cover" loading="<?= $i===0?'eager':'lazy' ?>">
-              <img src="<?= e(image_url($desk)) ?>" alt="<?= e($b['title'] ?? 'Banner') ?>" class="hidden md:block w-full h-auto object-cover" loading="<?= $i===0?'eager':'lazy' ?>">
-            </a>
-          </div>
-        <?php endforeach; elseif (!empty($slides)): foreach ($slides as $i => $s):
-          $price=(float)$s['price']; $orig=(float)($s['original_price']??0); $hasSale=$orig>$price;
-        ?>
-          <div class="hero-slide <?= $i===0?'is-active':'' ?>">
-            <div class="grid grid-cols-1 md:grid-cols-2 items-center">
-              <a href="<?= e(url('product.php?id='.(int)$s['id'])) ?>" class="block bg-gray-50 p-6 sm:p-8 flex items-center justify-center min-h-[260px] sm:min-h-[360px]">
-                <img src="<?= e(image_url($s['image'])) ?>" alt="<?= e($s['title']) ?>" class="max-h-[240px] sm:max-h-[320px] w-auto max-w-full object-contain mx-auto">
-              </a>
-              <div class="p-6 sm:p-8">
-                <span class="inline-block text-xs font-bold uppercase tracking-wider text-[#166534] bg-green-50 px-3 py-1 rounded-full mb-3"><?= e($s['category_name'] ?: 'Featured') ?></span>
-                <h3 class="text-2xl sm:text-3xl font-black text-gray-900 leading-tight"><?= e($s['title']) ?></h3>
-                <p class="mt-3 text-gray-600 text-sm leading-7"><?= e(mb_substr(trim(strip_tags((string)($s['description'] ?? 'Quality product with Cash on Delivery all over Pakistan.'))), 0, 140)) ?></p>
-                <div class="mt-4 flex items-baseline gap-3">
-                  <span class="text-3xl font-black text-[#166534] font-heading"><?= e(money($price)) ?></span>
-                  <?php if ($hasSale): ?><span class="text-lg text-gray-400 line-through"><?= e(money($orig)) ?></span><?php endif; ?>
-                </div>
-                <div class="mt-5 flex flex-wrap gap-3">
-                  <a href="<?= e(url('product.php?id='.(int)$s['id'])) ?>" class="pk-btn pk-btn-orange">Shop Now</a>
-                  <a href="<?= e(url('checkout.php?product='.(int)$s['id'].'&qty=1')) ?>" class="pk-btn pk-btn-green">Buy Now</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        <?php endforeach; else: ?>
-          <div class="hero-slide is-active"><div class="p-10 text-center text-gray-600">Banners yahan admin panel se add honge.</div></div>
-        <?php endif; ?>
-
-        <?php $dotsCount = !empty($homeBanners) ? count($homeBanners) : count($slides); if ($dotsCount > 1): ?>
-          <div class="absolute bottom-3 left-0 right-0 z-20 flex justify-center gap-2">
-            <?php for($i=0;$i<$dotsCount;$i++): ?><button type="button" data-hero-dot="<?= $i ?>" class="hero-dot rounded-full h-2.5 <?= $i===0?'w-7':'w-2.5' ?>" style="background:<?= $i===0?'#f97316':'rgba(255,255,255,.85)' ?>;border:1px solid rgba(0,0,0,.08)"></button><?php endfor; ?>
-          </div>
-        <?php endif; ?>
-      </div>
-    </div>
-  </section>
 <!-- BEST SELLERS -->
   <section class="pk-section pk-section-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
