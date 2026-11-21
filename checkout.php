@@ -230,9 +230,9 @@ require __DIR__ . '/includes/header.php';
   <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="mb-6"><h1 class="pk-title">Checkout</h1><p class="pk-sub">Cash on Delivery — poore Pakistan mein</p></div>
     <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-      <div class="px-6 py-4 bg-[#166534] text-white flex items-center justify-between">
-        <div><span class="text-green-200 font-bold text-xs uppercase tracking-wider block">100% Cash on Delivery</span><h2 class="text-lg font-bold" style="color:#fff">Complete Your Order</h2></div>
-        <a href="<?= e($isDirect ? url('product.php?id=' . (int)$directProduct['id']) : url('cart.php')) ?>" class="text-white/80 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></a>
+      <div class="px-6 py-4 bg-[#166534] text-gray-900 flex items-center justify-between">
+        <div><span class="text-green-200 font-bold text-xs uppercase tracking-wider block">100% Cash on Delivery</span><h2 class="text-lg font-bold" style="color:#111827">Complete Your Order</h2></div>
+        <a href="<?= e($isDirect ? url('product.php?id=' . (int)$directProduct['id']) : url('cart.php')) ?>" class="text-gray-900/80 hover:text-gray-900"><i data-lucide="x" class="w-5 h-5"></i></a>
       </div>
 
       <form method="post" action="<?= e(url('checkout.php')) ?>" class="p-6 space-y-5">
@@ -279,7 +279,7 @@ require __DIR__ . '/includes/header.php';
         </div>
 
         <div class="p-4 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-[#166534] text-white flex items-center justify-center font-bold shrink-0">Rs</div>
+          <div class="w-10 h-10 rounded-full bg-[#166534] text-gray-900 flex items-center justify-center font-bold shrink-0">Rs</div>
           <div><div class="font-bold text-gray-900 text-sm">Payment Method: Cash on Delivery (COD)</div><div class="text-xs text-gray-600">Parcel receive karen aur cash courier rider ko dein.</div></div>
         </div>
 

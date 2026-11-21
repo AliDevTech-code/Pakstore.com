@@ -26,9 +26,9 @@ require __DIR__ . '/includes/header.php';
 <main class="flex-1 bg-slate-50">
     <div class="max-w-3xl mx-auto px-4 sm:px-6 py-8 relative" data-success-burst>
         <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xl">
-            <div class="bg-emerald-600 text-white p-6 text-center">
+            <div class="bg-emerald-600 text-gray-900 p-6 text-center">
                 <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <i data-lucide="check-circle" class="w-8 h-8 text-white"></i>
+                    <i data-lucide="check-circle" class="w-8 h-8 text-gray-900"></i>
                 </div>
                 <span class="text-xs uppercase font-bold tracking-widest text-emerald-200 block">Order Successfully Placed</span>
                 <h1 class="text-2xl font-bold tracking-tight mt-1">Shukriya, <?= e($order['customer_name']) ?>!</h1>
@@ -95,7 +95,7 @@ require __DIR__ . '/includes/header.php';
                     <button type="button" onclick="window.print()" class="py-2.5 px-4 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 text-xs font-semibold transition-colors flex items-center justify-center gap-2">
                         <i data-lucide="printer" class="w-4 h-4"></i> Print Receipt
                     </button>
-                    <a href="<?= e(url('index.php')) ?>" class="py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition-colors flex items-center justify-center gap-2">
+                    <a href="<?= e(url('index.php')) ?>" class="py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-gray-900 text-xs font-semibold transition-colors flex items-center justify-center gap-2">
                         <span>Back to Store</span>
                         <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </a>

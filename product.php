@@ -152,7 +152,7 @@ $hasSale = $original > 0;
               <input type="hidden" name="action" value="toggle">
               <input type="hidden" name="product_id" value="<?= (int) $product['id'] ?>">
               <input type="hidden" name="redirect" value="product.php?id=<?= (int) $product['id'] ?>">
-              <button type="submit" class="p-2.5 rounded-full border transition-colors <?= wishlist_has((int) $product['id']) ? 'bg-red-500 border-red-500 text-white' : 'bg-white border-gray-200 text-gray-400 hover:text-red-500' ?>" title="Wishlist">
+              <button type="submit" class="p-2.5 rounded-full border transition-colors <?= wishlist_has((int) $product['id']) ? 'bg-red-500 border-red-500 text-gray-900' : 'bg-white border-gray-200 text-gray-400 hover:text-red-500' ?>" title="Wishlist">
                 <i data-lucide="heart" class="w-5 h-5 <?= wishlist_has((int) $product['id']) ? 'fill-white' : '' ?>"></i>
               </button>
             </form>

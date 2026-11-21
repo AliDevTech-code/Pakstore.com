@@ -8,7 +8,7 @@ $email = setting('email', 'pakstore63@gmail.com');
 $phone = setting('phone', '');
 ?>
 <main class="flex-1 bg-[#f3f4f6]">
-  <section class="bg-[#166534] text-white py-12"><div class="max-w-4xl mx-auto px-4 text-center"><h1 class="text-3xl sm:text-4xl font-black" style="color:#fff">Contact Us</h1><p class="mt-2 text-green-100">Hum aapki madad ke liye yahan hain</p></div></section>
+  <section class="bg-[#166534] text-gray-900 py-12"><div class="max-w-4xl mx-auto px-4 text-center"><h1 class="text-3xl sm:text-4xl font-black" style="color:#111827">Contact Us</h1><p class="mt-2 text-green-100">Hum aapki madad ke liye yahan hain</p></div></section>
   <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10 grid grid-cols-1 md:grid-cols-2 gap-6">
     <div class="bg-white rounded-2xl border border-gray-200 p-6 sm:p-8 shadow-sm">
       <h2 class="text-xl font-extrabold text-[#166534] mb-4">Get in Touch</h2>

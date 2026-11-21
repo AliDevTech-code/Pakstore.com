@@ -49,7 +49,7 @@ require __DIR__ . '/includes/header.php';
 
     <?php if ($order): ?>
       <div class="mt-5 bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
-        <div class="px-5 py-4 bg-[#166534] text-white flex flex-wrap items-center justify-between gap-3">
+        <div class="px-5 py-4 bg-[#166534] text-gray-900 flex flex-wrap items-center justify-between gap-3">
           <div><span class="text-[10px] uppercase tracking-widest text-green-200 font-bold block">Order ID</span><span class="font-mono text-base font-black">#<?= e($order['order_code']) ?></span></div>
           <span class="px-2.5 py-1 rounded-full text-xs font-bold <?= e(order_status_classes($order['status'])) ?>"><?= e($order['status']) ?></span>
         </div>
@@ -61,7 +61,7 @@ require __DIR__ . '/includes/header.php';
               <div class="absolute top-5 left-[12.5%] h-0.5 bg-[#166534]" style="width: <?= max(0, min(75, ($currentStep - 1) * 25)) ?>%"></div>
               <?php foreach ($steps as $i => $step): $stepNo=$i+1; $done=$stepNo<=$currentStep; $active=$stepNo===$currentStep; ?>
                 <div class="relative flex flex-col items-center text-center">
-                  <div class="w-10 h-10 rounded-full flex items-center justify-center border-2 z-10 <?= $done ? 'bg-[#166534] border-[#166534] text-white' : 'bg-white border-gray-200 text-gray-400' ?> <?= $active ? 'ring-4 ring-green-100' : '' ?>"><i data-lucide="<?= e($step['icon']) ?>" class="w-4 h-4"></i></div>
+                  <div class="w-10 h-10 rounded-full flex items-center justify-center border-2 z-10 <?= $done ? 'bg-[#166534] border-[#166534] text-gray-900' : 'bg-white border-gray-200 text-gray-400' ?> <?= $active ? 'ring-4 ring-green-100' : '' ?>"><i data-lucide="<?= e($step['icon']) ?>" class="w-4 h-4"></i></div>
                   <span class="mt-2 text-[10px] sm:text-[11px] font-bold <?= $done ? 'text-gray-900' : 'text-gray-400' ?>"><?= e($step['label']) ?></span>
                 </div>
               <?php endforeach; ?>

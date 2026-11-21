@@ -76,20 +76,20 @@ function pk_product_card(array $p, string $badgeType = '') {
         <div class="absolute inset-0 bg-gradient-to-r from-[#14532d] via-[#166534]/95 to-[#14532d]/70"></div>
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 min-h-[420px] flex items-center">
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center w-full">
-            <div class="text-white">
+            <div class="text-gray-900">
               <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-3 py-1.5 rounded-full text-xs font-bold text-green-100 mb-4">
                 <span class="w-2 h-2 rounded-full bg-[#f97316] animate-pulse"></span> Cash on Delivery • Free Delivery
               </div>
               <p class="text-green-200 font-semibold text-sm uppercase tracking-wider"><?= e($s['category_name'] ?: 'PakStore') ?></p>
-              <h1 class="text-3xl sm:text-5xl font-black leading-tight mt-2" style="color:#fff"><?= e($s['title']) ?></h1>
+              <h1 class="text-3xl sm:text-5xl font-black leading-tight mt-2" style="color:#111827"><?= e($s['title']) ?></h1>
               <p class="mt-4 text-green-50/90 text-sm sm:text-base max-w-xl"><?= e(mb_substr(trim(strip_tags((string)($s['description'] ?? 'Premium quality product with Cash on Delivery all over Pakistan.'))), 0, 140)) ?></p>
               <div class="mt-5 flex items-baseline gap-3">
-                <span class="text-3xl sm:text-4xl font-black text-white font-heading"><?= e(money($price)) ?></span>
+                <span class="text-3xl sm:text-4xl font-black text-gray-900 font-heading"><?= e(money($price)) ?></span>
                 <?php if ($hasSale): ?><span class="text-lg text-green-200/70 line-through"><?= e(money($orig)) ?></span><?php endif; ?>
               </div>
               <div class="mt-6 flex flex-wrap gap-3">
                 <a href="<?= e(url('product.php?id='.(int)$s['id'])) ?>" class="pk-btn pk-btn-orange">Shop Now <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
-                <a href="<?= e(url('shop.php')) ?>" class="pk-btn" style="background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.25)">View All Products</a>
+                <a href="<?= e(url('shop.php')) ?>" class="pk-btn" style="background:rgba(255,255,255,.12);color:#111827;border-color:rgba(255,255,255,.25)">View All Products</a>
               </div>
             </div>
             <div class="flex justify-center mt-6 lg:mt-0">
@@ -102,8 +102,8 @@ function pk_product_card(array $p, string $badgeType = '') {
       </div>
     <?php endforeach; else: ?>
       <div class="hero-slide is-active">
-        <div class="max-w-7xl mx-auto px-4 py-20 text-center text-white">
-          <h1 class="text-4xl font-black" style="color:#fff">Welcome to PakStore</h1>
+        <div class="max-w-7xl mx-auto px-4 py-20 text-center text-gray-900">
+          <h1 class="text-4xl font-black" style="color:#111827">Welcome to PakStore</h1>
           <p class="mt-3 text-green-100">Quality products with Cash on Delivery across Pakistan.</p>
           <a href="<?= e(url('shop.php')) ?>" class="pk-btn pk-btn-orange mt-6">Shop Now</a>
         </div>
@@ -111,8 +111,8 @@ function pk_product_card(array $p, string $badgeType = '') {
     <?php endif; ?>
 
     <?php if (count($slides) > 1): ?>
-      <button type="button" data-hero-prev class="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 text-[#166534] hover:bg-[#f97316] hover:text-white flex items-center justify-center shadow"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
-      <button type="button" data-hero-next class="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 text-[#166534] hover:bg-[#f97316] hover:text-white flex items-center justify-center shadow"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
+      <button type="button" data-hero-prev class="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 text-[#166534] hover:bg-[#f97316] hover:text-gray-900 flex items-center justify-center shadow"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
+      <button type="button" data-hero-next class="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 text-[#166534] hover:bg-[#f97316] hover:text-gray-900 flex items-center justify-center shadow"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
       <div class="absolute bottom-4 left-0 right-0 z-20 flex justify-center gap-2">
         <?php foreach ($slides as $i => $_): ?><button type="button" data-hero-dot="<?= $i ?>" class="hero-dot rounded-full h-2.5 <?= $i===0?'w-7':'w-2.5' ?>" style="background:<?= $i===0?'#f97316':'rgba(255,255,255,.5)' ?>"></button><?php endforeach; ?>
       </div>
@@ -201,9 +201,9 @@ function pk_product_card(array $p, string $badgeType = '') {
     </div>
   </section>
   <!-- CTA -->
-  <section class="py-14 bg-[#166534] text-white">
+  <section class="py-14 bg-[#166534] text-gray-900">
     <div class="max-w-4xl mx-auto px-4 text-center">
-      <h2 class="text-3xl sm:text-4xl font-black" style="color:#fff">Ready to Shop?</h2>
+      <h2 class="text-3xl sm:text-4xl font-black" style="color:#111827">Ready to Shop?</h2>
       <p class="mt-3 text-green-100">Quality products, best prices, aur Cash on Delivery — all over Pakistan.</p>
       <div class="mt-6 flex flex-wrap justify-center gap-3">
         <a href="<?= e(url('shop.php')) ?>" class="pk-btn pk-btn-orange">Shop Now</a>
