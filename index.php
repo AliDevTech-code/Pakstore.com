@@ -87,7 +87,7 @@ function pk_product_card(array $p, string $badgeType = '') {
         </div>
 
         <div class="w-full">
-          <div class="relative rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-sm">
+          <div class="relative rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-sm h-[220px] sm:h-[280px] md:h-[340px] lg:h-[380px]">
             <?php
               $heroBanners = !empty($homeBanners) ? $homeBanners : [];
               $hb = $heroBanners[0] ?? null;
@@ -99,17 +99,16 @@ function pk_product_card(array $p, string $badgeType = '') {
               $hLink = str_starts_with($hLink,'http') ? $hLink : url(ltrim($hLink,'/'));
             ?>
             <?php if ($desk !== '' || $mob !== ''): ?>
-              <a href="<?= e($hLink) ?>" class="block">
-                <img src="<?= e(image_url($mob ?: $desk)) ?>" alt="<?= e($hb['title'] ?? 'Banner') ?>" class="block md:hidden w-full h-[220px] sm:h-[280px] object-cover">
-                <img src="<?= e(image_url($desk ?: $mob)) ?>" alt="<?= e($hb['title'] ?? 'Banner') ?>" class="hidden md:block w-full h-[320px] lg:h-[360px] object-cover">
-              </a>
-            <?php elseif (!empty($featured[0]['image'])): ?>
-              <a href="<?= e(url('product.php?id='.(int)$featured[0]['id'])) ?>" class="block bg-gray-50 p-6">
-                <img src="<?= e(image_url($featured[0]['image'])) ?>" alt="<?= e($featured[0]['title']) ?>" class="w-full h-[220px] sm:h-[280px] md:h-[320px] lg:h-[360px] object-contain">
+              <a href="<?= e($hLink) ?>" class="block w-full h-full">
+                <img src="<?= e(image_url($mob ?: $desk)) ?>" alt="<?= e($hb['title'] ?? 'Banner') ?>" class="block md:hidden w-full h-full object-cover">
+                <img src="<?= e(image_url($desk ?: $mob)) ?>" alt="<?= e($hb['title'] ?? 'Banner') ?>" class="hidden md:block w-full h-full object-cover">
               </a>
             <?php else: ?>
-              <div class="w-full h-[220px] sm:h-[280px] md:h-[320px] lg:h-[360px] bg-gray-50 flex items-center justify-center text-gray-400">
-                <i data-lucide="image" class="w-16 h-16"></i>
+              <div class="w-full h-full bg-gradient-to-br from-green-50 to-orange-50 flex items-center justify-center text-gray-400">
+                <div class="text-center px-6">
+                  <i data-lucide="image-plus" class="w-12 h-12 mx-auto mb-2 text-[#166534]/40"></i>
+                  <p class="text-sm font-semibold text-gray-500">Admin panel se banner add karein</p>
+                </div>
               </div>
             <?php endif; ?>
           </div>
