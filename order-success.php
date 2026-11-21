@@ -18,8 +18,6 @@ if (!$order) {
 }
 
 $order['items'] = order_items($orderId);
-$waPhone = clean_phone_wa(setting('whatsapp', setting('phone', '')));
-$waText  = rawurlencode('Assalam-o-Alaikum, I have placed order #' . $order['order_code'] . ' on ' . setting('store_name', 'PakStore') . '.');
 
 $pageTitle = 'Order Confirmed #' . $order['order_code'] . ' - ' . setting('store_name', 'PakStore');
 require __DIR__ . '/includes/header.php';

@@ -1,363 +1,230 @@
 <?php
-/**
- * Storefront home + shop catalog.
- * All products and categories come from MySQL - there is no mock data.
- */
-
 require_once __DIR__ . '/includes/functions.php';
 
-$q              = get_string('q');
-$activeSlug     = get_string('category');
-$sort           = get_string('sort', 'featured');
-$allowedSorts   = ['featured', 'price-low', 'price-high', 'newest'];
-if (!in_array($sort, $allowedSorts, true)) {
-    $sort = 'featured';
-}
-
-$activeCategoryRow = $activeSlug !== '' ? find_category_by_slug($activeSlug) : null;
-if ($activeSlug !== '' && !$activeCategoryRow) {
-    $activeSlug = '';
-}
-
 $categories = all_categories();
-
-/* ---------------- Auto product slider (replaces banner) ---------------- */
 try {
-    $featuredProducts = db()->query(
-        "SELECT p.*, c.name AS category_name
-         FROM products p LEFT JOIN categories c ON c.id = p.category_id
-         WHERE p.in_stock = 1 AND p.stock > 0 AND p.image <> ''
-         ORDER BY p.created_at DESC, p.id DESC
-         LIMIT 12"
-    )->fetchAll();
-    if (!$featuredProducts) {
-        $featuredProducts = db()->query(
-            "SELECT p.*, c.name AS category_name
-             FROM products p LEFT JOIN categories c ON c.id = p.category_id
-             WHERE p.image <> ''
-             ORDER BY p.id DESC LIMIT 12"
-        )->fetchAll();
-    }
-} catch (Throwable $e) {
-    error_log('Featured products query failed: ' . $e->getMessage());
-    $featuredProducts = [];
-}
-$featuredSlides = array_chunk($featuredProducts, 4);
+    $featured = db()->query("SELECT p.*, c.name AS category_name, c.slug AS category_slug FROM products p LEFT JOIN categories c ON c.id=p.category_id WHERE p.image <> '' ORDER BY (p.badge='Bestseller') DESC, p.created_at DESC, p.id DESC LIMIT 8")->fetchAll();
+} catch (Throwable $e) { $featured = []; }
+try {
+    $best = db()->query("SELECT p.*, c.name AS category_name, c.slug AS category_slug FROM products p LEFT JOIN categories c ON c.id=p.category_id WHERE p.badge='Bestseller' OR p.badge='Hot' ORDER BY p.created_at DESC, p.id DESC LIMIT 10")->fetchAll();
+    if (!$best) $best = array_slice($featured, 0, 8);
+} catch (Throwable $e) { $best = array_slice($featured, 0, 8); }
+try {
+    $newArrivals = db()->query("SELECT p.*, c.name AS category_name, c.slug AS category_slug FROM products p LEFT JOIN categories c ON c.id=p.category_id ORDER BY p.created_at DESC, p.id DESC LIMIT 10")->fetchAll();
+} catch (Throwable $e) { $newArrivals = []; }
+try {
+    $sale = db()->query("SELECT p.*, c.name AS category_name, c.slug AS category_slug FROM products p LEFT JOIN categories c ON c.id=p.category_id WHERE p.original_price IS NOT NULL AND p.original_price > p.price ORDER BY ((p.original_price-p.price)/p.original_price) DESC, p.id DESC LIMIT 10")->fetchAll();
+} catch (Throwable $e) { $sale = []; }
 
-/* ---------------- Product query ---------------- */
-$where = ['1 = 1'];
-$params = [];
-
-if ($activeSlug !== '') {
-    $where[] = 'c.slug = ?';
-    $params[] = $activeSlug;
-}
-
-if ($q !== '') {
-    $like = '%' . $q . '%';
-    $where[] = '(p.title LIKE ? OR p.description LIKE ? OR p.sku LIKE ? OR c.name LIKE ?)';
-    array_push($params, $like, $like, $like, $like);
-}
-
-$orderBy = match ($sort) {
-    'price-low'  => 'p.price ASC, p.id DESC',
-    'price-high' => 'p.price DESC, p.id DESC',
-    'newest'     => 'p.created_at DESC, p.id DESC',
-    default      => "(p.badge = 'Bestseller') DESC, p.created_at DESC, p.id DESC",
-};
-
-$sql = "SELECT p.*, c.name AS category_name, c.slug AS category_slug
-        FROM products p
-        LEFT JOIN categories c ON c.id = p.category_id
-        WHERE " . implode(' AND ', $where) . "
-        ORDER BY $orderBy
-        LIMIT 120";
-
-$stmt = db()->prepare($sql);
-$stmt->execute($params);
-$products = $stmt->fetchAll();
-
-/* Group products by category so the home catalog shows each category name
-   followed by its own products, in the site's normal category order. */
-$groupedProducts = [];
-foreach ($products as $product) {
-    $categoryId = (int) ($product['category_id'] ?? 0);
-    if (!isset($groupedProducts[$categoryId])) {
-        $groupedProducts[$categoryId] = [
-            'name'  => (string) ($product['category_name'] ?: 'Uncategorized'),
-            'slug'  => (string) ($product['category_slug'] ?? ''),
-            'items' => [],
-        ];
-    }
-    $groupedProducts[$categoryId]['items'][] = $product;
-}
-$orderedGroups = [];
-foreach ($categories as $category) {
-    $categoryId = (int) $category['id'];
-    if (isset($groupedProducts[$categoryId])) {
-        $orderedGroups[$categoryId] = $groupedProducts[$categoryId];
-        unset($groupedProducts[$categoryId]);
-    }
-}
-$groupedProducts = $orderedGroups + $groupedProducts;
-
-$pageTitle = $activeCategoryRow
-    ? ($activeCategoryRow['name'] . ' - ' . setting('store_name', 'PakStore'))
-    : (setting('store_name', 'PakStore') . ' - Cash on Delivery Store Pakistan');
-if ($q !== '') {
-    $pageTitle = 'Search: ' . $q . ' - ' . setting('store_name', 'PakStore');
-}
-
-$currentListUrl = 'index.php?' . http_build_query(array_filter([
-    'q'        => $q,
-    'category' => $activeSlug,
-    'sort'     => $sort,
-]));
-
+$slides = array_slice($featured, 0, 5);
+$pageTitle = setting('store_name', 'PakStore') . ' - Cash on Delivery Store Pakistan';
+$metaDescription = 'Shop premium products in Pakistan with Cash on Delivery, free delivery offers, 7-day return, and fast nationwide shipping.';
 require __DIR__ . '/includes/header.php';
-?>
 
-<main class="flex-1">
-    <!-- ================= HERO ================= -->
-    <section class="relative overflow-hidden bg-gradient-to-br from-slate-950 via-emerald-950 to-slate-900 text-white border-b border-slate-800">
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,166,81,0.18),transparent_60%)]"></div>
-        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-10 sm:pt-12 sm:pb-14 flex flex-col justify-center items-center text-center">
-            <div class="max-w-3xl mx-auto flex flex-col items-center space-y-4 sm:space-y-5">
-                <div class="inline-flex items-center gap-2 text-xs font-bold text-emerald-300 bg-emerald-950/90 border border-emerald-500/40 px-3.5 py-1.5 rounded-full backdrop-blur-md">
-                    <span class="w-2 h-2 rounded-full bg-[#00A651] animate-pulse"></span>
-                    <span>&#127477;&#127472; 100% Cash on Delivery All Over Pakistan</span>
-                </div>
-
-                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1]">
-                    Premium Lifestyle &amp; Audio. <br>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#00A651] via-emerald-300 to-[#FF6B00]">Pay Cash at Doorstep.</span>
-                </h1>
-
-                <p class="text-xs sm:text-sm md:text-base text-slate-200 leading-relaxed max-w-2xl mx-auto">
-                    Authentic smartwatches, active noise-cancelling acoustics, genuine leather accessories, and royal fragrances. Check the parcel and pay cash to the rider upon arrival.
-                </p>
-
-                <div class="flex flex-wrap items-center justify-center gap-3 pt-1">
-                    <a href="#catalog-section" class="px-6 py-3 bg-[#00A651] hover:bg-[#008f45] text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-lg flex items-center gap-2">
-                        <span>Explore Catalog</span>
-                        <i data-lucide="arrow-down" class="w-4 h-4"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <?php if ($featuredSlides): ?>
-    <!-- ================= AUTO PRODUCT SLIDER ================= -->
-    <section data-hero-slider class="relative overflow-hidden bg-slate-50 border-b border-slate-200" style="min-height: 250px;">
-        <?php foreach ($featuredSlides as $slideIndex => $slideProducts): ?>
-            <div class="hero-slide <?= $slideIndex === 0 ? 'is-active' : '' ?> bg-slate-50">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-                    <div class="flex items-center justify-between gap-3 mb-3">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="sparkles" class="w-4 h-4 text-[#FF6B00]"></i>
-                            <h2 class="text-sm sm:text-base font-black text-slate-900 tracking-tight">Featured Products</h2>
-                            <span class="text-[10px] text-slate-500 hidden sm:inline">&middot; Cash on Delivery available</span>
-                        </div>
-                        <a href="<?= e(url('index.php#catalog-section')) ?>" class="text-[11px] font-bold text-[#00A651] hover:underline shrink-0">View all &rarr;</a>
-                    </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
-                        <?php foreach ($slideProducts as $featured): ?>
-                            <a href="<?= e(url('product.php?id=' . (int) $featured['id'])) ?>" class="bg-white rounded-xl border border-slate-200 overflow-hidden flex items-center gap-2.5 p-2 hover:shadow-md hover:border-[#00A651]/40 transition-all min-w-0">
-                                <img src="<?= e(image_url($featured['image'])) ?>" alt="<?= e($featured['title']) ?>" class="product-thumb rounded-lg bg-slate-100 shrink-0" loading="lazy">
-                                <span class="min-w-0">
-                                    <span class="block text-[11px] sm:text-xs font-bold text-slate-900 truncate leading-snug" title="<?= e($featured['title']) ?>"><?= e($featured['title']) ?></span>
-                                    <span class="block text-xs font-black text-[#00A651] mt-1"><?= e(money($featured['price'])) ?></span>
-                                </span>
-                            </a>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            </div>
-        <?php endforeach; ?>
-
-        <?php if (count($featuredSlides) > 1): ?>
-            <div class="absolute left-2 right-2 top-1/2 -translate-y-1/2 z-20 flex justify-between pointer-events-none">
-                <button type="button" data-hero-prev class="pointer-events-auto p-2 rounded-full bg-white/90 hover:bg-[#00A651] text-slate-800 hover:text-white border border-slate-200 shadow-md transition-colors" aria-label="Previous products">
-                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
-                </button>
-                <button type="button" data-hero-next class="pointer-events-auto p-2 rounded-full bg-white/90 hover:bg-[#00A651] text-slate-800 hover:text-white border border-slate-200 shadow-md transition-colors" aria-label="Next products">
-                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                </button>
-            </div>
-            <div class="relative z-20 flex items-center justify-center gap-1.5 pb-2 pt-1">
-                <?php foreach ($featuredSlides as $idx => $unused): ?>
-                    <button type="button" data-hero-dot="<?= $idx ?>" class="hero-dot rounded-full h-1.5 <?= $idx === 0 ? 'w-7 bg-[#FF6B00]' : 'w-2 bg-slate-300 hover:bg-slate-400' ?>" aria-label="Go to slide <?= $idx + 1 ?>"></button>
-                <?php endforeach; ?>
-            </div>
+function pk_product_card(array $p, string $badgeType = '') {
+  $price = (float)$p['price']; $orig = (float)($p['original_price'] ?? 0); $hasSale = $orig > $price;
+  $disc = $hasSale ? (int)round((($orig-$price)/$orig)*100) : 0;
+  $inStock = (int)($p['in_stock'] ?? 1)===1 && (int)($p['stock'] ?? 0)>0;
+  ?>
+  <div class="pk-card pk-product-card flex flex-col h-full">
+    <a href="<?= e(url('product.php?id='.(int)$p['id'])) ?>" class="img-wrap block">
+      <img src="<?= e(image_url($p['image'])) ?>" alt="<?= e($p['title']) ?>" loading="lazy">
+      <?php if ($hasSale): ?><span class="pk-badge-sale">-<?= $disc ?>% OFF</span>
+      <?php elseif ($badgeType==='new'): ?><span class="pk-badge-new">New</span>
+      <?php elseif (!empty($p['badge'])): ?><span class="pk-badge-new"><?= e($p['badge']) ?></span><?php endif; ?>
+    </a>
+    <div class="body flex flex-col flex-1">
+      <div class="cat"><?= e($p['category_name'] ?: 'Product') ?></div>
+      <a href="<?= e(url('product.php?id='.(int)$p['id'])) ?>" class="name"><?= e($p['title']) ?></a>
+      <div class="pk-stars mt-1">★★★★★ <span class="text-gray-400 text-[11px] font-normal">(4.8)</span></div>
+      <div class="mt-2 flex items-baseline gap-2 flex-wrap">
+        <span class="pk-price"><?= e(money($price)) ?></span>
+        <?php if ($hasSale): ?><span class="pk-old"><?= e(money($orig)) ?></span><?php endif; ?>
+      </div>
+      <div class="text-[11px] mt-1 font-semibold <?= $inStock ? 'text-[#166534]' : 'text-red-500' ?>"><?= $inStock ? 'In Stock • Ready to Ship' : 'Out of Stock' ?></div>
+      <div class="mt-auto pt-3 grid grid-cols-1 gap-2">
+        <?php if ($inStock): ?>
+          <form action="<?= e(url('cart.php')) ?>" method="post"><?= csrf_field() ?><input type="hidden" name="action" value="add"><input type="hidden" name="product_id" value="<?= (int)$p['id'] ?>"><input type="hidden" name="quantity" value="1"><button type="submit" class="pk-btn pk-btn-orange w-full text-xs py-2.5">Add to Cart</button></form>
+        <?php else: ?>
+          <span class="pk-btn w-full text-xs py-2.5 bg-gray-100 text-gray-400 cursor-not-allowed">Out of Stock</span>
         <?php endif; ?>
-    </section>
+      </div>
+    </div>
+  </div>
+  <?php
+}
+?>
+<main class="flex-1">
+
+  <!-- HERO SWIPER -->
+  <section data-hero-slider class="relative bg-[#14532d] overflow-hidden" style="min-height:420px;">
+    <?php if ($slides): foreach ($slides as $i => $s): 
+      $price=(float)$s['price']; $orig=(float)($s['original_price']??0); $hasSale=$orig>$price;
+    ?>
+      <div class="hero-slide <?= $i===0?'is-active':'' ?>">
+        <div class="absolute inset-0 bg-gradient-to-r from-[#14532d] via-[#166534]/95 to-[#14532d]/70"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 min-h-[420px] flex items-center">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center w-full">
+            <div class="text-white">
+              <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-3 py-1.5 rounded-full text-xs font-bold text-green-100 mb-4">
+                <span class="w-2 h-2 rounded-full bg-[#f97316] animate-pulse"></span> Cash on Delivery • Free Delivery
+              </div>
+              <p class="text-green-200 font-semibold text-sm uppercase tracking-wider"><?= e($s['category_name'] ?: 'PakStore') ?></p>
+              <h1 class="text-3xl sm:text-5xl font-black leading-tight mt-2" style="color:#fff"><?= e($s['title']) ?></h1>
+              <p class="mt-4 text-green-50/90 text-sm sm:text-base max-w-xl"><?= e(mb_substr(trim(strip_tags((string)($s['description'] ?? 'Premium quality product with Cash on Delivery all over Pakistan.'))), 0, 140)) ?></p>
+              <div class="mt-5 flex items-baseline gap-3">
+                <span class="text-3xl sm:text-4xl font-black text-white font-heading"><?= e(money($price)) ?></span>
+                <?php if ($hasSale): ?><span class="text-lg text-green-200/70 line-through"><?= e(money($orig)) ?></span><?php endif; ?>
+              </div>
+              <div class="mt-6 flex flex-wrap gap-3">
+                <a href="<?= e(url('product.php?id='.(int)$s['id'])) ?>" class="pk-btn pk-btn-orange">Shop Now <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+                <a href="<?= e(url('shop.php')) ?>" class="pk-btn" style="background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.25)">View All Products</a>
+              </div>
+            </div>
+            <div class="hidden lg:flex justify-center">
+              <a href="<?= e(url('product.php?id='.(int)$s['id'])) ?>" class="block bg-white/10 p-4 rounded-3xl border border-white/10 backdrop-blur-sm">
+                <img src="<?= e(image_url($s['image'])) ?>" alt="<?= e($s['title']) ?>" class="w-full max-w-md h-[320px] object-contain rounded-2xl bg-white">
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    <?php endforeach; else: ?>
+      <div class="hero-slide is-active">
+        <div class="max-w-7xl mx-auto px-4 py-20 text-center text-white">
+          <h1 class="text-4xl font-black" style="color:#fff">Welcome to PakStore</h1>
+          <p class="mt-3 text-green-100">Quality products with Cash on Delivery across Pakistan.</p>
+          <a href="<?= e(url('shop.php')) ?>" class="pk-btn pk-btn-orange mt-6">Shop Now</a>
+        </div>
+      </div>
     <?php endif; ?>
 
-    <!-- ================= CATALOG ================= -->
-    <section id="catalog-section" class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 overflow-hidden">
-        <div class="space-y-4 pb-5 border-b border-slate-200 w-full min-w-0 max-w-full">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                    <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                        <?= e($activeCategoryRow ? $activeCategoryRow['name'] : 'Curated Collection') ?>
-                    </h2>
-                    <p class="text-xs text-slate-500 mt-0.5">
-                        <?= count($products) ?> item<?= count($products) === 1 ? '' : 's' ?> available &middot; Guaranteed Cash on Delivery across Pakistan
-                    </p>
-                </div>
+    <?php if (count($slides) > 1): ?>
+      <button type="button" data-hero-prev class="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 text-[#166534] hover:bg-[#f97316] hover:text-white flex items-center justify-center shadow"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
+      <button type="button" data-hero-next class="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 text-[#166534] hover:bg-[#f97316] hover:text-white flex items-center justify-center shadow"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
+      <div class="absolute bottom-4 left-0 right-0 z-20 flex justify-center gap-2">
+        <?php foreach ($slides as $i => $_): ?><button type="button" data-hero-dot="<?= $i ?>" class="hero-dot rounded-full h-2.5 <?= $i===0?'w-7':'w-2.5' ?>" style="background:<?= $i===0?'#f97316':'rgba(255,255,255,.5)' ?>"></button><?php endforeach; ?>
+      </div>
+    <?php endif; ?>
+  </section>
 
-                <form method="get" action="<?= e(url('index.php')) ?>" class="relative shrink-0 flex items-center border border-slate-200 rounded-lg px-2.5 py-1.5 bg-white text-xs shadow-sm self-start sm:self-auto">
-                    <?php if ($q !== ''): ?><input type="hidden" name="q" value="<?= e($q) ?>"><?php endif; ?>
-                    <?php if ($activeSlug !== ''): ?><input type="hidden" name="category" value="<?= e($activeSlug) ?>"><?php endif; ?>
-                    <i data-lucide="arrow-up-down" class="w-3.5 h-3.5 text-slate-400 mr-1.5"></i>
-                    <label for="sort" class="sr-only">Sort products</label>
-                    <select id="sort" name="sort" onchange="this.form.submit()" class="bg-transparent text-slate-700 font-medium focus:outline-none cursor-pointer">
-                        <option value="featured" <?= $sort === 'featured' ? 'selected' : '' ?>>Featured First</option>
-                        <option value="price-low" <?= $sort === 'price-low' ? 'selected' : '' ?>>Price: Low to High</option>
-                        <option value="price-high" <?= $sort === 'price-high' ? 'selected' : '' ?>>Price: High to Low</option>
-                        <option value="newest" <?= $sort === 'newest' ? 'selected' : '' ?>>Newest Arrivals</option>
-                    </select>
-                    <noscript><button type="submit" class="ml-2 text-[#00A651] font-bold">Apply</button></noscript>
-                </form>
-            </div>
+  <!-- TRUST BADGES -->
+  <section class="py-10 bg-white border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="pk-trust"><div class="icon"><i data-lucide="banknote" class="w-6 h-6"></i></div><h3>Cash on Delivery</h3><p>Poore Pakistan mein COD available</p></div>
+      <div class="pk-trust"><div class="icon"><i data-lucide="rotate-ccw" class="w-6 h-6"></i></div><h3>7-Day Easy Return</h3><p>Asaan return/exchange policy</p></div>
+      <div class="pk-trust"><div class="icon"><i data-lucide="truck" class="w-6 h-6"></i></div><h3>TCS / Leopards Delivery</h3><p>Fast & reliable nationwide shipping</p></div>
+      <div class="pk-trust"><div class="icon"><i data-lucide="shield-check" class="w-6 h-6"></i></div><h3>Secure Shopping</h3><p>Trusted store & quality products</p></div>
+    </div>
+  </section>
 
-            <div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none w-full max-w-full min-w-0">
-                <a href="<?= e(url('index.php' . ($q !== '' ? '?q=' . urlencode($q) : '') . '#catalog-section')) ?>" class="px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 <?= $activeSlug === '' ? 'bg-[#00A651] text-white shadow-sm' : 'bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300' ?>">All Products</a>
-                <?php foreach ($categories as $cat): ?>
-                    <a href="<?= e(url('index.php?' . http_build_query(array_filter(['q' => $q, 'category' => $cat['slug']])) . '#catalog-section')) ?>"
-                       class="px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 <?= $activeSlug === $cat['slug'] ? 'bg-[#00A651] text-white shadow-sm' : 'bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300' ?>">
-                        <?= e($cat['name']) ?>
-                    </a>
-                <?php endforeach; ?>
+  <!-- CATEGORIES -->
+  <section class="pk-section pk-section-surface">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-end justify-between gap-4 mb-6">
+        <div><h2 class="pk-title">Shop by Category</h2><p class="pk-sub">Apni favourite category explore karein</p></div>
+        <a href="<?= e(url('categories.php')) ?>" class="text-sm font-bold text-[#166534] hover:text-[#f97316]">View All →</a>
+      </div>
+      <div class="flex gap-5 sm:gap-8 overflow-x-auto scrollbar-none pb-2">
+        <?php foreach (array_slice($categories, 0, 10) as $cat): $img = trim((string)($cat['image'] ?? '')); ?>
+          <a href="<?= e(url('shop.php?category=' . urlencode($cat['slug']))) ?>" class="pk-cat-circle shrink-0 w-[100px]">
+            <div class="circle">
+              <?php if ($img !== ''): ?><img src="<?= e(image_url($img)) ?>" alt="<?= e($cat['name']) ?>" loading="lazy">
+              <?php else: ?><i data-lucide="tag" class="w-8 h-8 text-[#166534]"></i><?php endif; ?>
             </div>
+            <span class="label"><?= e($cat['name']) ?></span>
+          </a>
+        <?php endforeach; ?>
+      </div>
+    </div>
+  </section>
+
+  <!-- BEST SELLERS -->
+  <section class="pk-section pk-section-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-end justify-between gap-4 mb-6">
+        <div><h2 class="pk-title">Best Sellers</h2><p class="pk-sub">Most loved by customers across Pakistan</p></div>
+        <div class="flex gap-2">
+          <button type="button" class="pk-carousel-btn" data-carousel-prev data-target="best-track"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+          <button type="button" class="pk-carousel-btn" data-carousel-next data-target="best-track"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
         </div>
+      </div>
+      <div class="pk-carousel" data-carousel>
+        <div class="pk-carousel-track scrollbar-none" id="best-track" data-carousel-track>
+          <?php foreach ($best as $p) { echo '<div>'; pk_product_card($p); echo '</div>'; } ?>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        <?php if ($q !== ''): ?>
-            <div class="mt-4 p-3 bg-slate-100 rounded-lg flex items-center justify-between text-xs text-slate-700">
-                <span>Search results for <strong class="text-slate-900">&ldquo;<?= e($q) ?>&rdquo;</strong> (<?= count($products) ?> items)</span>
-                <a href="<?= e(url('index.php#catalog-section')) ?>" class="text-emerald-700 font-semibold hover:underline">Clear Search</a>
+  <!-- NEW ARRIVALS -->
+  <section class="pk-section pk-section-surface">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-end justify-between gap-4 mb-6">
+        <div><h2 class="pk-title">New Arrivals</h2><p class="pk-sub">Fresh products just added</p></div>
+        <a href="<?= e(url('shop.php?sort=newest')) ?>" class="text-sm font-bold text-[#166534] hover:text-[#f97316]">View All →</a>
+      </div>
+      <div class="pk-carousel" data-carousel>
+        <div class="pk-carousel-track scrollbar-none" data-carousel-track>
+          <?php foreach ($newArrivals as $p) { echo '<div>'; pk_product_card($p, 'new'); echo '</div>'; } ?>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SALE -->
+  <?php if ($sale): ?>
+  <section class="pk-section pk-section-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-end justify-between gap-4 mb-6">
+        <div><h2 class="pk-title">Sale / Special Offers</h2><p class="pk-sub">Best discounts — limited time deals</p></div>
+        <a href="<?= e(url('shop.php')) ?>" class="text-sm font-bold text-[#166534] hover:text-[#f97316]">Shop All →</a>
+      </div>
+      <div class="pk-carousel" data-carousel>
+        <div class="pk-carousel-track scrollbar-none" data-carousel-track>
+          <?php foreach ($sale as $p) { echo '<div>'; pk_product_card($p); echo '</div>'; } ?>
+        </div>
+      </div>
+    </div>
+  </section>
+  <?php endif; ?>
+
+  <!-- REVIEWS -->
+  <section class="pk-section" style="background:#ecfdf5;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-8"><h2 class="pk-title">Customer Reviews</h2><p class="pk-sub">Pakistan bhar se hamare customers ka trust</p></div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <?php
+        $reviews = [
+          ['name'=>'Ayesha K.', 'city'=>'Lahore', 'text'=>'Bohat achi quality aur delivery time par mili. Cash on Delivery ka option bohat convenient hai.'],
+          ['name'=>'Hamza R.', 'city'=>'Karachi', 'text'=>'Product exactly same as shown. Packaging safe thi aur price bhi reasonable thi. Recommended!'],
+          ['name'=>'Sana M.', 'city'=>'Islamabad', 'text'=>'Customer support achi hai aur return policy clear hai. Main dobara order karungi.'],
+        ];
+        foreach ($reviews as $r): ?>
+          <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+            <div class="pk-stars text-lg">★★★★★</div>
+            <p class="text-sm text-gray-600 mt-3 leading-7">"<?= e($r['text']) ?>"</p>
+            <div class="mt-4 flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-[#166534] text-white font-bold flex items-center justify-center"><?= e(mb_substr($r['name'],0,1)) ?></div>
+              <div><div class="font-bold text-gray-900 text-sm"><?= e($r['name']) ?></div><div class="text-xs text-gray-500"><?= e($r['city']) ?>, Pakistan</div></div>
             </div>
-        <?php endif; ?>
+          </div>
+        <?php endforeach; ?>
+      </div>
+    </div>
+  </section>
 
-        <?php if ($products): ?>
-            <?php foreach ($groupedProducts as $group): ?>
-                <section class="mt-7 sm:mt-9">
-                    <div class="flex items-center justify-between gap-3 mb-3">
-                        <h3 class="flex items-center gap-2 text-base sm:text-lg font-black text-slate-900 tracking-tight">
-                            <span class="w-1 h-5 rounded-full bg-[#00A651] shrink-0"></span>
-                            <?= e($group['name']) ?>
-                            <span class="text-[11px] font-semibold text-slate-400">(<?= count($group['items']) ?>)</span>
-                        </h3>
-                        <?php if ($group['slug'] !== ''): ?>
-                            <a href="<?= e(url('index.php?category=' . urlencode($group['slug']) . '#catalog-section')) ?>" class="text-[11px] font-bold text-[#00A651] hover:underline whitespace-nowrap">View all &rarr;</a>
-                        <?php endif; ?>
-                    </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 lg:gap-6">
-                <?php foreach ($group['items'] as $p): ?>
-                    <?php
-                    $price = (float) $p['price'];
-                    $original = $p['original_price'] !== null && (float) $p['original_price'] > $price ? (float) $p['original_price'] : 0.0;
-                    $discount = $original > 0 ? (int) round((($original - $price) / $original) * 100) : 0;
-                    $inStock = (int) $p['in_stock'] === 1 && (int) $p['stock'] > 0;
-                    $productUrl = url('product.php?id=' . (int) $p['id']);
-                    ?>
-                    <div class="group bg-white rounded-xl sm:rounded-2xl border border-slate-200/90 overflow-hidden flex flex-col justify-between hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 shadow-sm relative">
-                        <div class="relative aspect-square bg-slate-50 overflow-hidden">
-                            <a href="<?= e($productUrl) ?>" class="block w-full h-full">
-                                <img src="<?= e(image_url($p['image'])) ?>" alt="<?= e($p['title']) ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
-                            </a>
+  <!-- CTA -->
+  <section class="py-14 bg-[#166534] text-white">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <h2 class="text-3xl sm:text-4xl font-black" style="color:#fff">Ready to Shop?</h2>
+      <p class="mt-3 text-green-100">Quality products, best prices, aur Cash on Delivery — all over Pakistan.</p>
+      <div class="mt-6 flex flex-wrap justify-center gap-3">
+        <a href="<?= e(url('shop.php')) ?>" class="pk-btn pk-btn-orange">Shop Now</a>
+        <a href="<?= e(url('contact.php')) ?>" class="pk-btn" style="background:#fff;color:#166534">Contact Us</a>
+      </div>
+    </div>
+  </section>
 
-                            <?php if (!empty($p['badge'])): ?>
-                                <span class="absolute top-2 left-2 bg-slate-900 text-white text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded shadow-sm"><?= e($p['badge']) ?></span>
-                            <?php endif; ?>
-
-                            <?php if ($discount > 0): ?>
-                                <span class="absolute top-2 right-10 sm:right-11 bg-[#FF6B00] text-white text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded shadow-sm">-<?= $discount ?>%</span>
-                            <?php endif; ?>
-
-                            <form action="<?= e(url('wishlist.php')) ?>" method="post" class="absolute top-2 right-2">
-                                <?= csrf_field() ?>
-                                <input type="hidden" name="action" value="toggle">
-                                <input type="hidden" name="product_id" value="<?= (int) $p['id'] ?>">
-                                <input type="hidden" name="redirect" value="<?= e($currentListUrl . '#catalog-section') ?>">
-                                <button type="submit" class="p-1.5 rounded-full backdrop-blur-md transition-all shadow-sm <?= wishlist_has((int) $p['id']) ? 'bg-rose-500 text-white' : 'bg-white/90 text-slate-500 hover:text-rose-500 hover:bg-white' ?>" title="<?= wishlist_has((int) $p['id']) ? 'Remove from Wishlist' : 'Add to Wishlist' ?>">
-                                    <i data-lucide="heart" class="w-3.5 h-3.5 <?= wishlist_has((int) $p['id']) ? 'fill-white' : '' ?>"></i>
-                                </button>
-                            </form>
-
-                            <div class="absolute inset-0 bg-slate-950/20 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:flex items-center justify-center pointer-events-none">
-                                <span class="bg-white/95 text-slate-900 text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm flex items-center gap-1.5">
-                                    <i data-lucide="eye" class="w-3.5 h-3.5 text-[#00A651]"></i> View Details &amp; Reviews
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="p-2.5 sm:p-3.5 flex-1 flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center justify-between gap-2 text-[10px] sm:text-xs text-slate-500 mb-1">
-                                    <span class="font-bold uppercase tracking-wider text-slate-400 truncate max-w-[90px]"><?= e($p['category_name'] ?: 'Uncategorized') ?></span>
-                                    <span class="<?= $inStock ? 'text-[#00A651] font-semibold text-[10px]' : 'text-rose-500 font-semibold' ?>"><?= $inStock ? 'In Stock' : 'Out' ?></span>
-                                </div>
-
-                                <a href="<?= e($productUrl) ?>" class="text-xs sm:text-sm font-bold text-slate-900 clamp-2 min-h-[32px] sm:min-h-[38px] hover:text-[#00A651] transition-colors leading-snug"><?= e($p['title']) ?></a>
-
-                                <?php if ((int) $p['reviews_count'] > 0): ?>
-                                    <div class="mt-1 flex items-center gap-1">
-                                        <i data-lucide="star" class="w-3 h-3 fill-amber-400 text-amber-400"></i>
-                                        <span class="text-[10px] font-bold text-slate-700 font-mono"><?= e(number_format((float) $p['rating'], 1)) ?></span>
-                                        <span class="text-[10px] text-slate-400">(<?= (int) $p['reviews_count'] ?>)</span>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-
-                            <div class="mt-2.5 pt-2 border-t border-slate-100">
-                                <div class="flex flex-wrap items-baseline gap-1.5 mb-2">
-                                    <span class="text-xs sm:text-sm font-black text-slate-900 font-mono tabular-nums"><?= e(money($price)) ?></span>
-                                    <?php if ($original > 0): ?>
-                                        <span class="text-[10px] text-slate-400 line-through font-mono tabular-nums"><?= e(money($original)) ?></span>
-                                    <?php endif; ?>
-                                </div>
-
-                                <div class="flex items-center gap-1.5">
-                                    <a href="<?= e(url('checkout.php?product=' . (int) $p['id'] . '&qty=1')) ?>"
-                                       class="flex-1 py-1.5 sm:py-2 px-1.5 text-[11px] font-bold rounded-lg bg-[#00A651] hover:bg-[#008f45] text-white transition-colors flex items-center justify-center gap-1 whitespace-nowrap shadow-sm <?= $inStock ? '' : 'opacity-50 pointer-events-none' ?>"
-                                       title="Instant Cash on Delivery Checkout">
-                                        <i data-lucide="zap" class="w-3 h-3 fill-current shrink-0"></i>
-                                        <span>Order Now</span>
-                                    </a>
-
-                                    <form action="<?= e(url('cart.php')) ?>" method="post">
-                                        <?= csrf_field() ?>
-                                        <input type="hidden" name="action" value="add">
-                                        <input type="hidden" name="product_id" value="<?= (int) $p['id'] ?>">
-                                        <input type="hidden" name="quantity" value="1">
-                                        <input type="hidden" name="redirect" value="<?= e($currentListUrl . '#catalog-section') ?>">
-                                        <button type="submit" class="p-1.5 sm:p-2 rounded-lg border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors <?= $inStock ? '' : 'opacity-50 pointer-events-none' ?>" title="Add to shopping cart" <?= $inStock ? '' : 'disabled' ?>>
-                                            <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-slate-700"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-                    </div>
-                </section>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <div class="py-16 text-center bg-white rounded-2xl border border-slate-200 mt-8">
-                <i data-lucide="search-x" class="w-10 h-10 text-slate-400 mx-auto mb-3"></i>
-                <h3 class="text-base font-bold text-slate-800">No products found</h3>
-                <p class="text-xs text-slate-500 max-w-sm mx-auto mt-1">
-                    <?= $q !== '' ? 'Try a different search term or browse another category.' : 'The catalog is empty right now. New products will appear here as soon as the admin adds them.' ?>
-                </p>
-                <?php if ($q !== '' || $activeSlug !== ''): ?>
-                    <a href="<?= e(url('index.php#catalog-section')) ?>" class="inline-block mt-4 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold">Reset Filters</a>
-                <?php endif; ?>
-            </div>
-        <?php endif; ?>
-    </section>
 </main>
-
 <?php require __DIR__ . '/includes/footer.php'; ?>

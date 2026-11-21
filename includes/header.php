@@ -48,7 +48,7 @@ if ($shareImage !== '' && !preg_match('~^https?://~i', $shareImage)) {
 }
 if ($shareImage === '') {
     /* Always give crawlers a real 1200x630 JPG: small logos and WebP
-       uploads are ignored by WhatsApp / Facebook, so the card is rendered
+       uploads are ignored by social platforms, so the card is rendered
        by og-image.php instead of linking the raw file. */
     $siteCard = url('og-image.php?type=site');
     if ($logoVersion !== '') {
@@ -95,339 +95,174 @@ if (empty($structuredData)) {
     <meta name="twitter:title" content="<?= e($pageTitle) ?>">
     <meta name="twitter:description" content="<?= e($metaDescription) ?>">
     <link rel="canonical" href="<?= e($canonicalUrl) ?>">
-    <meta name="theme-color" content="#00A651">
+    <meta name="theme-color" content="#166534">
     <?= $structuredData ?>
 
     <link rel="preload" href="<?= e(url('assets/fonts/plus-jakarta-sans-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="<?= e(url('assets/fonts/outfit-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 
     <link rel="stylesheet" href="<?= e(url('assets/css/tailwind.css') . '?v=4') ?>">
-    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=11') ?>">
+    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=20') ?>">
     <script src="<?= e(url('assets/js/lucide.min.js')) ?>"></script>
     <style>
         /* Keep drawers closed by default even if the external stylesheet fails to load. */
         [data-drawer][hidden] { display: none !important; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-[#00A651] selection:text-white">
+<body class="min-h-screen flex flex-col bg-white text-gray-800">
 
-<!-- Announcement bar -->
-<div class="bg-[#003d1e] text-emerald-100 text-xs py-1.5 px-4 border-b border-emerald-900/40 print-hide">
-    <div class="max-w-7xl mx-auto flex items-center justify-center gap-2 font-semibold">
-        <i data-lucide="truck" class="w-3.5 h-3.5 text-[#FF6B00] shrink-0"></i>
-        <span class="tracking-wide">Free Delivery All Over Pakistan</span>
-    </div>
+<div class="pk-announcement print-hide">
+  <div class="max-w-7xl mx-auto px-4 py-2 flex items-center justify-center gap-3 sm:gap-6 text-center flex-wrap">
+    <span class="inline-flex items-center gap-1.5"><i data-lucide="truck" class="w-3.5 h-3.5" style="color:#f97316"></i> Free Delivery All Over Pakistan</span>
+    <span class="hidden sm:inline opacity-40">|</span>
+    <span class="inline-flex items-center gap-1.5"><i data-lucide="banknote" class="w-3.5 h-3.5" style="color:#f97316"></i> Cash on Delivery Available</span>
+    <span class="hidden sm:inline opacity-40">|</span>
+    <span class="inline-flex items-center gap-1.5"><i data-lucide="shield-check" class="w-3.5 h-3.5" style="color:#f97316"></i> 7-Day Easy Return</span>
+  </div>
 </div>
 
-<!-- Navbar -->
-<header class="sticky top-0 z-30 bg-white border-b border-slate-200 text-slate-800 shadow-sm print-hide">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between gap-2 sm:gap-4 h-[64px] sm:h-[72px]">
-            <div class="nav-left flex items-center gap-1.5 sm:gap-3 shrink-0">
-                <a href="<?= e(url('index.php')) ?>" class="flex items-center gap-1.5 text-left group cursor-pointer shrink-0" aria-label="<?= e($storeName) ?> home">
-                    <span id="store-text-logo" class="<?= $logoUrl !== '' ? 'hidden ' : 'flex ' ?>items-end">
-                        <span class="text-xl sm:text-3xl font-black tracking-tight text-[#00A651]">Pak</span>
-                        <span class="text-xl sm:text-3xl font-black tracking-tight text-[#FF6B00]">Store</span>
-                        <span class="ml-1 text-[10px] font-bold uppercase tracking-widest text-slate-400 self-end mb-1 hidden sm:inline">.pk</span>
-                    </span>
-                    <?php if ($logoUrl !== ''): ?>
-                        <img src="<?= e(image_url($logoUrl) . $logoVersion) ?>" alt="<?= e($storeName) ?>" class="h-9 sm:h-10 w-auto max-w-[110px] sm:max-w-[170px] object-contain rounded" onerror="this.style.display='none';var f=document.getElementById('store-text-logo');if(f){f.classList.remove('hidden');f.classList.add('flex');}">
-                    <?php endif; ?>
-                </a>
+<header class="pk-header print-hide">
+  <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between gap-2 sm:gap-4 h-[68px] sm:h-[76px]">
+      <div class="nav-left flex items-center gap-2 shrink-0">
+        <a href="<?= e(url('index.php')) ?>" class="flex items-center gap-1.5 shrink-0" aria-label="<?= e($storeName) ?> home">
+          <span id="store-text-logo" class="<?= $logoUrl !== '' ? 'hidden ' : 'flex ' ?>items-end pk-brand text-2xl sm:text-3xl">
+            <span class="pk">Pak</span><span class="store">Store</span>
+          </span>
+          <?php if ($logoUrl !== ''): ?>
+            <img src="<?= e(image_url($logoUrl) . $logoVersion) ?>" alt="<?= e($storeName) ?>" class="h-9 sm:h-11 w-auto max-w-[120px] sm:max-w-[170px] object-contain" onerror="this.style.display='none';var f=document.getElementById('store-text-logo');if(f){f.classList.remove('hidden');f.classList.add('flex');}">
+          <?php endif; ?>
+        </a>
+        <button type="button" data-open-drawer="category-drawer" class="mobile-menu-btn menu-icon-btn border border-gray-200 text-gray-700 hover:text-[#166534] hover:bg-green-50" title="Menu" aria-label="Open Menu"><i data-lucide="menu" class="w-5 h-5"></i></button>
+      </div>
 
-                <button type="button" data-open-drawer="category-drawer" class="mobile-menu-btn menu-icon-btn rounded-lg text-slate-700 hover:text-[#00A651] hover:bg-emerald-50 border border-slate-200 transition-colors cursor-pointer items-center gap-1.5" title="Menu" aria-label="Open Menu">
-                    <i data-lucide="menu" class="w-5 h-5"></i>
-                </button>
-            </div>
+      <nav class="desktop-nav pk-nav">
+        <a href="<?= e(url('index.php')) ?>" class="<?= $currentPage === 'index.php' ? 'is-active' : '' ?>">Home</a>
+        <a href="<?= e(url('shop.php')) ?>" class="<?= $currentPage === 'shop.php' ? 'is-active' : '' ?>">Shop</a>
+        <a href="<?= e(url('categories.php')) ?>" class="<?= $currentPage === 'categories.php' ? 'is-active' : '' ?>">Categories</a>
+        <a href="<?= e(url('track-order.php')) ?>" class="<?= $currentPage === 'track-order.php' ? 'is-active' : '' ?>">Track Order</a>
+      </nav>
 
-            <!-- Desktop navigation (horizontal links beside the logo) -->
-            <nav class="desktop-nav">
-                <a href="<?= e(url('index.php')) ?>" class="<?= $currentPage === 'index.php' ? 'is-active' : '' ?>">Home</a>
-                <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
-                <a href="<?= e(url('index.php#catalog-section')) ?>">Shop</a>
-                <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
-                <a href="<?= e(url('track-order.php')) ?>" class="<?= $currentPage === 'track-order.php' ? 'is-active' : '' ?>">Track Order</a>
-                <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
-                <a href="<?= e(url('about.php')) ?>" class="<?= $currentPage === 'about.php' ? 'is-active' : '' ?>">About Us</a>
-                <span class="desktop-nav-sep" aria-hidden="true">&rsaquo;</span>
-                <a href="<?= e(url('contact.php')) ?>" class="<?= $currentPage === 'contact.php' ? 'is-active' : '' ?>">Contact Us</a>
-            </nav>
+      <div class="flex-1 min-w-0 max-w-xl desktop-search">
+        <form action="<?= e(url('shop.php')) ?>" method="get" class="pk-search" role="search">
+          <input type="search" name="q" value="<?= e($searchQuery) ?>" placeholder="Search products... / پروڈکٹ تلاش کریں" aria-label="Search products">
+          <button type="submit" aria-label="Search"><i data-lucide="search" class="w-4 h-4"></i></button>
+        </form>
+      </div>
 
-            <div class="flex-1 min-w-0 max-w-2xl desktop-search">
-                <form action="<?= e(url('index.php')) ?>" method="get" class="relative flex items-center" role="search">
-                    <input type="search" name="q" value="<?= e($searchQuery) ?>" placeholder="Search products..." class="w-full pl-3 sm:pl-4 pr-10 sm:pr-12 py-2 sm:py-2.5 text-xs bg-slate-100/90 border border-slate-300 rounded-lg focus:outline-none focus:border-[#00A651] focus:bg-white text-slate-900 placeholder-slate-400 transition-all shadow-inner" aria-label="Search products">
-                    <button type="submit" class="absolute right-1 top-1 bottom-1 px-2.5 sm:px-3.5 bg-[#FF6B00] hover:bg-[#e05e00] text-white rounded-md flex items-center justify-center transition-colors cursor-pointer" title="Search Products">
-                        <i data-lucide="search" class="w-4 h-4"></i>
-                    </button>
-                </form>
-            </div>
+      <div class="mobile-inline-search flex-1 min-w-0">
+        <form action="<?= e(url('shop.php')) ?>" method="get" class="pk-search" role="search">
+          <input type="search" name="q" value="<?= e($searchQuery) ?>" placeholder="Search products..." aria-label="Search products">
+          <button type="submit" aria-label="Search"><i data-lucide="search" class="w-4 h-4"></i></button>
+        </form>
+      </div>
 
-            <!-- Mobile inline search: opens inside the navbar on the left -->
-            <div class="mobile-inline-search flex-1 min-w-0">
-                <form action="<?= e(url('index.php')) ?>" method="get" class="relative flex items-center" role="search">
-                    <input type="search" name="q" value="<?= e($searchQuery) ?>" placeholder="Search products..." class="w-full pl-3 pr-11 py-2 text-xs bg-slate-100 border border-slate-300 rounded-lg focus:outline-none focus:border-[#00A651] text-slate-900" aria-label="Search products">
-                    <button type="submit" class="absolute right-1 top-1 bottom-1 px-2.5 bg-[#FF6B00] text-white rounded-md flex items-center justify-center" aria-label="Submit search">
-                        <i data-lucide="search" class="w-4 h-4"></i>
-                    </button>
-                </form>
-            </div>
-
-            <div class="flex items-center gap-1 sm:gap-2 shrink-0">
-                <button type="button" data-search-toggle class="mobile-menu-btn menu-icon-btn rounded-lg border border-slate-200 text-slate-700 hover:text-[#00A651] hover:bg-emerald-50 transition-colors" title="Search products" aria-label="Open search">
-                    <i data-lucide="search" class="w-5 h-5"></i>
-                </button>
-                <button type="button" data-search-close class="search-close-btn p-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors" title="Close search" aria-label="Close search">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-                <details class="relative group">
-                    <summary class="list-none flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-lg bg-[#00A651] hover:bg-[#008f45] border border-[#00A651] text-xs font-bold text-white transition-colors cursor-pointer shadow-sm">
-                        <i data-lucide="user" class="w-4 h-4"></i>
-                        <span class="hidden sm:inline max-w-[90px] truncate"><?= $navCustomer ? e(explode(' ', $navCustomer['full_name'])[0]) : 'Login' ?></span>
-                        <?php if ($navCartCount > 0): ?>
-                            <span class="bg-white text-[#00A651] text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center leading-none"><?= $navCartCount ?></span>
-                        <?php endif; ?>
-                        <i data-lucide="chevron-down" class="w-3 h-3 text-white/80"></i>
-                    </summary>
-                    <div class="absolute right-0 mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-xl py-2 z-50 text-xs">
-                        <?php if ($navCustomer): ?>
-                            <div class="px-3.5 py-2 border-b border-slate-100">
-                                <span class="font-bold text-slate-900 block truncate"><?= e($navCustomer['full_name']) ?></span>
-                                <span class="text-[10px] text-slate-500 font-mono"><?= e($navCustomer['phone']) ?></span>
-                            </div>
-                            <button type="button" data-open-drawer="cart-drawer" onclick="this.closest('details').open=false" class="w-full px-3.5 py-2 text-left hover:bg-emerald-50 flex items-center gap-2 text-slate-700 font-medium cursor-pointer">
-                                <i data-lucide="shopping-bag" class="w-4 h-4 text-[#00A651]"></i>
-                                <span class="flex-1">Shopping Cart</span>
-                                <span class="bg-[#FF6B00] text-white text-[10px] font-black px-1.5 py-0.5 rounded-full leading-none"><?= (int) $navCartCount ?></span>
-                            </button>
-                            <a href="<?= e(url('account.php')) ?>" class="w-full px-3.5 py-2 text-left hover:bg-emerald-50 flex items-center gap-2 text-slate-700 font-medium">
-                                <i data-lucide="package" class="w-4 h-4 text-[#00A651]"></i>
-                                <span>My Orders &amp; Delivery</span>
-                            </a>
-                            <a href="<?= e(url('wishlist.php')) ?>" class="w-full px-3.5 py-2 text-left hover:bg-emerald-50 flex items-center gap-2 text-slate-700 font-medium">
-                                <i data-lucide="heart" class="w-4 h-4 text-[#00A651]"></i>
-                                <span>My Wishlist</span>
-                            </a>
-                            <form action="<?= e(url('account.php')) ?>" method="post">
-                                <?= csrf_field() ?>
-                                <input type="hidden" name="action" value="logout">
-                                <button type="submit" class="w-full px-3.5 py-2 text-left hover:bg-rose-50 flex items-center gap-2 text-rose-600 font-medium cursor-pointer">
-                                    <i data-lucide="log-out" class="w-4 h-4"></i>
-                                    <span>Sign Out</span>
-                                </button>
-                            </form>
-                        <?php else: ?>
-                            <div class="px-3.5 py-2 border-b border-slate-100">
-                                <span class="font-bold text-slate-900 block">Welcome to <?= e($storeName) ?></span>
-                                <span class="text-[10px] text-slate-500">Login or create an account</span>
-                            </div>
-                            <button type="button" data-open-drawer="cart-drawer" onclick="this.closest('details').open=false" class="w-full px-3.5 py-2 text-left hover:bg-emerald-50 flex items-center gap-2 text-slate-700 font-medium cursor-pointer">
-                                <i data-lucide="shopping-bag" class="w-4 h-4 text-[#00A651]"></i>
-                                <span class="flex-1">Shopping Cart</span>
-                                <span class="bg-[#FF6B00] text-white text-[10px] font-black px-1.5 py-0.5 rounded-full leading-none"><?= (int) $navCartCount ?></span>
-                            </button>
-                            <a href="<?= e(url('account.php')) ?>" class="w-full px-3.5 py-2 text-left hover:bg-emerald-50 flex items-center gap-2 text-slate-700 font-medium">
-                                <i data-lucide="log-in" class="w-4 h-4 text-[#00A651]"></i>
-                                <span>Login</span>
-                            </a>
-                            <a href="<?= e(url('account.php?mode=register')) ?>" class="w-full px-3.5 py-2 text-left hover:bg-emerald-50 flex items-center gap-2 text-slate-700 font-medium">
-                                <i data-lucide="user-plus" class="w-4 h-4 text-[#00A651]"></i>
-                                <span>Create Account</span>
-                            </a>
-                            <a href="<?= e(url('track-order.php')) ?>" class="w-full px-3.5 py-2 text-left hover:bg-emerald-50 flex items-center gap-2 text-slate-700 font-medium">
-                                <i data-lucide="package-check" class="w-4 h-4 text-[#00A651]"></i>
-                                <span>Track Order</span>
-                            </a>
-                        <?php endif; ?>
-                    </div>
-                </details>
-            </div>
-        </div>
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <button type="button" data-search-toggle class="mobile-menu-btn menu-icon-btn border border-gray-200 text-gray-700 hover:text-[#166534] hover:bg-green-50" title="Search" aria-label="Open search"><i data-lucide="search" class="w-5 h-5"></i></button>
+        <button type="button" data-search-close class="search-close-btn p-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50" title="Close search" aria-label="Close search"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <a href="<?= e(url('account.php')) ?>" class="hidden sm:inline-flex pk-icon-btn" title="Account" aria-label="Account"><i data-lucide="user" class="w-5 h-5"></i></a>
+        <button type="button" data-open-drawer="cart-drawer" class="relative inline-flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl bg-[#166534] text-white font-bold text-xs hover:bg-[#14532d]">
+          <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Cart</span>
+          <span class="min-w-[20px] h-5 px-1 rounded-full bg-[#f97316] text-white text-[10px] font-black inline-flex items-center justify-center"><?= (int)$navCartCount ?></span>
+        </button>
+      </div>
     </div>
+  </div>
 
-    <script>
-    (function () {
-      var header = document.currentScript ? document.currentScript.closest('header') : null;
-      function setSearch(open) {
-        header = header || document.querySelector('header.sticky');
-        if (!header) return;
-        header.classList.toggle('search-open', open);
-        var btn = header.querySelector('[data-search-toggle]');
-        if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-        if (open) {
-          var i = header.querySelector('.mobile-inline-search input[type=search]');
-          if (i) { try { i.focus(); } catch (x) {} }
-        }
-      }
-      window.setSearch = setSearch;
-      function bind() {
-        header = header || document.querySelector('header.sticky');
-        if (!header || header.dataset.searchBound) return;
-        header.dataset.searchBound = '1';
-        var openBtn = header.querySelector('[data-search-toggle]');
-        var closeBtn = header.querySelector('[data-search-close]');
-        if (openBtn) openBtn.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); setSearch(true); });
-        if (closeBtn) closeBtn.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); setSearch(false); });
-      }
-      bind();
-      document.addEventListener('DOMContentLoaded', bind);
-    })();
-    </script>
-
-    <!-- Category quick strip -->
-    <div class="mobile-categories bg-slate-50 border-t border-slate-200 overflow-x-auto scrollbar-none">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-4 py-2 text-xs font-semibold text-slate-700">
-            <button type="button" data-open-drawer="category-drawer" class="flex items-center gap-1.5 text-[#00A651] hover:underline cursor-pointer font-bold shrink-0">
-                <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
-                <span>All Categories &#9776;</span>
-            </button>
-            <span class="text-slate-300">|</span>
-            <?php foreach ($navCategories as $cat): ?>
-                <a href="<?= e(url('index.php?category=' . urlencode($cat['slug']) . '#catalog-section')) ?>"
-                   class="whitespace-nowrap transition-colors hover:text-[#00A651] <?= $activeCategory === $cat['slug'] ? 'text-[#00A651] font-bold border-b-2 border-[#00A651]' : '' ?>">
-                    <?= e($cat['name']) ?>
-                </a>
-            <?php endforeach; ?>
-        </div>
+  <div class="mobile-categories border-t border-gray-100 bg-white overflow-x-auto scrollbar-none">
+    <div class="max-w-7xl mx-auto px-4 flex items-center gap-4 py-2.5 text-xs font-semibold text-gray-600">
+      <a href="<?= e(url('shop.php')) ?>" class="text-[#166534] font-bold whitespace-nowrap">All Products</a>
+      <?php foreach ($navCategories as $cat): ?>
+        <a href="<?= e(url('shop.php?category=' . urlencode($cat['slug']))) ?>" class="whitespace-nowrap hover:text-[#166534] <?= $activeCategory === $cat['slug'] ? 'text-[#166534] font-bold' : '' ?>"><?= e($cat['name']) ?></a>
+      <?php endforeach; ?>
     </div>
+  </div>
+
+  <script>
+  (function () {
+    var header = document.currentScript ? document.currentScript.closest('header') : null;
+    function setSearch(open) {
+      header = header || document.querySelector('header.pk-header');
+      if (!header) return;
+      header.classList.toggle('search-open', open);
+      var btn = header.querySelector('[data-search-toggle]');
+      if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (open) { var i = header.querySelector('.mobile-inline-search input[type=search]'); if (i) { try { i.focus(); } catch (x) {} } }
+    }
+    window.setSearch = setSearch;
+    function bind() {
+      header = header || document.querySelector('header.pk-header');
+      if (!header || header.dataset.searchBound) return;
+      header.dataset.searchBound = '1';
+      var openBtn = header.querySelector('[data-search-toggle]');
+      var closeBtn = header.querySelector('[data-search-close]');
+      if (openBtn) openBtn.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); setSearch(true); });
+      if (closeBtn) closeBtn.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); setSearch(false); });
+    }
+    bind(); document.addEventListener('DOMContentLoaded', bind);
+  })();
+  </script>
 </header>
 
 <?php render_flashes(); ?>
 
-<!-- ============ Category drawer ============ -->
-<div id="category-drawer" data-drawer hidden class="fixed inset-0 z-50 overflow-hidden bg-slate-950/60 backdrop-blur-sm flex print-hide">
-    <div class="menu-drawer-panel bg-white text-slate-900 h-full shadow-2xl flex flex-col justify-between animate-slide-left overflow-y-auto">
-        <div>
-            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
-                <div class="flex items-center gap-2">
-                    <span class="bg-[#00A651] text-white font-black text-xs px-2 py-0.5 rounded">PAK</span>
-                    <h3 class="font-bold text-sm text-slate-900">Menu</h3>
-                </div>
-                <button type="button" data-close-drawer="category-drawer" class="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-
-            <nav class="mt-4 space-y-1">
-                <a href="<?= e(url('index.php')) ?>" class="w-full text-left px-3.5 py-3 rounded-xl font-bold text-sm flex items-center gap-3 transition-colors hover:bg-emerald-50 hover:text-[#00A651] text-slate-800">
-                    <i data-lucide="home" class="w-4 h-4 text-[#FF6B00]"></i><span>Home</span>
-                </a>
-                <a href="<?= e(url('index.php#catalog-section')) ?>" class="w-full text-left px-3.5 py-3 rounded-xl font-bold text-sm flex items-center gap-3 transition-colors hover:bg-emerald-50 hover:text-[#00A651] text-slate-800">
-                    <i data-lucide="shopping-bag" class="w-4 h-4 text-[#FF6B00]"></i><span>Shop</span>
-                </a>
-                <a href="<?= e(url('track-order.php')) ?>" class="w-full text-left px-3.5 py-3 rounded-xl font-bold text-sm flex items-center gap-3 transition-colors hover:bg-emerald-50 hover:text-[#00A651] text-slate-800">
-                    <i data-lucide="package-check" class="w-4 h-4 text-[#FF6B00]"></i><span>Track Order</span>
-                </a>
-                <a href="<?= e(url('about.php')) ?>" class="w-full text-left px-3.5 py-3 rounded-xl font-bold text-sm flex items-center gap-3 transition-colors hover:bg-emerald-50 hover:text-[#00A651] text-slate-800">
-                    <i data-lucide="info" class="w-4 h-4 text-[#FF6B00]"></i><span>About Us</span>
-                </a>
-                <a href="<?= e(url('contact.php')) ?>" class="w-full text-left px-3.5 py-3 rounded-xl font-bold text-sm flex items-center gap-3 transition-colors hover:bg-emerald-50 hover:text-[#00A651] text-slate-800">
-                    <i data-lucide="mail" class="w-4 h-4 text-[#FF6B00]"></i><span>Contact Us</span>
-                </a>
-            </nav>
-        </div>
-
-        <div class="pt-4 mt-4 border-t border-slate-200 bg-slate-50 p-3 rounded-xl text-center text-xs text-slate-600">
-            <span class="font-bold text-[#00A651] block">Cash on Delivery All Over Pakistan</span>
-            <span class="text-[11px] text-slate-500">Pay cash upon parcel inspection at doorstep.</span>
-        </div>
+<div id="category-drawer" data-drawer hidden class="fixed inset-0 z-50 overflow-hidden bg-black/50 backdrop-blur-sm flex print-hide">
+  <div class="menu-drawer-panel h-full shadow-2xl flex flex-col animate-slide-left overflow-y-auto">
+    <div class="flex items-center justify-between pb-4 border-b border-gray-200">
+      <div class="pk-brand text-2xl"><span class="pk">Pak</span><span class="store">Store</span></div>
+      <button type="button" data-close-drawer="category-drawer" class="pk-icon-btn"><i data-lucide="x" class="w-5 h-5"></i></button>
     </div>
-    <div class="flex-1 cursor-pointer" data-close-drawer="category-drawer"></div>
+    <nav class="mt-4 space-y-1 text-sm font-bold text-gray-700">
+      <a href="<?= e(url('index.php')) ?>" class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-green-50 hover:text-[#166534]"><i data-lucide="home" class="w-4 h-4 text-[#f97316]"></i>Home</a>
+      <a href="<?= e(url('shop.php')) ?>" class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-green-50 hover:text-[#166534]"><i data-lucide="store" class="w-4 h-4 text-[#f97316]"></i>Shop</a>
+      <a href="<?= e(url('categories.php')) ?>" class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-green-50 hover:text-[#166534]"><i data-lucide="layout-grid" class="w-4 h-4 text-[#f97316]"></i>Categories</a>
+      <a href="<?= e(url('track-order.php')) ?>" class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-green-50 hover:text-[#166534]"><i data-lucide="package-search" class="w-4 h-4 text-[#f97316]"></i>Track Order</a>
+      <a href="<?= e(url('about.php')) ?>" class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-green-50 hover:text-[#166534]"><i data-lucide="info" class="w-4 h-4 text-[#f97316]"></i>About Us</a>
+      <a href="<?= e(url('contact.php')) ?>" class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-green-50 hover:text-[#166534]"><i data-lucide="mail" class="w-4 h-4 text-[#f97316]"></i>Contact Us</a>
+      <a href="<?= e(url('account.php')) ?>" class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-green-50 hover:text-[#166534]"><i data-lucide="user" class="w-4 h-4 text-[#f97316]"></i>My Account</a>
+    </nav>
+    <div class="mt-auto pt-4 border-t border-gray-200">
+      <div class="p-4 rounded-xl bg-green-50 text-sm"><div class="font-bold text-[#166534]">Cash on Delivery</div><div class="text-gray-600 text-xs mt-1">All over Pakistan with easy return.</div></div>
+    </div>
+  </div>
+  <div class="flex-1 cursor-pointer" data-close-drawer="category-drawer"></div>
 </div>
 
-<!-- ============ Cart drawer ============ -->
-<div id="cart-drawer" data-drawer hidden class="fixed inset-0 z-50 overflow-hidden bg-slate-950/50 backdrop-blur-sm flex justify-end print-hide">
-    <div class="w-full max-w-md bg-white h-full shadow-2xl flex flex-col justify-between border-l border-slate-200 animate-slide-right">
-        <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <i data-lucide="shopping-bag" class="w-5 h-5 text-[#00A651]"></i>
-                <h2 class="font-bold text-slate-900 text-base">Shopping Bag (<?= count($cartItems) ?>)</h2>
-            </div>
-            <button type="button" data-close-drawer="cart-drawer" class="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors" aria-label="Close cart">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-        </div>
-
-        <div class="bg-emerald-50 px-6 py-2.5 border-b border-emerald-100 text-xs flex items-center justify-between text-slate-700 font-medium">
-            <div class="flex items-center gap-1.5">
-                <i data-lucide="truck" class="w-4 h-4 text-[#00A651]"></i>
-                <span>Delivery: <strong class="text-slate-900"><?= $cartTotals['shipping'] <= 0 ? 'FREE' : e(money($cartTotals['shipping'])) ?></strong> nationwide</span>
-            </div>
-            <span class="text-[10px] font-bold uppercase bg-[#FF6B00] text-white px-2 py-0.5 rounded">COD</span>
-        </div>
-
-        <div class="flex-1 overflow-y-auto p-6 space-y-4">
-            <?php if ($cartItems): ?>
-                <?php foreach ($cartItems as $item): ?>
-                    <div class="flex items-center gap-4 pb-4 border-b border-slate-100 last:border-b-0">
-                        <img src="<?= e(image_url($item['image'])) ?>" alt="<?= e($item['title']) ?>" class="w-16 h-16 rounded-lg object-cover bg-slate-100 shrink-0 border border-slate-200">
-                        <div class="flex-1 min-w-0">
-                            <h4 class="text-xs font-semibold text-slate-900 truncate"><?= e($item['title']) ?></h4>
-                            <p class="text-xs font-mono font-bold text-slate-900 mt-0.5"><?= e(money($item['price'])) ?></p>
-
-                            <div class="flex items-center justify-between mt-2 gap-2">
-                                <form action="<?= e(url('cart.php')) ?>" method="post" class="flex items-center border border-slate-200 rounded-md bg-slate-50 text-xs" data-qty>
-                                    <?= csrf_field() ?>
-                                    <input type="hidden" name="action" value="update">
-                                    <input type="hidden" name="product_id" value="<?= (int) $item['id'] ?>">
-                                    <button type="submit" name="quantity" value="<?= max(0, (int) $item['qty'] - 1) ?>" class="px-2 py-0.5 text-slate-600 hover:bg-slate-200 font-bold" aria-label="Decrease quantity">-</button>
-                                    <span class="px-2.5 py-0.5 font-mono font-bold text-slate-900 bg-white"><?= (int) $item['qty'] ?></span>
-                                    <button type="submit" name="quantity" value="<?= (int) $item['qty'] + 1 ?>" class="px-2 py-0.5 text-slate-600 hover:bg-slate-200 font-bold" aria-label="Increase quantity">+</button>
-                                </form>
-
-                                <form action="<?= e(url('cart.php')) ?>" method="post">
-                                    <?= csrf_field() ?>
-                                    <input type="hidden" name="action" value="remove">
-                                    <input type="hidden" name="product_id" value="<?= (int) $item['id'] ?>">
-                                    <button type="submit" class="text-slate-400 hover:text-rose-600 p-1 transition-colors" title="Remove item">
-                                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <div class="h-full flex flex-col items-center justify-center text-center py-12">
-                    <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-4">
-                        <i data-lucide="shopping-bag" class="w-8 h-8"></i>
-                    </div>
-                    <h3 class="text-sm font-bold text-slate-800">Your bag is empty</h3>
-                    <p class="text-xs text-slate-500 mt-1 max-w-xs">Explore our catalog and choose your favorite items with Cash on Delivery.</p>
-                    <a href="<?= e(url('index.php#catalog-section')) ?>" class="mt-4 px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-slate-800">Start Shopping</a>
-                </div>
-            <?php endif; ?>
-        </div>
-
-        <?php if ($cartItems): ?>
-            <div class="p-6 bg-slate-50 border-t border-slate-200 space-y-3">
-                <div class="space-y-1.5 text-xs">
-                    <div class="flex justify-between text-slate-600">
-                        <span>Subtotal</span>
-                        <span class="font-mono font-bold text-slate-900"><?= e(money($cartTotals['subtotal'])) ?></span>
-                    </div>
-                    <div class="flex justify-between text-slate-600">
-                        <span>Delivery Charges (Pakistan)</span>
-                        <span class="font-mono font-bold">
-                            <?php if ($cartTotals['shipping'] <= 0): ?>
-                                <span class="text-emerald-600 uppercase font-bold text-[11px]">Free</span>
-                            <?php else: ?>
-                                <?= e(money($cartTotals['shipping'])) ?>
-                            <?php endif; ?>
-                        </span>
-                    </div>
-                    <div class="flex justify-between text-sm font-bold text-slate-900 pt-2 border-t border-slate-200">
-                        <span>Total Amount to Pay</span>
-                        <span class="font-mono text-emerald-700 text-base"><?= e(money($cartTotals['total'])) ?></span>
-                    </div>
-                    <p class="text-[11px] text-slate-500 text-center pt-1">&#128181; 100% Cash on Delivery (Pay only when courier arrives)</p>
-                </div>
-
-                <a href="<?= e(url('checkout.php')) ?>" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm">
-                    <span>Proceed to COD Checkout</span>
-                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                </a>
-            </div>
-        <?php endif; ?>
+<div id="cart-drawer" data-drawer hidden class="fixed inset-0 z-50 overflow-hidden bg-black/50 backdrop-blur-sm flex justify-end print-hide">
+  <div class="w-full max-w-md bg-white h-full shadow-2xl flex flex-col border-l border-gray-200 animate-slide-right">
+    <div class="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
+      <div class="flex items-center gap-2 font-bold text-gray-900"><i data-lucide="shopping-bag" class="w-5 h-5 text-[#166534]"></i>Shopping Cart (<?= count($cartItems) ?>)</div>
+      <button type="button" data-close-drawer="cart-drawer" class="pk-icon-btn"><i data-lucide="x" class="w-5 h-5"></i></button>
     </div>
-    <div class="flex-1 cursor-pointer" data-close-drawer="cart-drawer"></div>
+    <div class="flex-1 overflow-y-auto p-5 space-y-4">
+      <?php if ($cartItems): ?>
+        <?php foreach ($cartItems as $item): ?>
+          <div class="flex gap-3 pb-4 border-b border-gray-100">
+            <img src="<?= e(image_url($item['image'])) ?>" alt="<?= e($item['title']) ?>" class="w-16 h-16 rounded-lg object-cover bg-gray-100 border border-gray-200">
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-bold text-gray-900 truncate"><?= e($item['title']) ?></div>
+              <div class="text-sm font-extrabold text-[#166534] mt-0.5"><?= e(money($item['price'])) ?></div>
+              <div class="flex items-center justify-between mt-2">
+                <span class="text-xs text-gray-500">Qty: <?= (int)$item['qty'] ?></span>
+                <form action="<?= e(url('cart.php')) ?>" method="post"><?= csrf_field() ?><input type="hidden" name="action" value="remove"><input type="hidden" name="product_id" value="<?= (int)$item['id'] ?>"><button type="submit" class="text-gray-400 hover:text-red-600"><i data-lucide="trash-2" class="w-4 h-4"></i></button></form>
+              </div>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <div class="text-center py-12 text-gray-500"><i data-lucide="shopping-bag" class="w-12 h-12 mx-auto mb-3 text-gray-300"></i><div class="font-bold text-gray-800">Your cart is empty</div><p class="text-sm mt-1">Add products to start shopping.</p></div>
+      <?php endif; ?>
+    </div>
+    <?php if ($cartItems): ?>
+    <div class="p-5 bg-gray-50 border-t border-gray-200 space-y-3">
+      <div class="flex justify-between text-sm"><span class="text-gray-600">Subtotal</span><span class="font-bold"><?= e(money($cartTotals['subtotal'])) ?></span></div>
+      <div class="flex justify-between text-sm"><span class="text-gray-600">Delivery</span><span class="font-bold"><?= $cartTotals['shipping'] <= 0 ? '<span class="text-[#166534]">FREE</span>' : e(money($cartTotals['shipping'])) ?></span></div>
+      <div class="flex justify-between text-base font-black text-gray-900 pt-2 border-t border-gray-200"><span>Total</span><span class="text-[#166534]"><?= e(money($cartTotals['total'])) ?></span></div>
+      <a href="<?= e(url('checkout.php')) ?>" class="pk-btn pk-btn-orange w-full">Proceed to Checkout</a>
+      <a href="<?= e(url('cart.php')) ?>" class="pk-btn pk-btn-outline w-full">View Cart</a>
+    </div>
+    <?php endif; ?>
+  </div>
+  <div class="flex-1 cursor-pointer" data-close-drawer="cart-drawer"></div>
 </div>

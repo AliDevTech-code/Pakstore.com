@@ -219,7 +219,7 @@ require __DIR__ . '/includes/header.php';
                                 </div>
 
                                 <div>
-                                    <label for="phone" class="block text-xs font-semibold text-slate-700 mb-1">WhatsApp Number *</label>
+                                    <label for="phone" class="block text-xs font-semibold text-slate-700 mb-1">Mobile Number *</label>
                                     <input id="phone" name="phone" type="tel" required maxlength="30" placeholder="0300-1234567" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-mono focus:outline-[#00A651] focus:border-[#00A651]">
                                 </div>
 

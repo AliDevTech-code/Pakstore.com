@@ -2,7 +2,7 @@
 /**
  * Open Graph preview image (1200x630 JPEG).
  *
- * WhatsApp / Facebook / LinkedIn only render a link preview when og:image is
+ * social platforms only render a link preview when og:image is
  * a normal raster image (JPG/PNG) that is big enough. Small logos and WebP
  * uploads therefore show no preview, so this endpoint renders one fixed-size
  * JPEG card for the site and for each product.
