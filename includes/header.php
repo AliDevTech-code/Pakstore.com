@@ -102,7 +102,7 @@ if (empty($structuredData)) {
     <link rel="preload" href="<?= e(url('assets/fonts/outfit-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 
     <link rel="stylesheet" href="<?= e(url('assets/css/tailwind.css') . '?v=4') ?>">
-    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=33') ?>">
+    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=34') ?>">
     <script src="<?= e(url('assets/js/lucide.min.js')) ?>"></script>
     <style>
         /* Keep drawers closed by default even if the external stylesheet fails to load. */
@@ -112,12 +112,8 @@ if (empty($structuredData)) {
 <body class="min-h-screen flex flex-col bg-white text-gray-800">
 
 <div class="pk-announcement print-hide">
-  <div class="max-w-7xl mx-auto px-4 py-2 flex items-center justify-center gap-3 sm:gap-6 text-center flex-wrap">
+  <div class="max-w-7xl mx-auto px-4 py-2 flex items-center justify-center text-center">
     <span class="inline-flex items-center gap-1.5"><i data-lucide="truck" class="w-3.5 h-3.5" style="color:#f97316"></i> Free Delivery All Over Pakistan</span>
-    <span class="hidden sm:inline opacity-40">|</span>
-    <span class="inline-flex items-center gap-1.5"><i data-lucide="banknote" class="w-3.5 h-3.5" style="color:#f97316"></i> Cash on Delivery Available</span>
-    <span class="hidden sm:inline opacity-40">|</span>
-    <span class="inline-flex items-center gap-1.5"><i data-lucide="shield-check" class="w-3.5 h-3.5" style="color:#f97316"></i> 7-Day Easy Return</span>
   </div>
 </div>
 
