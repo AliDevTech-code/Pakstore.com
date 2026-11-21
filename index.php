@@ -20,6 +20,7 @@ $slides = array_slice($featured, 0, 5);
 $pageTitle = setting('store_name', 'PakStore') . ' - Cash on Delivery Store Pakistan';
 $metaDescription = 'Shop premium products in Pakistan with Cash on Delivery, free delivery offers, 7-day return, and fast nationwide shipping.';
 require __DIR__ . '/includes/header.php';
+if (!function_exists('pk_cat_icon')) { function pk_cat_icon(string $name, string $slug=''): string { $k=strtolower($slug.' '.$name); $map=['electronic'=>'smartphone','mobile'=>'smartphone','phone'=>'smartphone','watch'=>'watch','smart'=>'watch','fashion'=>'shirt','cloth'=>'shirt','wear'=>'shirt','shoe'=>'footprints','bag'=>'shopping-bag','beaut'=>'sparkles','cosmetic'=>'sparkles','skin'=>'sparkles','health'=>'heart-pulse','perfume'=>'spray-can','fragrance'=>'spray-can','home'=>'house','kitchen'=>'cooking-pot','decor'=>'lamp','furniture'=>'sofa','toy'=>'gamepad-2','kid'=>'baby','baby'=>'baby','sport'=>'dumbbell','fitness'=>'dumbbell','book'=>'book-open','station'=>'pencil-ruler','grocery'=>'shopping-basket','food'=>'utensils','computer'=>'laptop','laptop'=>'laptop','accessor'=>'headphones','audio'=>'headphones','earbud'=>'headphones','jewel'=>'gem','gift'=>'gift','auto'=>'car','car'=>'car']; foreach($map as $n=>$i){ if(str_contains($k,$n)) return $i; } return 'layout-grid'; } }
 
 function pk_product_card(array $p, string $badgeType = '') {
   $price = (float)$p['price']; $orig = (float)($p['original_price'] ?? 0); $hasSale = $orig > $price;
@@ -42,11 +43,21 @@ function pk_product_card(array $p, string $badgeType = '') {
         <?php if ($hasSale): ?><span class="pk-old"><?= e(money($orig)) ?></span><?php endif; ?>
       </div>
       <div class="text-[11px] mt-1 font-semibold <?= $inStock ? 'text-[#166534]' : 'text-red-500' ?>"><?= $inStock ? 'In Stock • Ready to Ship' : 'Out of Stock' ?></div>
-      <div class="mt-auto pt-3 grid grid-cols-1 gap-2">
+      <div class="mt-auto pt-3 flex items-center gap-2">
+        <?php $wished = function_exists('wishlist_has') && wishlist_has((int)$p['id']); ?>
+        <form action="<?= e(url('wishlist.php')) ?>" method="post" class="shrink-0">
+          <?= csrf_field() ?>
+          <input type="hidden" name="action" value="toggle">
+          <input type="hidden" name="product_id" value="<?= (int)$p['id'] ?>">
+          <input type="hidden" name="redirect" value="<?= e($_SERVER['REQUEST_URI'] ?? 'index.php') ?>">
+          <button type="submit" class="w-10 h-10 rounded-xl border flex items-center justify-center transition-colors <?= $wished ? 'bg-red-50 border-red-200 text-red-500' : 'bg-white border-gray-200 text-gray-500 hover:text-red-500 hover:border-red-200' ?>" title="<?= $wished ? 'Remove from Wishlist' : 'Add to Wishlist' ?>" aria-label="Wishlist">
+            <i data-lucide="heart" class="w-4 h-4 <?= $wished ? 'fill-red-500' : '' ?>"></i>
+          </button>
+        </form>
         <?php if ($inStock): ?>
-          <form action="<?= e(url('cart.php')) ?>" method="post"><?= csrf_field() ?><input type="hidden" name="action" value="add"><input type="hidden" name="product_id" value="<?= (int)$p['id'] ?>"><input type="hidden" name="quantity" value="1"><button type="submit" class="pk-btn pk-btn-orange w-full text-xs py-2.5">Add to Cart</button></form>
+          <a href="<?= e(url('checkout.php?product='.(int)$p['id'].'&qty=1')) ?>" class="pk-btn pk-btn-orange flex-1 text-xs py-2.5">Buy Now <i data-lucide="chevron-right" class="w-4 h-4"></i></a>
         <?php else: ?>
-          <span class="pk-btn w-full text-xs py-2.5 bg-gray-100 text-gray-400 cursor-not-allowed">Out of Stock</span>
+          <span class="pk-btn flex-1 text-xs py-2.5 bg-gray-100 text-gray-400 cursor-not-allowed">Out of Stock</span>
         <?php endif; ?>
       </div>
     </div>
@@ -81,9 +92,9 @@ function pk_product_card(array $p, string $badgeType = '') {
                 <a href="<?= e(url('shop.php')) ?>" class="pk-btn" style="background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.25)">View All Products</a>
               </div>
             </div>
-            <div class="hidden lg:flex justify-center">
-              <a href="<?= e(url('product.php?id='.(int)$s['id'])) ?>" class="block bg-white/10 p-4 rounded-3xl border border-white/10 backdrop-blur-sm">
-                <img src="<?= e(image_url($s['image'])) ?>" alt="<?= e($s['title']) ?>" class="w-full max-w-md h-[320px] object-contain rounded-2xl bg-white">
+            <div class="flex justify-center mt-6 lg:mt-0">
+              <a href="<?= e(url('product.php?id='.(int)$s['id'])) ?>" class="block bg-white/10 p-3 sm:p-4 rounded-3xl border border-white/10 backdrop-blur-sm w-full max-w-md">
+                <img src="<?= e(image_url($s['image'])) ?>" alt="<?= e($s['title']) ?>" class="w-full h-[220px] sm:h-[280px] lg:h-[320px] object-contain rounded-2xl bg-white">
               </a>
             </div>
           </div>
@@ -108,15 +119,6 @@ function pk_product_card(array $p, string $badgeType = '') {
     <?php endif; ?>
   </section>
 
-  <!-- TRUST BADGES -->
-  <section class="py-10 bg-white border-b border-gray-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="pk-trust"><div class="icon"><i data-lucide="banknote" class="w-6 h-6"></i></div><h3>Cash on Delivery</h3><p>Poore Pakistan mein COD available</p></div>
-      <div class="pk-trust"><div class="icon"><i data-lucide="rotate-ccw" class="w-6 h-6"></i></div><h3>7-Day Easy Return</h3><p>Asaan return/exchange policy</p></div>
-      <div class="pk-trust"><div class="icon"><i data-lucide="truck" class="w-6 h-6"></i></div><h3>TCS / Leopards Delivery</h3><p>Fast & reliable nationwide shipping</p></div>
-      <div class="pk-trust"><div class="icon"><i data-lucide="shield-check" class="w-6 h-6"></i></div><h3>Secure Shopping</h3><p>Trusted store & quality products</p></div>
-    </div>
-  </section>
 
   <!-- CATEGORIES -->
   <section class="pk-section pk-section-surface">
@@ -130,7 +132,7 @@ function pk_product_card(array $p, string $badgeType = '') {
           <a href="<?= e(url('shop.php?category=' . urlencode($cat['slug']))) ?>" class="pk-cat-circle shrink-0 w-[100px]">
             <div class="circle">
               <?php if ($img !== ''): ?><img src="<?= e(image_url($img)) ?>" alt="<?= e($cat['name']) ?>" loading="lazy">
-              <?php else: ?><i data-lucide="tag" class="w-8 h-8 text-[#166534]"></i><?php endif; ?>
+              <?php else: ?><i data-lucide="<?= e(pk_cat_icon($cat['name'], $cat['slug'] ?? '')) ?>" class="w-8 h-8 text-[#166534]"></i><?php endif; ?>
             </div>
             <span class="label"><?= e($cat['name']) ?></span>
           </a>
@@ -189,31 +191,15 @@ function pk_product_card(array $p, string $badgeType = '') {
   </section>
   <?php endif; ?>
 
-  <!-- REVIEWS -->
-  <section class="pk-section" style="background:#ecfdf5;">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-8"><h2 class="pk-title">Customer Reviews</h2><p class="pk-sub">Pakistan bhar se hamare customers ka trust</p></div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <?php
-        $reviews = [
-          ['name'=>'Ayesha K.', 'city'=>'Lahore', 'text'=>'Bohat achi quality aur delivery time par mili. Cash on Delivery ka option bohat convenient hai.'],
-          ['name'=>'Hamza R.', 'city'=>'Karachi', 'text'=>'Product exactly same as shown. Packaging safe thi aur price bhi reasonable thi. Recommended!'],
-          ['name'=>'Sana M.', 'city'=>'Islamabad', 'text'=>'Customer support achi hai aur return policy clear hai. Main dobara order karungi.'],
-        ];
-        foreach ($reviews as $r): ?>
-          <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-            <div class="pk-stars text-lg">★★★★★</div>
-            <p class="text-sm text-gray-600 mt-3 leading-7">"<?= e($r['text']) ?>"</p>
-            <div class="mt-4 flex items-center gap-3">
-              <div class="w-10 h-10 rounded-full bg-[#166534] text-white font-bold flex items-center justify-center"><?= e(mb_substr($r['name'],0,1)) ?></div>
-              <div><div class="font-bold text-gray-900 text-sm"><?= e($r['name']) ?></div><div class="text-xs text-gray-500"><?= e($r['city']) ?>, Pakistan</div></div>
-            </div>
-          </div>
-        <?php endforeach; ?>
-      </div>
+  <!-- TRUST BADGES -->
+  <section class="py-10 bg-white border-t border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="pk-trust"><div class="icon"><i data-lucide="banknote" class="w-6 h-6"></i></div><h3>Cash on Delivery</h3><p>Poore Pakistan mein COD available</p></div>
+      <div class="pk-trust"><div class="icon"><i data-lucide="rotate-ccw" class="w-6 h-6"></i></div><h3>7-Day Easy Return</h3><p>Asaan return/exchange policy</p></div>
+      <div class="pk-trust"><div class="icon"><i data-lucide="truck" class="w-6 h-6"></i></div><h3>TCS / Leopards Delivery</h3><p>Fast & reliable nationwide shipping</p></div>
+      <div class="pk-trust"><div class="icon"><i data-lucide="shield-check" class="w-6 h-6"></i></div><h3>Secure Shopping</h3><p>Trusted store & quality products</p></div>
     </div>
   </section>
-
   <!-- CTA -->
   <section class="py-14 bg-[#166534] text-white">
     <div class="max-w-4xl mx-auto px-4 text-center">

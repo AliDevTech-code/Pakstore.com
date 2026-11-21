@@ -19,6 +19,9 @@
 html,body{overflow-x:hidden;max-width:100%}
 body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:var(--pk-text);background:var(--pk-surface)}
 h1,h2,h3,h4,h5,h6,.font-heading{font-family:'Outfit','Plus Jakarta Sans',sans-serif;color:var(--pk-green-dark)}
+.bg-\[\#166534\] h1,.bg-\[\#166534\] h2,.bg-\[\#166534\] h3,.bg-\[\#166534\] h4,.bg-\[\#14532d\] h1,.bg-\[\#14532d\] h2,.bg-\[\#14532d\] h3,.pk-footer h1,.pk-footer h2,.pk-footer h3,.pk-footer h4,.pk-announcement{color:#fff}
+.pk-dark h1,.pk-dark h2,.pk-dark h3,.pk-dark h4,.pk-dark p,.pk-dark span{color:#ecfdf5!important}
+.text-on-dark{color:#f0fdf4!important}
 a{transition:color .15s ease,background-color .15s ease,border-color .15s ease,opacity .15s ease}
 img{max-width:100%;height:auto}
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:9999px}::-webkit-scrollbar-thumb:hover{background:#94a3b8}

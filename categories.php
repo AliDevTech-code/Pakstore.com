@@ -4,6 +4,7 @@ $categories = all_categories();
 $pageTitle = 'Categories - ' . setting('store_name', 'PakStore');
 $metaDescription = 'Browse all product categories at ' . setting('store_name', 'PakStore') . '. Cash on Delivery available across Pakistan.';
 require __DIR__ . '/includes/header.php';
+if (!function_exists('pk_cat_icon')) { function pk_cat_icon(string $name, string $slug=''): string { $k=strtolower($slug.' '.$name); $map=['electronic'=>'smartphone','mobile'=>'smartphone','phone'=>'smartphone','watch'=>'watch','smart'=>'watch','fashion'=>'shirt','cloth'=>'shirt','wear'=>'shirt','shoe'=>'footprints','bag'=>'shopping-bag','beaut'=>'sparkles','cosmetic'=>'sparkles','skin'=>'sparkles','health'=>'heart-pulse','perfume'=>'spray-can','fragrance'=>'spray-can','home'=>'house','kitchen'=>'cooking-pot','decor'=>'lamp','furniture'=>'sofa','toy'=>'gamepad-2','kid'=>'baby','baby'=>'baby','sport'=>'dumbbell','fitness'=>'dumbbell','book'=>'book-open','station'=>'pencil-ruler','grocery'=>'shopping-basket','food'=>'utensils','computer'=>'laptop','laptop'=>'laptop','accessor'=>'headphones','audio'=>'headphones','earbud'=>'headphones','jewel'=>'gem','gift'=>'gift','auto'=>'car','car'=>'car']; foreach($map as $n=>$i){ if(str_contains($k,$n)) return $i; } return 'layout-grid'; } }
 
 // Count products per category
 $counts = [];
@@ -33,7 +34,7 @@ try {
               <?php if ($img !== ''): ?>
                 <img src="<?= e(image_url($img)) ?>" alt="<?= e($cat['name']) ?>" class="w-full h-full object-cover" loading="lazy">
               <?php else: ?>
-                <i data-lucide="layout-grid" class="w-10 h-10 text-[#166534]"></i>
+                <i data-lucide="<?= e(pk_cat_icon($cat['name'], $cat['slug'] ?? '')) ?>" class="w-10 h-10 text-[#166534]"></i>
               <?php endif; ?>
             </div>
             <h2 class="mt-4 font-extrabold text-gray-900 group-hover:text-[#166534]"><?= e($cat['name']) ?></h2>

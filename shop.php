@@ -48,36 +48,49 @@ require __DIR__ . '/includes/header.php';
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
       <aside class="lg:col-span-1">
         <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm sticky top-24">
-          <h2 class="font-extrabold text-[#166534] text-lg mb-4">Filters</h2>
-          <form method="get" action="<?= e(url('shop.php')) ?>" class="space-y-4">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-extrabold text-[#166534] text-lg">Filters</h2>
+            <a href="<?= e(url('shop.php')) ?>" class="text-xs font-bold text-[#f97316]">Clear</a>
+          </div>
+          <form method="get" action="<?= e(url('shop.php')) ?>" class="space-y-5">
             <div>
               <label class="pk-label">Search</label>
               <input type="search" name="q" value="<?= e($q) ?>" class="pk-input" placeholder="Search products...">
             </div>
+
             <div>
-              <label class="pk-label">Category</label>
-              <select name="category" class="pk-select">
-                <option value="">All Categories</option>
-                <?php foreach ($categories as $cat): ?>
-                  <option value="<?= e($cat['slug']) ?>" <?= $activeSlug === $cat['slug'] ? 'selected' : '' ?>><?= e($cat['name']) ?></option>
+              <div class="pk-label mb-2">Category</div>
+              <div class="flex flex-wrap gap-2">
+                <?php $catBase = array_filter(['q'=>$q,'min_price'=>$minPrice,'max_price'=>$maxPrice,'sort'=>$sort]); ?>
+                <a href="<?= e(url('shop.php?' . http_build_query($catBase))) ?>" class="px-3 py-1.5 rounded-full text-xs font-bold border <?= $activeSlug==='' ? 'bg-[#166534] text-white border-[#166534]' : 'bg-white text-gray-700 border-gray-200 hover:border-[#166534]' ?>">All</a>
+                <?php foreach ($categories as $cat): $pms = $catBase; $pms['category']=$cat['slug']; ?>
+                  <a href="<?= e(url('shop.php?' . http_build_query($pms))) ?>" class="px-3 py-1.5 rounded-full text-xs font-bold border <?= $activeSlug===$cat['slug'] ? 'bg-[#166534] text-white border-[#166534]' : 'bg-white text-gray-700 border-gray-200 hover:border-[#166534]' ?>"><?= e($cat['name']) ?></a>
                 <?php endforeach; ?>
-              </select>
+              </div>
+              <?php if ($activeSlug !== ''): ?><input type="hidden" name="category" value="<?= e($activeSlug) ?>"><?php endif; ?>
             </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div><label class="pk-label">Min Price</label><input type="number" name="min_price" value="<?= e($minPrice) ?>" class="pk-input" min="0" placeholder="0"></div>
-              <div><label class="pk-label">Max Price</label><input type="number" name="max_price" value="<?= e($maxPrice) ?>" class="pk-input" min="0" placeholder="Any"></div>
-            </div>
+
             <div>
-              <label class="pk-label">Sort By</label>
-              <select name="sort" class="pk-select">
-                <option value="featured" <?= $sort==='featured'?'selected':'' ?>>Featured</option>
-                <option value="price-low" <?= $sort==='price-low'?'selected':'' ?>>Price: Low to High</option>
-                <option value="price-high" <?= $sort==='price-high'?'selected':'' ?>>Price: High to Low</option>
-                <option value="newest" <?= $sort==='newest'?'selected':'' ?>>Newest</option>
-              </select>
+              <div class="pk-label mb-2">Price Range</div>
+              <div class="grid grid-cols-2 gap-3">
+                <div><input type="number" name="min_price" value="<?= e($minPrice) ?>" class="pk-input" min="0" placeholder="Min"></div>
+                <div><input type="number" name="max_price" value="<?= e($maxPrice) ?>" class="pk-input" min="0" placeholder="Max"></div>
+              </div>
             </div>
+
+            <div>
+              <div class="pk-label mb-2">Sort By</div>
+              <div class="space-y-2">
+                <?php $sortOpts = ['featured'=>'Featured','price-low'=>'Price: Low to High','price-high'=>'Price: High to Low','newest'=>'Newest']; foreach ($sortOpts as $val=>$label): ?>
+                  <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                    <input type="radio" name="sort" value="<?= e($val) ?>" <?= $sort===$val?'checked':'' ?> class="accent-[#166534]">
+                    <span><?= e($label) ?></span>
+                  </label>
+                <?php endforeach; ?>
+              </div>
+            </div>
+
             <button type="submit" class="pk-btn pk-btn-green w-full">Apply Filters</button>
-            <a href="<?= e(url('shop.php')) ?>" class="pk-btn pk-btn-outline w-full">Clear</a>
           </form>
         </div>
       </aside>
