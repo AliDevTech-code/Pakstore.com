@@ -197,17 +197,6 @@ function pk_product_card(array $p, string $badgeType = '') {
       <div class="pk-trust"><div class="icon"><i data-lucide="shield-check" class="w-6 h-6"></i></div><h3>Secure Shopping</h3><p>Trusted store & quality products</p></div>
     </div>
   </section>
-  <!-- CTA -->
-  <section class="py-14 bg-[#166534] text-white">
-    <div class="max-w-4xl mx-auto px-4 text-center">
-      <h2 class="text-3xl sm:text-4xl font-black" style="color:#111827">Ready to Shop?</h2>
-      <p class="mt-3 text-green-100">Quality products, best prices, aur Cash on Delivery — all over Pakistan.</p>
-      <div class="mt-6 flex flex-wrap justify-center gap-3">
-        <a href="<?= e(url('shop.php')) ?>" class="pk-btn pk-btn-orange">Shop Now</a>
-        <a href="<?= e(url('contact.php')) ?>" class="pk-btn" style="background:#fff;color:#166534">Contact Us</a>
-      </div>
-    </div>
-  </section>
 
 </main>
 <?php require __DIR__ . '/includes/footer.php'; ?>
