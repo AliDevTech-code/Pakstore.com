@@ -13,7 +13,7 @@ try {
     $newArrivals = db()->query("SELECT p.*, c.name AS category_name, c.slug AS category_slug FROM products p LEFT JOIN categories c ON c.id=p.category_id ORDER BY p.created_at DESC, p.id DESC LIMIT 10")->fetchAll();
 } catch (Throwable $e) { $newArrivals = []; }
 try {
-    $sale = db()->query("SELECT p.*, c.name AS category_name, c.slug AS category_slug FROM products p LEFT JOIN categories c ON c.id=p.category_id WHERE p.original_price IS NOT NULL AND p.original_price > p.price ORDER BY ((p.original_price-p.price)/p.original_price) DESC, p.id DESC LIMIT 10")->fetchAll();
+    $sale = db()->query("SELECT p.*, c.name AS category_name, c.slug AS category_slug FROM products p LEFT JOIN categories c ON c.id=p.category_id ORDER BY (CASE WHEN p.original_price IS NOT NULL AND p.original_price > p.price THEN 1 ELSE 0 END) DESC, p.id DESC LIMIT 10")->fetchAll();
 } catch (Throwable $e) { $sale = []; }
 
 $slides = array_slice($featured, 0, 5);
@@ -24,7 +24,7 @@ require __DIR__ . '/includes/header.php';
 if (!function_exists('pk_cat_icon')) { function pk_cat_icon(string $name, string $slug=''): string { $k=strtolower($slug.' '.$name); $map=['electronic'=>'smartphone','mobile'=>'smartphone','phone'=>'smartphone','watch'=>'watch','smart'=>'watch','fashion'=>'shirt','cloth'=>'shirt','wear'=>'shirt','shoe'=>'footprints','bag'=>'shopping-bag','beaut'=>'sparkles','cosmetic'=>'sparkles','skin'=>'sparkles','health'=>'heart-pulse','perfume'=>'spray-can','fragrance'=>'spray-can','home'=>'house','kitchen'=>'cooking-pot','decor'=>'lamp','furniture'=>'sofa','toy'=>'gamepad-2','kid'=>'baby','baby'=>'baby','sport'=>'dumbbell','fitness'=>'dumbbell','book'=>'book-open','station'=>'pencil-ruler','grocery'=>'shopping-basket','food'=>'utensils','computer'=>'laptop','laptop'=>'laptop','accessor'=>'headphones','audio'=>'headphones','earbud'=>'headphones','jewel'=>'gem','gift'=>'gift','auto'=>'car','car'=>'car']; foreach($map as $n=>$i){ if(str_contains($k,$n)) return $i; } return 'layout-grid'; } }
 
 function pk_product_card(array $p, string $badgeType = '') {
-  $price = (float)$p['price']; $orig = (float)($p['original_price'] ?? 0); $hasSale = $orig > $price;
+  $_pi = pk_display_prices($p['price'] ?? 0, $p['original_price'] ?? 0, $p['id'] ?? 0); $price = $_pi['price']; $orig = $_pi['original']; $hasSale = $_pi['has_sale'];
   $disc = $hasSale ? (int)round((($orig-$price)/$orig)*100) : 0;
   $inStock = (int)($p['in_stock'] ?? 1)===1 && (int)($p['stock'] ?? 0)>0;
   ?>
@@ -73,7 +73,6 @@ function pk_product_card(array $p, string $badgeType = '') {
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
         <div class="max-w-xl">
-          <span class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-[#166534] text-[11px] font-bold uppercase tracking-wide mb-4">Cash on Delivery</span>
           <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight" style="color:#111827">
             Premium Products.<br><span style="color:#166534">Cash on Delivery.</span>
           </h1>

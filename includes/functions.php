@@ -59,6 +59,25 @@ function redirect(string $path): void
     exit;
 }
 
+
+/**
+ * Ensure storefront always shows a sale/compare price with ~700-900 PKR saving.
+ */
+function pk_display_prices($price, $original = null, $id = 0): array
+{
+    $price = (float) $price;
+    $orig  = (float) ($original ?? 0);
+    $seed  = abs((int) $id);
+    $save  = 700 + (($seed % 3) * 100); // 700, 800, 900
+    if ($price <= 0) {
+        return ['price' => 0.0, 'original' => 0.0, 'has_sale' => false, 'save' => 0.0];
+    }
+    if ($orig <= $price || ($orig - $price) < 700) {
+        $orig = $price + $save;
+    }
+    $hasSale = $orig > $price;
+    return ['price' => $price, 'original' => $orig, 'has_sale' => $hasSale, 'save' => $hasSale ? ($orig - $price) : 0.0];
+}
 function money($amount): string
 {
     return 'Rs. ' . number_format((float) $amount, 0, '.', ',');

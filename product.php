@@ -24,8 +24,7 @@ if (!$product) {
 }
 
 $price    = (float) $product['price'];
-$original = $product['original_price'] !== null && (float) $product['original_price'] > $price
-    ? (float) $product['original_price'] : 0.0;
+$_pi = pk_display_prices($price, $product['original_price'] ?? 0, $product['id'] ?? 0); $original = $_pi['has_sale'] ? $_pi['original'] : 0.0;
 $discount = $original > 0 ? (int) round((($original - $price) / $original) * 100) : 0;
 $inStock  = (int) $product['in_stock'] === 1 && (int) $product['stock'] > 0;
 $features = json_array($product['features']);
@@ -229,7 +228,7 @@ $hasSale = $original > 0;
       </div>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5">
         <?php foreach ($related as $item): 
-          $rPrice=(float)$item['price']; $rOrig=(float)($item['original_price']??0); $rSale=$rOrig>$rPrice;
+          $_pi = pk_display_prices($item['price'] ?? 0, $item['original_price'] ?? 0, $item['id'] ?? 0); $rPrice=$_pi['price']; $rOrig=$_pi['original']; $rSale=$_pi['has_sale'];
           $rInStock=(int)$item['in_stock']===1 && (int)$item['stock']>0;
         ?>
           <div class="pk-card pk-product-card flex flex-col">

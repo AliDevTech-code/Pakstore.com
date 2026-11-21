@@ -102,7 +102,7 @@ require __DIR__ . '/includes/header.php';
         <?php if ($products): ?>
           <div class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5">
             <?php foreach ($products as $p): 
-              $price = (float)$p['price']; $orig = (float)($p['original_price'] ?? 0); $hasSale = $orig > $price;
+              $_pi = pk_display_prices($p['price'] ?? 0, $p['original_price'] ?? 0, $p['id'] ?? 0); $price = $_pi['price']; $orig = $_pi['original']; $hasSale = $_pi['has_sale'];
               $disc = $hasSale ? (int)round((($orig-$price)/$orig)*100) : 0;
               $inStock = (int)$p['in_stock']===1 && (int)$p['stock']>0;
             ?>

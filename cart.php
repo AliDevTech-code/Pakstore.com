@@ -93,7 +93,7 @@ require __DIR__ . '/includes/header.php';
                     <div class="text-[11px] font-bold uppercase tracking-wider text-gray-400"><?= e($item['category_name'] ?: 'Product') ?></div>
                     <a href="<?= e(url('product.php?id='.(int)$item['id'])) ?>" class="block font-bold text-gray-900 hover:text-[#166534] truncate"><?= e($item['title']) ?></a>
                     <div class="text-sm text-gray-500 mt-0.5"><?= e(money($item['price'])) ?> each</div>
-                    <?php if (!empty($item['original_price']) && (float)$item['original_price'] > (float)$item['price']): ?><div class="text-xs text-gray-400 line-through"><?= e(money($item['original_price'])) ?></div><?php endif; ?>
+                    <?php $_pi = pk_display_prices($item['price'] ?? 0, $item['original_price'] ?? 0, $item['product_id'] ?? $item['id'] ?? 0); if ($_pi['has_sale']): ?><div class="text-xs text-gray-400 line-through"><?= e(money($_pi['original'])) ?></div><?php endif; ?>
                   </div>
                   <form action="<?= e(url('cart.php')) ?>" method="post">
                     <?= csrf_field() ?><input type="hidden" name="action" value="remove"><input type="hidden" name="product_id" value="<?= (int)$item['id'] ?>"><input type="hidden" name="redirect" value="cart.php">

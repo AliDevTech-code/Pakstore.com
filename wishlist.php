@@ -79,7 +79,7 @@ require __DIR__ . '/includes/header.php';
                 <?php foreach ($products as $p): ?>
                     <?php
                     $price = (float) $p['price'];
-                    $original = $p['original_price'] !== null && (float) $p['original_price'] > $price ? (float) $p['original_price'] : 0.0;
+                    $_pi = pk_display_prices($price, $p['original_price'] ?? 0, $p['id'] ?? 0); $original = $_pi['has_sale'] ? $_pi['original'] : 0.0;
                     $inStock = (int) $p['in_stock'] === 1 && (int) $p['stock'] > 0;
                     ?>
                     <div class="group bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col hover:shadow-lg transition-all">
