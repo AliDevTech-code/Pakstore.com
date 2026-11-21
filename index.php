@@ -86,7 +86,7 @@ function pk_product_card(array $p, string $badgeType = '') {
         </div>
 
         <div class="w-full">
-          <div data-hero-slider class="relative rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-sm h-[220px] sm:h-[280px] md:h-[340px] lg:h-[380px]">
+          <div data-hero-slider class="relative rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-sm pk-hero-banner">
             <?php $heroBanners = !empty($homeBanners) ? $homeBanners : []; $heroSlideCount = 0; ?>
             <?php if (!empty($heroBanners)): foreach ($heroBanners as $hb):
               $desk = trim((string)($hb['image'] ?? ''));
