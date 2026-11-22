@@ -252,9 +252,15 @@ require __DIR__ . '/includes/header.php';
             <div class="flex items-center justify-between gap-3 text-sm">
               <div class="flex items-center gap-3 min-w-0">
                 <img src="<?= e(image_url($directProduct['image'])) ?>" alt="<?= e($directProduct['title']) ?>" class="w-12 h-12 rounded-lg object-cover border border-gray-200">
-                <div class="min-w-0"><div class="font-semibold text-gray-900 truncate"><?= e($directProduct['title']) ?></div><div class="text-gray-500 text-xs">Qty: <?= (int)$directQty ?> × <?= e(money($directProduct['price'])) ?></div></div>
+                <div class="min-w-0">
+                  <div class="font-semibold text-gray-900 truncate"><?= e($directProduct['title']) ?></div>
+                  <div class="text-gray-500 text-xs"><?= e(money($directProduct['price'])) ?> each</div>
+                </div>
               </div>
-              <span class="font-bold text-gray-900 shrink-0"><?= e(money($subtotal)) ?></span>
+              <div class="shrink-0 text-right">
+                <label class="block text-[11px] font-bold text-gray-600 mb-1">Quantity</label>
+                <input type="number" name="direct_qty" value="<?= (int)$directQty ?>" min="1" max="<?= max(1,(int)($directProduct['stock']??99)) ?>" class="w-20 px-2 py-2 border border-gray-300 rounded-lg text-center font-bold text-sm">
+              </div>
             </div>
           <?php else: ?>
             <div class="space-y-2 text-sm max-h-40 overflow-y-auto">

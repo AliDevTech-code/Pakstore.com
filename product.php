@@ -196,13 +196,10 @@ $hasSale = $original > 0;
               <?= csrf_field() ?>
               <input type="hidden" name="action" value="add">
               <input type="hidden" name="product_id" value="<?= (int) $product['id'] ?>">
-              <div class="flex items-center border border-gray-300 rounded-xl bg-white" data-qty>
-                <button type="button" data-qty-step="-1" class="px-3 py-3 text-gray-600 hover:bg-gray-100 font-bold">-</button>
-                <input type="number" name="quantity" value="1" min="1" max="<?= max(1, (int)$product['stock']) ?>" class="w-14 py-3 text-center font-bold border-x border-gray-200 focus:outline-none" aria-label="Quantity">
-                <button type="button" data-qty-step="1" class="px-3 py-3 text-gray-600 hover:bg-gray-100 font-bold">+</button>
-              </div>
+              <input type="hidden" name="quantity" value="1">
+              <button type="button" id="shareProductBtn" class="pk-btn pk-btn-outline px-4" aria-label="Share product"><i data-lucide="share-2" class="w-4 h-4"></i> Share</button>
               <button type="submit" class="flex-1 pk-btn pk-btn-orange" <?= !$inStock ? 'disabled style="opacity:.5;cursor:not-allowed"' : '' ?>><i data-lucide="shopping-cart" class="w-4 h-4"></i> Add to Cart</button>
-              <button type="submit" formaction="<?= e(url('cart.php')) ?>" name="redirect" value="checkout.php?product=<?= (int)$product['id'] ?>&qty=1" class="flex-1 pk-btn pk-btn-green" <?= !$inStock ? 'disabled style="opacity:.5;cursor:not-allowed"' : '' ?>>Buy Now <i data-lucide="zap" class="w-4 h-4"></i></button>
+              <a href="<?= e(url('checkout.php?product='.(int)$product['id'].'&qty=1')) ?>" class="flex-1 pk-btn pk-btn-green" <?= !$inStock ? 'style="opacity:.5;pointer-events:none"' : '' ?>>Buy Now <i data-lucide="zap" class="w-4 h-4"></i></a>
             </form>
             <p class="text-xs text-gray-500">Cash on Delivery • 7-Day Return • TCS/Leopards Delivery</p>
           </div>
@@ -281,5 +278,17 @@ $hasSale = $original > 0;
   </div>
   <script>document.body.classList.add('has-sticky-atc');</script>
   <?php endif; ?>
+<script>
+(function(){
+  var btn=document.getElementById('shareProductBtn');
+  if(!btn) return;
+  btn.addEventListener('click', async function(){
+    var data={title:document.title, url:window.location.href};
+    if(navigator.share){ try{ await navigator.share(data); return; }catch(e){} }
+    try{ await navigator.clipboard.writeText(window.location.href); btn.innerHTML='<i data-lucide="check" class="w-4 h-4"></i> Copied'; if(window.lucide) lucide.createIcons(); setTimeout(function(){ btn.innerHTML='<i data-lucide="share-2" class="w-4 h-4"></i> Share'; if(window.lucide) lucide.createIcons(); },1500); }
+    catch(e){ prompt('Copy link:', window.location.href); }
+  });
+})();
+</script>
 </main>
 <?php require __DIR__ . '/includes/footer.php'; ?>
