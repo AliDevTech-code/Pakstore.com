@@ -47,35 +47,13 @@ if ($editId > 0) {
             </div>
 
             <div>
-            <div>
-                <label for="image_file" class="block text-xs font-semibold text-slate-700 mb-1">Desktop Banner Image (max 3 MB)</label>
-                <input id="image_file" name="image_file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="w-full text-xs border border-slate-300 rounded-lg p-1.5 bg-white file:mr-2 file:px-2.5 file:py-1 file:rounded file:border-0 file:bg-slate-900 file:text-gray-900 file:text-[11px] file:font-bold">
-                <p class="text-[10px] text-slate-500 mt-1">Recommended desktop size: <strong>1600 × 500 px</strong></p>
-                <?php if (!empty($editing['image'])): ?>
-                    <img src="<?= e(image_url($editing['image'])) ?>" alt="" class="mt-2 h-20 w-full object-cover rounded-lg border border-slate-200">
+                <label for="video_file" class="block text-xs font-semibold text-slate-700 mb-1">Hero Video Upload (MP4/WEBM/MOV, max 20 MB)</label>
+                <input id="video_file" name="video_file" type="file" accept="video/mp4,video/webm,video/quicktime" class="w-full text-xs border border-slate-300 rounded-lg p-1.5 bg-white file:mr-2 file:px-2.5 file:py-1 file:rounded file:border-0 file:bg-[#00A651] file:text-white file:text-[11px] file:font-bold">
+                <p class="text-[10px] text-slate-500 mt-1">Ye video hero section mein show hogi (desktop: circle, mobile: vertical).</p>
+                <?php if (!empty($editing['video'])): ?>
+                    <video src="<?= e(image_url($editing['video'])) ?>" class="mt-2 h-24 w-full object-cover rounded-lg border border-slate-200" muted playsinline controls></video>
                 <?php endif; ?>
             </div>
-
-            <div>
-                <label for="image_mobile_file" class="block text-xs font-semibold text-slate-700 mb-1">Mobile Banner Image (max 3 MB)</label>
-                <input id="image_mobile_file" name="image_mobile_file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="w-full text-xs border border-slate-300 rounded-lg p-1.5 bg-white file:mr-2 file:px-2.5 file:py-1 file:rounded file:border-0 file:bg-slate-900 file:text-gray-900 file:text-[11px] file:font-bold">
-                <p class="text-[10px] text-slate-500 mt-1">Recommended mobile size: <strong>768 × 500 px</strong></p>
-                <?php if (!empty($editing['image_mobile'])): ?>
-                    <img src="<?= e(image_url($editing['image_mobile'])) ?>" alt="" class="mt-2 h-20 w-full object-cover rounded-lg border border-slate-200">
-                <?php endif; ?>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label for="image_width" class="block text-xs font-semibold text-slate-700 mb-1">Width (px)</label>
-                    <input id="image_width" name="image_width" type="number" min="300" max="4000" step="10" value="<?= (int) ($editing['image_width'] ?? 1600) ?>" placeholder="1600" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-mono focus:outline-[#00A651]">
-                </div>
-                <div>
-                    <label for="image_height" class="block text-xs font-semibold text-slate-700 mb-1">Height (px)</label>
-                    <input id="image_height" name="image_height" type="number" min="100" max="2000" step="10" value="<?= (int) ($editing['image_height'] ?? 400) ?>" placeholder="400" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-mono focus:outline-[#00A651]">
-                </div>
-            </div>
-            <p class="text-[10px] text-slate-500 -mt-1">Patla banner ke liye height chhoti rakhein (e.g. 1600 × 400).</p>
 
             <div>
                 <label for="link" class="block text-xs font-semibold text-slate-700 mb-1">Button Link (optional)</label>
