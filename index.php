@@ -78,7 +78,7 @@ function pk_product_card(array $p, string $badgeType = '') {
 ?>
 <main class="flex-1">
 
-    <!-- HERO -->
+        <!-- HERO -->
   <section class="bg-[#f8fafc] border-b border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
@@ -95,43 +95,59 @@ function pk_product_card(array $p, string $badgeType = '') {
           </div>
         </div>
 
-        <div class="w-full">
-          <div data-hero-slider class="relative rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-sm pk-hero-banner">
-            <?php $heroBanners = !empty($homeBanners) ? $homeBanners : []; $heroSlideCount = 0; ?>
-            <?php if (!empty($heroBanners)): foreach ($heroBanners as $hb):
-              $desk = trim((string)($hb['image'] ?? ''));
-              $mob = trim((string)($hb['image_mobile'] ?? ''));
-              if ($mob === '') $mob = $desk;
-              if ($desk === '' && $mob === '') continue;
-              $hLink = trim((string)($hb['link'] ?? ''));
-              if ($hLink === '') $hLink = url('shop.php');
-              $hLink = str_starts_with($hLink,'http') ? $hLink : url(ltrim($hLink,'/'));
-              $active = $heroSlideCount === 0 ? 'is-active' : '';
-              $heroSlideCount++;
-            ?>
-              <a href="<?= e($hLink) ?>" class="hero-slide <?= $active ?> block w-full h-full"<?= $active ? ' style="opacity:1;pointer-events:auto"' : '' ?>>
-                <img src="<?= e(image_url($mob ?: $desk)) ?>" alt="<?= e($hb['title'] ?? 'Banner') ?>" class="block md:hidden w-full h-full object-cover">
-                <img src="<?= e(image_url($desk ?: $mob)) ?>" alt="<?= e($hb['title'] ?? 'Banner') ?>" class="hidden md:block w-full h-full object-cover">
-              </a>
-            <?php endforeach; endif; ?>
-            <?php if ($heroSlideCount === 0): ?>
-              <div class="hero-slide is-active w-full h-full bg-gradient-to-br from-green-50 to-orange-50 flex items-center justify-center text-gray-400" style="opacity:1;pointer-events:auto">
-                <div class="text-center px-6">
-                  <i data-lucide="image-plus" class="w-12 h-12 mx-auto mb-2 text-[#166534]/40"></i>
-                  <p class="text-sm font-semibold text-gray-500">Admin panel se banner add karein</p>
-                </div>
-              </div>
-            <?php endif; ?>
-
-            <?php if ($heroSlideCount > 1): ?>
-              <div class="absolute bottom-3 left-0 right-0 z-20 flex justify-center gap-2">
-                <?php for ($i=0; $i<$heroSlideCount; $i++): ?>
-                  <button type="button" data-hero-dot="<?= $i ?>" class="rounded-full h-2.5 transition-all" style="width:<?= $i===0?'28px':'8px' ?>;background:<?= $i===0?'#f97316':'rgba(255,255,255,.75)' ?>;border:1px solid rgba(0,0,0,.08)"></button>
-                <?php endfor; ?>
+        <div class="hidden lg:flex justify-center lg:justify-end">
+          <?php $heroBanners = !empty($homeBanners) ? $homeBanners : []; $circleBanner = $heroBanners[0] ?? null;
+            $cDesk = $circleBanner ? trim((string)($circleBanner['image'] ?? '')) : '';
+            $cMob = $circleBanner ? trim((string)($circleBanner['image_mobile'] ?? '')) : '';
+            if ($cMob === '') $cMob = $cDesk;
+            $cImg = $cDesk ?: $cMob;
+          ?>
+          <div class="pk-hero-circle rounded-full overflow-hidden border-8 border-white shadow-xl bg-gray-100">
+            <?php if ($cImg !== ''): ?>
+              <img src="<?= e(image_url($cImg)) ?>" alt="<?= e($circleBanner['title'] ?? 'Banner') ?>" class="w-full h-full object-cover">
+            <?php else: ?>
+              <div class="w-full h-full flex items-center justify-center text-gray-400 bg-gradient-to-br from-green-50 to-orange-50">
+                <i data-lucide="image-plus" class="w-14 h-14 text-[#166534]/40"></i>
               </div>
             <?php endif; ?>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MOBILE HERO BANNERS -->
+  <section class="block lg:hidden bg-[#f3f4f6] border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+      <div data-hero-slider class="relative rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-sm pk-hero-banner-mobile">
+        <?php $mSlideCount = 0; $heroBanners = !empty($homeBanners) ? $homeBanners : []; ?>
+        <?php if (!empty($heroBanners)): foreach ($heroBanners as $hb):
+          $desk = trim((string)($hb['image'] ?? ''));
+          $mob = trim((string)($hb['image_mobile'] ?? ''));
+          if ($mob === '') $mob = $desk;
+          if ($desk === '' && $mob === '') continue;
+          $hLink = trim((string)($hb['link'] ?? ''));
+          if ($hLink === '') $hLink = url('shop.php');
+          $hLink = str_starts_with($hLink,'http') ? $hLink : url(ltrim($hLink,'/'));
+          $active = $mSlideCount === 0 ? 'is-active' : '';
+          $mSlideCount++;
+        ?>
+          <a href="<?= e($hLink) ?>" class="hero-slide <?= $active ?> block w-full h-full"<?= $active ? ' style="opacity:1;pointer-events:auto"' : '' ?>>
+            <img src="<?= e(image_url($mob ?: $desk)) ?>" alt="<?= e($hb['title'] ?? 'Banner') ?>" class="w-full h-full object-cover">
+          </a>
+        <?php endforeach; endif; ?>
+        <?php if ($mSlideCount === 0): ?>
+          <div class="hero-slide is-active w-full h-full bg-gradient-to-br from-green-50 to-orange-50 flex items-center justify-center text-gray-400" style="opacity:1;pointer-events:auto">
+            <div class="text-center px-6"><i data-lucide="image-plus" class="w-10 h-10 mx-auto mb-2 text-[#166534]/40"></i><p class="text-sm font-semibold text-gray-500">Admin panel se banner add karein</p></div>
+          </div>
+        <?php endif; ?>
+        <?php if ($mSlideCount > 1): ?>
+          <div class="absolute bottom-3 left-0 right-0 z-20 flex justify-center gap-2">
+            <?php for ($i=0; $i<$mSlideCount; $i++): ?>
+              <button type="button" data-hero-dot="<?= $i ?>" class="rounded-full h-2.5 transition-all" style="width:<?= $i===0?'28px':'8px' ?>;background:<?= $i===0?'#f97316':'rgba(255,255,255,.75)' ?>;border:1px solid rgba(0,0,0,.08)"></button>
+            <?php endfor; ?>
+          </div>
+        <?php endif; ?>
       </div>
     </div>
   </section>
