@@ -98,32 +98,26 @@ function pk_product_card(array $p, string $badgeType = '') {
             $heroBanners = !empty($homeBanners) ? $homeBanners : [];
             $circleBanner = $heroBanners[0] ?? null;
             $cVideo = $circleBanner ? trim((string)($circleBanner['video'] ?? '')) : '';
-            $cDesk = $circleBanner ? trim((string)($circleBanner['image'] ?? '')) : '';
-            $cMob = $circleBanner ? trim((string)($circleBanner['image_mobile'] ?? '')) : '';
-            if ($cMob === '') $cMob = $cDesk;
-            $cImg = $cDesk ?: $cMob;
           ?>
           <?php if ($cVideo !== ''): ?>
             <div class="mt-6 lg:hidden">
-              <div class="mx-auto w-full max-w-[320px] rounded-2xl overflow-hidden border border-gray-200 shadow-sm bg-black" style="aspect-ratio:9/16;">
-                <video src="<?= e(image_url($cVideo)) ?>" class="w-full h-full object-cover" autoplay muted loop playsinline controls></video>
+              <div class="mx-auto w-full max-w-[220px] rounded-2xl overflow-hidden border border-gray-200 shadow-sm bg-black" style="aspect-ratio:9/16;max-height:390px;">
+                <video src="<?= e(image_url($cVideo)) ?>" class="w-full h-full object-cover" autoplay muted loop playsinline></video>
               </div>
             </div>
           <?php endif; ?>
         </div>
 
         <div class="hidden lg:flex justify-center lg:justify-end">
-          <div class="pk-hero-circle rounded-full overflow-hidden border-8 border-white shadow-xl bg-gray-100">
-            <?php if ($cVideo !== ''): ?>
+          <?php if ($cVideo !== ''): ?>
+            <div class="w-full max-w-[280px] xl:max-w-[300px] rounded-2xl overflow-hidden border border-gray-200 shadow-lg bg-black" style="aspect-ratio:9/16;max-height:500px;">
               <video src="<?= e(image_url($cVideo)) ?>" class="w-full h-full object-cover" autoplay muted loop playsinline></video>
-            <?php elseif ($cImg !== ''): ?>
-              <img src="<?= e(image_url($cImg)) ?>" alt="<?= e($circleBanner['title'] ?? 'Banner') ?>" class="w-full h-full object-cover">
-            <?php else: ?>
-              <div class="w-full h-full flex items-center justify-center text-gray-400 bg-gradient-to-br from-green-50 to-orange-50">
-                <i data-lucide="image-plus" class="w-14 h-14 text-[#166534]/40"></i>
-              </div>
-            <?php endif; ?>
-          </div>
+            </div>
+          <?php else: ?>
+            <div class="pk-hero-circle rounded-full overflow-hidden border-8 border-white shadow-xl bg-gray-100 flex items-center justify-center text-gray-400 bg-gradient-to-br from-green-50 to-orange-50">
+              <i data-lucide="image-plus" class="w-14 h-14 text-[#166534]/40"></i>
+            </div>
+          <?php endif; ?>
         </div>
       </div>
     </div>
