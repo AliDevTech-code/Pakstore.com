@@ -642,6 +642,9 @@ function ensure_banner_size_columns(): void
         if (!in_array('image_mobile', $columns, true)) {
             db()->exec('ALTER TABLE banners ADD COLUMN image_mobile VARCHAR(500) NULL DEFAULT NULL AFTER image');
         }
+        if (!in_array('video', $columns, true)) {
+            db()->exec('ALTER TABLE banners ADD COLUMN video VARCHAR(500) NULL DEFAULT NULL AFTER image_mobile');
+        }
     } catch (Throwable $e) {
         error_log('Banner size migration failed: ' . $e->getMessage());
     }
@@ -681,4 +684,25 @@ function local_redirect_target(string $fallback = 'index.php'): string
         return $fallback;
     }
     return ltrim($target, '/');
+}
+
+function upload_video(array $file, string $subdir, string $prefix = 'vid'): array
+{
+    if (!isset($file['error']) || is_array($file['error'])) return [false, 'No valid file was uploaded.'];
+    if ($file['error'] === UPLOAD_ERR_NO_FILE) return [false, 'No file selected.'];
+    if ($file['error'] !== UPLOAD_ERR_OK) return [false, 'Upload failed (error code ' . (int) $file['error'] . ').'];
+    $max = 20 * 1024 * 1024; // 20MB
+    if ((int) $file['size'] > $max) return [false, 'Video is larger than 20 MB.'];
+    $mime = '';
+    if (class_exists('finfo')) { $finfo = new finfo(FILEINFO_MIME_TYPE); $mime = (string) $finfo->file($file['tmp_name']); }
+    $allowed = ['video/mp4' => 'mp4', 'video/webm' => 'webm', 'video/quicktime' => 'mov'];
+    if (!isset($allowed[$mime])) return [false, 'Only MP4, WEBM or MOV videos are allowed.'];
+    $subdir = trim($subdir, '/');
+    $dir = dirname(__DIR__) . '/uploads/' . $subdir;
+    if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) return [false, 'Upload folder could not be created.'];
+    $name = $prefix . '-' . date('YmdHis') . '-' . bin2hex(random_bytes(5)) . '.' . $allowed[$mime];
+    $target = $dir . '/' . $name;
+    if (!move_uploaded_file($file['tmp_name'], $target)) return [false, 'Could not move the uploaded file.'];
+    @chmod($target, 0644);
+    return [true, 'uploads/' . $subdir . '/' . $name];
 }
