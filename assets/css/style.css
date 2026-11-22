@@ -83,7 +83,10 @@ img{max-width:100%;height:auto}
 .pk-product-card .img-wrap{position:relative;aspect-ratio:1/1;background:#f9fafb;overflow:hidden}
 .pk-product-card .img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .35s ease}
 .pk-product-card:hover .img-wrap img{transform:scale(1.03)}
-.pk-product-card .body{padding:14px}
+.pk-product-card .body{padding:10px}
+@media(min-width:640px){.pk-product-card .body{padding:14px}}
+.pk-product-card .pk-btn{padding:8px 6px;font-size:11px;line-height:1.2;min-width:0;gap:4px}
+.pk-product-card .pk-btn i{width:14px;height:14px}
 .pk-product-card .cat{font-size:11px;font-weight:700;color:var(--pk-muted);text-transform:uppercase;letter-spacing:.04em}
 .pk-product-card .name{font-size:14px;font-weight:800;color:var(--pk-text);line-height:1.4;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.8em}
 .pk-product-card .name:hover{color:var(--pk-green)}
