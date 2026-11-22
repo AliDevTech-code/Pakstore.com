@@ -80,49 +80,40 @@ function pk_product_card(array $p, string $badgeType = '') {
 
         <!-- HERO -->
   <section class="bg-[#f8fafc] border-b border-gray-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
-        <div class="max-w-xl">
-          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight" style="color:#111827">
-            Premium Products.<br><span style="color:#166534">Cash on Delivery.</span>
-          </h1>
-          <p class="mt-4 text-sm sm:text-base text-gray-600 leading-6 max-w-lg">
-            Quality products, best prices aur poore Pakistan mein fast delivery.
-          </p>
-          <div class="mt-6 flex flex-wrap gap-3">
-            <a href="<?= e(url('shop.php')) ?>" class="pk-btn pk-btn-orange px-6 py-3 text-sm font-bold">Shop Now <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
-            <a href="<?= e(url('categories.php')) ?>" class="pk-btn pk-btn-outline px-6 py-3 text-sm font-bold">Browse Categories</a>
-          </div>
-
-          <?php
-            $heroBanners = !empty($homeBanners) ? $homeBanners : [];
-            $circleBanner = $heroBanners[0] ?? null;
-            $cVideo = $circleBanner ? trim((string)($circleBanner['video'] ?? '')) : '';
-          ?>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <?php
+        $heroBanners = !empty($homeBanners) ? $homeBanners : [];
+        $circleBanner = $heroBanners[0] ?? null;
+        $cVideo = $circleBanner ? trim((string)($circleBanner['video'] ?? '')) : '';
+      ?>
+      <div class="pk-hero-grid">
+        <div class="pk-hero-video">
           <?php if ($cVideo !== ''): ?>
-            <div class="mt-6 lg:hidden">
-              <div class="mx-auto w-full max-w-[220px] rounded-2xl overflow-hidden border border-gray-200 shadow-sm bg-black" style="aspect-ratio:9/16;max-height:390px;">
-                <video src="<?= e(image_url($cVideo)) ?>" class="w-full h-full object-cover" autoplay muted loop playsinline></video>
-              </div>
+            <div class="pk-hero-video-wrap">
+              <video src="<?= e(image_url($cVideo)) ?>" class="w-full h-full object-cover" autoplay muted loop playsinline></video>
+            </div>
+          <?php else: ?>
+            <div class="pk-hero-video-wrap pk-hero-video-placeholder">
+              <i data-lucide="image-plus" class="w-12 h-12 text-[#166534]/35"></i>
             </div>
           <?php endif; ?>
         </div>
 
-        <div class="hidden lg:flex justify-center lg:justify-end">
-          <?php if ($cVideo !== ''): ?>
-            <div class="w-full max-w-[280px] xl:max-w-[300px] rounded-2xl overflow-hidden border border-gray-200 shadow-lg bg-black" style="aspect-ratio:9/16;max-height:500px;">
-              <video src="<?= e(image_url($cVideo)) ?>" class="w-full h-full object-cover" autoplay muted loop playsinline></video>
-            </div>
-          <?php else: ?>
-            <div class="pk-hero-circle rounded-full overflow-hidden border-8 border-white shadow-xl bg-gray-100 flex items-center justify-center text-gray-400 bg-gradient-to-br from-green-50 to-orange-50">
-              <i data-lucide="image-plus" class="w-14 h-14 text-[#166534]/40"></i>
-            </div>
-          <?php endif; ?>
+        <div class="pk-hero-text">
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight" style="color:#111827">
+            Premium Products.<br><span style="color:#166534">Cash on Delivery.</span>
+          </h1>
+          <p class="mt-4 text-sm sm:text-base text-gray-600 leading-6 max-w-lg pk-hero-sub">
+            Quality products, best prices aur poore Pakistan mein fast delivery.
+          </p>
+          <div class="mt-6 flex flex-wrap gap-3 pk-hero-actions">
+            <a href="<?= e(url('shop.php')) ?>" class="pk-btn pk-btn-orange px-6 py-3 text-sm font-bold">Shop Now <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+            <a href="<?= e(url('categories.php')) ?>" class="pk-btn pk-btn-outline px-6 py-3 text-sm font-bold">Browse Categories</a>
+          </div>
         </div>
       </div>
     </div>
   </section>
-
   <!-- CATEGORIES -->
   <section class="pk-section pk-section-surface">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
