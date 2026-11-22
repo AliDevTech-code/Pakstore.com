@@ -102,7 +102,7 @@ if (empty($structuredData)) {
     <link rel="preload" href="<?= e(url('assets/fonts/outfit-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 
     <link rel="stylesheet" href="<?= e(url('assets/css/tailwind.css') . '?v=4') ?>">
-    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=46') ?>">
+    <link rel="stylesheet" href="<?= e(url('assets/css/style.css') . '?v=47') ?>">
     <script src="<?= e(url('assets/js/lucide.min.js')) ?>"></script>
     <style>
         /* Keep drawers closed by default even if the external stylesheet fails to load. */
@@ -154,14 +154,14 @@ if (empty($structuredData)) {
       </div>
 
       <div class="flex items-center gap-2 sm:gap-3 flex-1 justify-end ml-auto -mr-1 sm:-mr-1 lg:-mr-2">
-        <button type="button" data-search-toggle class="mobile-menu-btn menu-icon-btn border border-gray-200 text-gray-700 hover:text-[#166534] hover:bg-green-50" title="Search" aria-label="Open search"><i data-lucide="search" class="w-5 h-5"></i></button>
-        <button type="button" data-search-close class="search-close-btn p-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50" title="Close search" aria-label="Close search"><i data-lucide="x" class="w-5 h-5"></i></button>
-        <a href="<?= e(url('account.php')) ?>" class="inline-flex pk-icon-btn" title="Account" aria-label="Account"><i data-lucide="user" class="w-5 h-5"></i></a>
         <button type="button" data-open-drawer="cart-drawer" class="relative inline-flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl bg-[#166534] text-white font-bold text-xs hover:bg-[#14532d]">
           <i data-lucide="shopping-bag" class="w-4 h-4"></i>
           <span class="hidden sm:inline">Cart</span>
           <span class="min-w-[20px] h-5 px-1 rounded-full bg-[#f97316] text-gray-900 text-[10px] font-black inline-flex items-center justify-center"><?= (int)$navCartCount ?></span>
         </button>
+        <button type="button" data-search-toggle class="mobile-menu-btn menu-icon-btn border border-gray-200 text-gray-700 hover:text-[#166534] hover:bg-green-50" title="Search" aria-label="Open search"><i data-lucide="search" class="w-5 h-5"></i></button>
+        <button type="button" data-search-close class="search-close-btn p-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50" title="Close search" aria-label="Close search"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <a href="<?= e(url('account.php')) ?>" class="inline-flex pk-icon-btn" title="Account" aria-label="Account"><i data-lucide="user" class="w-5 h-5"></i></a>
       </div>
     </div>
   </div>
