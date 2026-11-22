@@ -93,17 +93,30 @@ function pk_product_card(array $p, string $badgeType = '') {
             <a href="<?= e(url('shop.php')) ?>" class="pk-btn pk-btn-orange px-6 py-3 text-sm font-bold">Shop Now <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
             <a href="<?= e(url('categories.php')) ?>" class="pk-btn pk-btn-outline px-6 py-3 text-sm font-bold">Browse Categories</a>
           </div>
-        </div>
 
-        <div class="hidden lg:flex justify-center lg:justify-end">
-          <?php $heroBanners = !empty($homeBanners) ? $homeBanners : []; $circleBanner = $heroBanners[0] ?? null;
+          <?php
+            $heroBanners = !empty($homeBanners) ? $homeBanners : [];
+            $circleBanner = $heroBanners[0] ?? null;
+            $cVideo = $circleBanner ? trim((string)($circleBanner['video'] ?? '')) : '';
             $cDesk = $circleBanner ? trim((string)($circleBanner['image'] ?? '')) : '';
             $cMob = $circleBanner ? trim((string)($circleBanner['image_mobile'] ?? '')) : '';
             if ($cMob === '') $cMob = $cDesk;
             $cImg = $cDesk ?: $cMob;
           ?>
+          <?php if ($cVideo !== ''): ?>
+            <div class="mt-6 lg:hidden">
+              <div class="mx-auto w-full max-w-[320px] rounded-2xl overflow-hidden border border-gray-200 shadow-sm bg-black" style="aspect-ratio:9/16;">
+                <video src="<?= e(image_url($cVideo)) ?>" class="w-full h-full object-cover" autoplay muted loop playsinline controls></video>
+              </div>
+            </div>
+          <?php endif; ?>
+        </div>
+
+        <div class="hidden lg:flex justify-center lg:justify-end">
           <div class="pk-hero-circle rounded-full overflow-hidden border-8 border-white shadow-xl bg-gray-100">
-            <?php if ($cImg !== ''): ?>
+            <?php if ($cVideo !== ''): ?>
+              <video src="<?= e(image_url($cVideo)) ?>" class="w-full h-full object-cover" autoplay muted loop playsinline></video>
+            <?php elseif ($cImg !== ''): ?>
               <img src="<?= e(image_url($cImg)) ?>" alt="<?= e($circleBanner['title'] ?? 'Banner') ?>" class="w-full h-full object-cover">
             <?php else: ?>
               <div class="w-full h-full flex items-center justify-center text-gray-400 bg-gradient-to-br from-green-50 to-orange-50">
@@ -116,41 +129,6 @@ function pk_product_card(array $p, string $badgeType = '') {
     </div>
   </section>
 
-  <!-- MOBILE HERO BANNERS -->
-  <section class="block lg:hidden bg-[#f3f4f6] border-b border-gray-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4">
-      <div data-hero-slider class="relative rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-sm pk-hero-banner-mobile">
-        <?php $mSlideCount = 0; $heroBanners = !empty($homeBanners) ? $homeBanners : []; ?>
-        <?php if (!empty($heroBanners)): foreach ($heroBanners as $hb):
-          $desk = trim((string)($hb['image'] ?? ''));
-          $mob = trim((string)($hb['image_mobile'] ?? ''));
-          if ($mob === '') $mob = $desk;
-          if ($desk === '' && $mob === '') continue;
-          $hLink = trim((string)($hb['link'] ?? ''));
-          if ($hLink === '') $hLink = url('shop.php');
-          $hLink = str_starts_with($hLink,'http') ? $hLink : url(ltrim($hLink,'/'));
-          $active = $mSlideCount === 0 ? 'is-active' : '';
-          $mSlideCount++;
-        ?>
-          <a href="<?= e($hLink) ?>" class="hero-slide <?= $active ?> block w-full h-full"<?= $active ? ' style="opacity:1;pointer-events:auto"' : '' ?>>
-            <img src="<?= e(image_url($mob ?: $desk)) ?>" alt="<?= e($hb['title'] ?? 'Banner') ?>" class="w-full h-full object-cover">
-          </a>
-        <?php endforeach; endif; ?>
-        <?php if ($mSlideCount === 0): ?>
-          <div class="hero-slide is-active w-full h-full bg-gradient-to-br from-green-50 to-orange-50 flex items-center justify-center text-gray-400" style="opacity:1;pointer-events:auto">
-            <div class="text-center px-6"><i data-lucide="image-plus" class="w-10 h-10 mx-auto mb-2 text-[#166534]/40"></i><p class="text-sm font-semibold text-gray-500">Admin panel se banner add karein</p></div>
-          </div>
-        <?php endif; ?>
-        <?php if ($mSlideCount > 1): ?>
-          <div class="absolute bottom-3 left-0 right-0 z-20 flex justify-center gap-2">
-            <?php for ($i=0; $i<$mSlideCount; $i++): ?>
-              <button type="button" data-hero-dot="<?= $i ?>" class="rounded-full h-2.5 transition-all" style="width:<?= $i===0?'28px':'8px' ?>;background:<?= $i===0?'#f97316':'rgba(255,255,255,.75)' ?>;border:1px solid rgba(0,0,0,.08)"></button>
-            <?php endfor; ?>
-          </div>
-        <?php endif; ?>
-      </div>
-    </div>
-  </section>
   <!-- CATEGORIES -->
   <section class="pk-section pk-section-surface">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
