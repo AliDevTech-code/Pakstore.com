@@ -14,6 +14,16 @@ try {
 } catch (Throwable $e) { $newArrivals = []; }
 try {
     $sale = db()->query("SELECT p.*, c.name AS category_name, c.slug AS category_slug FROM products p LEFT JOIN categories c ON c.id=p.category_id ORDER BY (CASE WHEN p.original_price IS NOT NULL AND p.original_price > p.price THEN 1 ELSE 0 END) DESC, p.id DESC LIMIT 10")->fetchAll();
+$categorySections = [];
+try {
+  $catsForHome = db()->query("SELECT id, name, slug FROM categories ORDER BY name ASC")->fetchAll();
+  $stmtCP = db()->prepare("SELECT p.*, c.name AS category_name, c.slug AS category_slug FROM products p LEFT JOIN categories c ON c.id=p.category_id WHERE p.category_id = ? ORDER BY p.id DESC LIMIT 8");
+  foreach ($catsForHome as $c) {
+    $stmtCP->execute([(int)$c['id']]);
+    $prods = $stmtCP->fetchAll();
+    if ($prods) $categorySections[] = ['category'=>$c, 'products'=>$prods];
+  }
+} catch (Throwable $e) { $categorySections = []; }
 } catch (Throwable $e) { $sale = []; }
 
 $slides = array_slice($featured, 0, 5);
@@ -147,56 +157,27 @@ function pk_product_card(array $p, string $badgeType = '') {
   </section>
 
 
-<!-- BEST SELLERS -->
+<!-- CATEGORY PRODUCTS -->
+<?php if (!empty($categorySections)): foreach ($categorySections as $idx => $sec): $cat=$sec['category']; $prods=$sec['products']; ?>
+  <section class="pk-section <?= $idx % 2 === 0 ? 'pk-section-white' : 'pk-section-surface' ?>">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-end justify-between gap-4 mb-6">
+        <div>
+          <h2 class="pk-title"><?= e($cat['name']) ?></h2>
+          <p class="pk-sub">Best picks from <?= e($cat['name']) ?></p>
+        </div>
+        <a href="<?= e(url('shop.php?category=' . urlencode($cat['slug']))) ?>" class="text-sm font-bold text-[#166534] hover:text-[#f97316]">View All →</a>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5">
+        <?php foreach ($prods as $p) pk_product_card($p); ?>
+      </div>
+    </div>
+  </section>
+<?php endforeach; else: ?>
   <section class="pk-section pk-section-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-end justify-between gap-4 mb-6">
-        <div><h2 class="pk-title">Best Sellers</h2><p class="pk-sub">Most loved by customers across Pakistan</p></div>
-        <div class="flex gap-2">
-          <button type="button" class="pk-carousel-btn" data-carousel-prev data-target="best-track"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
-          <button type="button" class="pk-carousel-btn" data-carousel-next data-target="best-track"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
-        </div>
-      </div>
-      <div class="pk-carousel" data-carousel>
-        <div class="pk-carousel-track scrollbar-none" id="best-track" data-carousel-track>
-          <?php foreach ($best as $p) { echo '<div>'; pk_product_card($p); echo '</div>'; } ?>
-        </div>
-      </div>
-    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500">Products coming soon.</div>
   </section>
-
-  <!-- NEW ARRIVALS -->
-  <section class="pk-section pk-section-surface">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-end justify-between gap-4 mb-6">
-        <div><h2 class="pk-title">New Arrivals</h2><p class="pk-sub">Fresh products just added</p></div>
-        <a href="<?= e(url('shop.php?sort=newest')) ?>" class="text-sm font-bold text-[#166534] hover:text-[#f97316]">View All →</a>
-      </div>
-      <div class="pk-carousel" data-carousel>
-        <div class="pk-carousel-track scrollbar-none" data-carousel-track>
-          <?php foreach ($newArrivals as $p) { echo '<div>'; pk_product_card($p, 'new'); echo '</div>'; } ?>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SALE -->
-  <?php if ($sale): ?>
-  <section class="pk-section pk-section-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-end justify-between gap-4 mb-6">
-        <div><h2 class="pk-title">Sale / Special Offers</h2><p class="pk-sub">Best discounts — limited time deals</p></div>
-        <a href="<?= e(url('shop.php')) ?>" class="text-sm font-bold text-[#166534] hover:text-[#f97316]">Shop All →</a>
-      </div>
-      <div class="pk-carousel" data-carousel>
-        <div class="pk-carousel-track scrollbar-none" data-carousel-track>
-          <?php foreach ($sale as $p) { echo '<div>'; pk_product_card($p); echo '</div>'; } ?>
-        </div>
-      </div>
-    </div>
-  </section>
-  <?php endif; ?>
-
+<?php endif; ?>
   <!-- TRUST BADGES -->
   <section class="py-10 bg-white border-t border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 lg:grid-cols-4 gap-4">
